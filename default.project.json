@@ -19,6 +19,12 @@
                 "$path": "src/features/app/ui/RootUI.luau"
               }
             }
+          },
+          "Plots": {
+            "$className": "Folder",
+            "PlotTypes": {
+              "$path": "src/features/plots/PlotTypes.luau"
+            }
           }
         },
         "Core": {
@@ -97,7 +103,19 @@
     },
     "ServerScriptService": {
       "Features": {
-        "$className": "Folder"
+        "$className": "Folder",
+        "Plots": {
+          "$className": "Folder",
+          "Classes": {
+            "$className": "Folder",
+            "PlotServer": {
+              "$path": "src/features/plots/classes/PlotServer.luau"
+            }
+          },
+          "PlotServiceServer": {
+            "$path": "src/features/plots/PlotServiceServer.luau"
+          }
+        }
       },
       "Core": {
         "$className": "Folder"
