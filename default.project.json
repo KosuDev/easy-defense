@@ -37,8 +37,23 @@
             "PlotServiceUtils": {
               "$path": "src/features/plots/PlotServiceUtils.luau"
             },
+            "PlotSlice": {
+              "$path": "src/features/plots/PlotSlice.luau"
+            },
             "PlotTypes": {
               "$path": "src/features/plots/PlotTypes.luau"
+            },
+            "UI": {
+              "$className": "Folder",
+              "PlotRoot": {
+                "$path": "src/features/plots/ui/PlotRoot.luau"
+              },
+              "Screens": {
+                "$className": "Folder",
+                "CrateBillboards": {
+                  "$path": "src/features/plots/ui/screens/CrateBillboards.luau"
+                }
+              }
             }
           }
         },

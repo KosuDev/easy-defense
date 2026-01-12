@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Charm = require(ReplicatedStorage.Packages.Charm)
 local CrateClient = require(script.Parent.CrateClient)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -24,6 +25,7 @@ export type PlotClient = typeof(setmetatable(
 		buttonSpring: Ripple.Spring<number>,
 		timeOfLastCrateSpawn: number,
 		currentCrate: Crate?,
+		conveyorSpeed: Charm.Atom<number>,
 		crateSpawnCf: CFrame,
 	},
 	PlotClient
@@ -43,6 +45,7 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 		crateIndex = 0,
 		crateSpawnCf = (plotData.plotModel:FindFirstChild("CrateStart", true) :: any).CFrame,
 		buttonSpring = Ripple.createSpring(0, { start = true, damping = 0.5, frequency = 6 }),
+		conveyorSpeed = Charm.atom(0),
 	}, PlotClient)
 
 	self.janitor:Add(self.buttonSpring, "destroy")
@@ -74,7 +77,11 @@ function PlotClient.cratesChanged(self: PlotClient, currentCrate: string)
 		self.currentCrate:setState("despawning")
 	end
 
-	self.currentCrate = CrateClient.new(currentCrate, self.crateSpawnCf)
+	self.currentCrate = CrateClient.new(currentCrate, self.crateSpawnCf, self.player == Players.LocalPlayer)
+	self.conveyorSpeed(3.1)
+	task.delay(PlotServiceUtils.enums.crateSpawnCooldown * 1.1, function()
+		self.conveyorSpeed(0)
+	end)
 end
 
 function PlotClient.initModel(self: PlotClient)
@@ -84,6 +91,12 @@ function PlotClient.initModel(self: PlotClient)
 	self.buttonSpring:onChange(function(v: number)
 		spawnerButton.CFrame = originalCFrame * CFrame.new(0, 0, -math.min(v, 0.5))
 	end)
+
+	local conveyorBeam = self.plotModel:FindFirstChild("ConveyorBeam", true) :: Beam
+	conveyorBeam.TextureSpeed = self.conveyorSpeed()
+	self.janitor:Add(Charm.subscribe(self.conveyorSpeed, function(speed: number)
+		conveyorBeam.TextureSpeed = speed
+	end))
 
 	local clicker = Instance.new("ClickDetector")
 	clicker.Parent = spawnerButton
