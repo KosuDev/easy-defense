@@ -22,6 +22,21 @@
           },
           "Plots": {
             "$className": "Folder",
+            "Classes": {
+              "$className": "Folder",
+              "CrateClient": {
+                "$path": "src/features/plots/classes/CrateClient.luau"
+              },
+              "PlotClient": {
+                "$path": "src/features/plots/classes/PlotClient.luau"
+              }
+            },
+            "PlotServiceClient": {
+              "$path": "src/features/plots/PlotServiceClient.luau"
+            },
+            "PlotServiceUtils": {
+              "$path": "src/features/plots/PlotServiceUtils.luau"
+            },
             "PlotTypes": {
               "$path": "src/features/plots/PlotTypes.luau"
             }

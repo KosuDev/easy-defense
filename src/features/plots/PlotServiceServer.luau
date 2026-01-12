@@ -1,6 +1,7 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
+local ServerStorage = game:GetService("ServerStorage")
 
 local PlotServer = require(ServerScriptService.Features.Plots.Classes.PlotServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -27,7 +28,13 @@ function PlotServiceServer.init(self: PlotServiceServer)
 
 	for _, plotSpawn: BasePart in CollectionService:GetTagged("PlotSpawn") do
 		local index = plotSpawn:GetAttribute("Index") :: number
-		self.plotSpawns[index] = { part = plotSpawn, index = index, owner = nil }
+		local fakePlot: Model & any = ReplicatedStorage.Assets.Misc.Plot:Clone()
+		local fakeDefense: Model = ReplicatedStorage.Assets.PlotDefenses["1"]:Clone()
+		fakeDefense:PivotTo(fakePlot.DefenseSpawn.CFrame)
+		fakeDefense.Parent = fakePlot
+		fakePlot:PivotTo(plotSpawn.CFrame)
+		fakePlot.Parent = workspace
+		self.plotSpawns[index] = { part = plotSpawn, index = index, fakePlot = fakePlot, owner = nil }
 	end
 end
 
@@ -41,6 +48,7 @@ function PlotServiceServer.claimPlot(self: PlotServiceServer, player: Player): P
 				continue
 			end
 
+			plotSpawn.fakePlot.Parent = ServerStorage
 			plotSpawn.owner = player
 			return plotSpawn
 		end
@@ -58,6 +66,7 @@ function PlotServiceServer.playerAdded(self: PlotServiceServer, player: Player, 
 
 	local plot = PlotServer.new(plotSpawn, player)
 	playerData.plot = plot
+	self.networker:fireAll("initPlot", plot:get())
 end
 
 function PlotServiceServer.playerRemoving(self: PlotServiceServer, player: Player, playerData: PlayerData)
@@ -71,7 +80,10 @@ function PlotServiceServer.playerRemoving(self: PlotServiceServer, player: Playe
 	local plotSpawn = self.plotSpawns[index]
 	if plotSpawn.owner == player then
 		plotSpawn.owner = nil
+		plotSpawn.fakePlot.Parent = workspace
 	end
+
+	self.networker:fireAll("removePlot", index)
 end
 
 type PlotServiceServer = typeof(PlotServiceServer) & {

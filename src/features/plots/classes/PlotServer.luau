@@ -1,10 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local Networker = require(ReplicatedStorage.Packages.Networker)
+local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local PlotModel = ReplicatedStorage.Assets.Misc.Plot
 local PlotDefenses = ReplicatedStorage.Assets.PlotDefenses
 
+local CRATE_SPAWN_CD = PlotServiceUtils.enums.crateSpawnCooldown
 local CHAR_SPAWN_OFFSET = CFrame.new(0, 20, 0) * CFrame.Angles(0, math.pi, 0)
 
 local PlotServer = {}
@@ -18,7 +21,11 @@ export type Plot = typeof(setmetatable(
 		player: Player,
 		plotModel: Model,
 		defenseModel: Model,
+		networker: Networker.Server,
 		janitor: Janitor.Janitor,
+		currentCrate: string?,
+		previousCrate: string?,
+		timeOfLastCrateSpawn: number,
 	},
 	PlotServer
 ))
@@ -29,7 +36,12 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotSpawn
 		cf = plotSpawn.part.CFrame,
 		index = plotSpawn.index,
 		janitor = Janitor.new(),
+		timeOfLastCrateSpawn = 0,
+		spawnCrate = PlotServer.spawnCrate,
 	}, PlotServer)
+
+	local networker = Networker.server.new("Plot" .. self.index, self, { self.spawnCrate })
+	self.networker = networker
 
 	local plotModel: Model & any = PlotModel:Clone()
 	local defense: Model = PlotDefenses["1"]:Clone()
@@ -39,10 +51,18 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotSpawn
 	plotModel.Parent = workspace
 	self.plotModel = plotModel
 	self.defenseModel = defense
-
 	self:charInit()
 
 	return self
+end
+
+function PlotServer.get(self: Plot): PlotTypes.PlotData
+	return {
+		index = self.index,
+		player = self.player,
+		cf = self.cf,
+		plotModel = self.plotModel,
+	}
 end
 
 function PlotServer.charInit(self: Plot)
@@ -54,10 +74,32 @@ function PlotServer.charInit(self: Plot)
 	end))
 end
 
+function PlotServer.isOwner(self: Plot, player: Player): boolean
+	return self.player == player
+end
+
+function PlotServer.spawnCrate(self: Plot, player: Player): boolean
+	if not self:isOwner(player) then
+		return false
+	end
+
+	if os.clock() - self.timeOfLastCrateSpawn < CRATE_SPAWN_CD then
+		return false
+	end
+
+	self.timeOfLastCrateSpawn = os.clock()
+	self.previousCrate = self.currentCrate
+	self.currentCrate = "basic" -- TODO: Replace with actual crate type
+	self.networker:fireAll("cratesChanged", self.currentCrate, self.previousCrate)
+
+	return true
+end
+
 function PlotServer.destroy(self: Plot)
 	self.plotModel:Destroy()
 	self.defenseModel:Destroy()
 	self.janitor:Destroy()
+	self.networker:destroy()
 end
 
 return PlotServer
