@@ -5,25 +5,30 @@ export type CrateInfo = {
 	weight: number,
 	cost: number,
 	odds: number,
+	name: string,
 }
 
 local crates = {
 	wooden = {
+		name = "Wooden Crate",
 		weight = 1e9,
 		cost = 100,
 	},
 	silver = {
+		name = "Silver Crate",
 		weight = 5e8,
 		cost = 1e3,
 	},
-	--[[gold = {
+	gold = {
+		name = "Gold Crate",
 		weight = 1e8,
 		cost = 10e3,
 	},
 	diamond = {
+		name = "Diamond Crate",
 		weight = 1e7,
 		cost = 100e3,
-	},]]
+	},
 }
 
 local totalWeight = 0

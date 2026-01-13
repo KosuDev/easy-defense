@@ -85,6 +85,9 @@
           },
           "UI": {
             "$className": "Folder",
+            "Abbreviate": {
+              "$path": "src/core/ui/Abbreviate.luau"
+            },
             "Hooks": {
               "$className": "Folder",
               "useSpring": {
@@ -109,6 +112,9 @@
                 "$path": "src/core/ui/primitives/TextLabel.luau"
               }
             },
+            "Suffixes": {
+              "$path": "src/core/ui/Suffixes.luau"
+            },
             "UITypes": {
               "$path": "src/core/ui/UITypes.luau"
             }
@@ -132,6 +138,9 @@
             "$className": "Folder",
             "DataTemplate": {
               "$path": "src/game/items/DataTemplate.luau"
+            },
+            "Tiers": {
+              "$path": "src/game/items/Tiers.luau"
             }
           }
         },

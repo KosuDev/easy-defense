@@ -3,11 +3,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
+local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 local e = React.createElement
 
-local function CrateBillboard(props: { instance: Instance, crateData: any })
+local function CrateBillboard(props: { instance: Instance, crateId: string })
+	local crateInfo = Crates.getCrateInfo(props.crateId)
+	local tierData = Tiers.getTierForOdds(crateInfo.odds)
 	return e("BillboardGui", {
 		Adornee = props.instance,
 		AlwaysOnTop = true,
@@ -22,28 +27,25 @@ local function CrateBillboard(props: { instance: Instance, crateData: any })
 		}),
 
 		Tier = e(TextLabel, {
-			Text = "Legendary",
+			Text = tierData.name,
 			Size = UDim2.fromScale(1, 0.36),
 			LayoutOrder = 1,
 			Stroke = {},
 			Gradient = {
 				Rotation = 90,
-				Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 215, 0)),
-					ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255)),
-				}),
+				Color = tierData.gradient,
 			},
 		}),
 
 		CrateName = e(TextLabel, {
-			Text = "Crate Name",
+			Text = crateInfo.name,
 			Size = UDim2.fromScale(1, 0.28),
 			LayoutOrder = 2,
 			Stroke = {},
 		}),
 
 		Cost = e(TextLabel, {
-			Text = "$12,000,000",
+			Text = `${Abbreviate(crateInfo.cost)}`,
 			Size = UDim2.fromScale(1, 0.36),
 			LayoutOrder = 3,
 			Stroke = {},
@@ -63,8 +65,8 @@ return function()
 	return e(
 		React.Fragment,
 		nil,
-		Sift.Dictionary.map(crates, function(crateData, instance)
-			return e(CrateBillboard, { instance = instance, crateData = crateData })
+		Sift.Dictionary.map(crates, function(crateId, instance)
+			return e(CrateBillboard, { instance = instance, crateId = crateId })
 		end)
 	)
 end

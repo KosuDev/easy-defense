@@ -6,12 +6,12 @@ local atom = Charm.atom
 
 type Atom<T> = Charm.Atom<T>
 
-local crates: Atom<{ [Instance]: any }> = atom({})
+local crates: Atom<{ [Instance]: string }> = atom({})
 
 local actions = {
-	addCrate = function(instance: Instance, crateData: any)
+	addCrate = function(instance: Instance, crateId: string)
 		crates(function(prev)
-			return Sift.Dictionary.set(prev, instance, crateData)
+			return Sift.Dictionary.set(prev, instance, crateId)
 		end)
 	end,
 

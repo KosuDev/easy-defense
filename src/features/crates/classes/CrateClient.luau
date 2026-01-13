@@ -134,7 +134,7 @@ function Crate.update(self: Crate, dt: number)
 	if not self.active and self.x >= 0 then
 		self.active = true
 		self.model.Parent = workspace
-		CrateSlice.actions.addCrate(self.model.Root, {})
+		CrateSlice.actions.addCrate(self.model.Root, self.crateId)
 	end
 
 	if not self.physicsEnabled and self.x >= JUMP_POINT then
