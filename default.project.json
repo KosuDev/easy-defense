@@ -20,13 +20,40 @@
               }
             }
           },
-          "Plots": {
+          "Crates": {
             "$className": "Folder",
             "Classes": {
               "$className": "Folder",
               "CrateClient": {
-                "$path": "src/features/plots/classes/CrateClient.luau"
+                "$path": "src/features/crates/classes/CrateClient.luau"
+              }
+            },
+            "CrateSlice": {
+              "$path": "src/features/crates/CrateSlice.luau"
+            },
+            "Modules": {
+              "$className": "Folder",
+              "Crates": {
+                "$path": "src/features/crates/modules/Crates.luau"
+              }
+            },
+            "UI": {
+              "$className": "Folder",
+              "CrateRoot": {
+                "$path": "src/features/crates/ui/CrateRoot.luau"
               },
+              "Screens": {
+                "$className": "Folder",
+                "CrateBillboards": {
+                  "$path": "src/features/crates/ui/screens/CrateBillboards.luau"
+                }
+              }
+            }
+          },
+          "Plots": {
+            "$className": "Folder",
+            "Classes": {
+              "$className": "Folder",
               "PlotClient": {
                 "$path": "src/features/plots/classes/PlotClient.luau"
               }
@@ -37,9 +64,6 @@
             "PlotServiceUtils": {
               "$path": "src/features/plots/PlotServiceUtils.luau"
             },
-            "PlotSlice": {
-              "$path": "src/features/plots/PlotSlice.luau"
-            },
             "PlotTypes": {
               "$path": "src/features/plots/PlotTypes.luau"
             },
@@ -47,12 +71,6 @@
               "$className": "Folder",
               "PlotRoot": {
                 "$path": "src/features/plots/ui/PlotRoot.luau"
-              },
-              "Screens": {
-                "$className": "Folder",
-                "CrateBillboards": {
-                  "$path": "src/features/plots/ui/screens/CrateBillboards.luau"
-                }
               }
             }
           }

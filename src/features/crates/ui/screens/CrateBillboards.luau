@@ -4,14 +4,14 @@ local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
-local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
+local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
 local e = React.createElement
 
 local function CrateBillboard(props: { instance: Instance, crateData: any })
 	return e("BillboardGui", {
 		Adornee = props.instance,
 		AlwaysOnTop = true,
-		ExtentsOffsetWorldSpace = Vector3.new(0, 3, 0),
+		ExtentsOffsetWorldSpace = Vector3.new(0, 11, 0),
 		Size = UDim2.fromScale(15, 5),
 	}, {
 		Layout = e("UIListLayout", {
@@ -59,7 +59,7 @@ local function CrateBillboard(props: { instance: Instance, crateData: any })
 end
 
 return function()
-	local crates = ReactCharm.useAtom(PlotSlice.state.crates)
+	local crates = ReactCharm.useAtom(CrateSlice.state.crates)
 	return e(
 		React.Fragment,
 		nil,

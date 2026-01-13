@@ -2,10 +2,10 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Charm = require(ReplicatedStorage.Packages.Charm)
-local CrateClient = require(script.Parent.CrateClient)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Ripple = require(ReplicatedStorage.Packages.Ripple)
+local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.CrateClient)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 
@@ -24,7 +24,7 @@ export type PlotClient = typeof(setmetatable(
 		networker: Networker.Client,
 		buttonSpring: Ripple.Spring<number>,
 		timeOfLastCrateSpawn: number,
-		currentCrate: Crate?,
+		crates: { Crate },
 		conveyorSpeed: Charm.Atom<number>,
 		crateSpawnCf: CFrame,
 	},
@@ -72,16 +72,15 @@ function PlotClient.attemptCrateSpawn(self: PlotClient)
 	end)
 end
 
-function PlotClient.cratesChanged(self: PlotClient, currentCrate: string)
-	if self.currentCrate then
-		self.currentCrate:setState("despawning")
+function PlotClient.cratesChanged(self: PlotClient, crateIds: { string })
+	for _, prevCrate in self.crates do
+		prevCrate:despawn()
 	end
 
-	self.currentCrate = CrateClient.new(currentCrate, self.crateSpawnCf, self.player == Players.LocalPlayer)
-	self.conveyorSpeed(3.1)
-	task.delay(PlotServiceUtils.enums.crateSpawnCooldown * 1.1, function()
-		self.conveyorSpeed(0)
-	end)
+	self.crates = {}
+	for i, crateId in crateIds do
+		self.crates[i] = CrateClient.new(self.crateSpawnCf, i, #crateIds, crateId, self.player == Players.LocalPlayer)
+	end
 end
 
 function PlotClient.initModel(self: PlotClient)

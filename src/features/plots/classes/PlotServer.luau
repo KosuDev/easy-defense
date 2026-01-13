@@ -2,11 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local PlotModel = ReplicatedStorage.Assets.Misc.Plot
 local PlotDefenses = ReplicatedStorage.Assets.PlotDefenses
 
+local MAX_CRATES = 3
 local CRATE_SPAWN_CD = PlotServiceUtils.enums.crateSpawnCooldown
 local CHAR_SPAWN_OFFSET = CFrame.new(0, 20, 0) * CFrame.Angles(0, math.pi, 0)
 
@@ -23,8 +25,7 @@ export type Plot = typeof(setmetatable(
 		defenseModel: Model,
 		networker: Networker.Server,
 		janitor: Janitor.Janitor,
-		currentCrate: string?,
-		previousCrate: string?,
+		crates: { string? },
 		timeOfLastCrateSpawn: number,
 	},
 	PlotServer
@@ -35,6 +36,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotSpawn
 		player = player,
 		cf = plotSpawn.part.CFrame,
 		index = plotSpawn.index,
+		crates = {},
 		janitor = Janitor.new(),
 		timeOfLastCrateSpawn = 0,
 		spawnCrate = PlotServer.spawnCrate,
@@ -87,10 +89,17 @@ function PlotServer.spawnCrate(self: Plot, player: Player): boolean
 		return false
 	end
 
+	local crateRolls = 3
+	for i = 1, MAX_CRATES do
+		if i <= crateRolls then
+			self.crates[i] = Crates.rollCrateId(1)
+		else
+			self.crates[i] = nil
+		end
+	end
+
 	self.timeOfLastCrateSpawn = os.clock()
-	self.previousCrate = self.currentCrate
-	self.currentCrate = "basic" -- TODO: Replace with actual crate type
-	self.networker:fireAll("cratesChanged", self.currentCrate, self.previousCrate)
+	self.networker:fireAll("cratesChanged", self.crates)
 
 	return true
 end
