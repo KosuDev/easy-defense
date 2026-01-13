@@ -77,9 +77,24 @@ function PlotClient.cratesChanged(self: PlotClient, crateIds: { string })
 		prevCrate:despawn()
 	end
 
+	local isLocalPlayer = self.player == Players.LocalPlayer
 	self.crates = {}
 	for i, crateId in crateIds do
-		self.crates[i] = CrateClient.new(self.crateSpawnCf, i, #crateIds, crateId, self.player == Players.LocalPlayer)
+		local crate = CrateClient.new(self.crateSpawnCf, i, #crateIds, crateId, isLocalPlayer)
+		self.crates[i] = crate
+		if isLocalPlayer then
+			function crate.onBought()
+				self.networker:fire("buyCrate", i)
+			end
+		end
+	end
+end
+
+function PlotClient.crateBought(self: PlotClient, crateIndex: number)
+	local crate = self.crates[crateIndex]
+	if crate then
+		crate:destroy()
+		self.crates[crateIndex] = nil
 	end
 end
 

@@ -1,3 +1,5 @@
 return {
-	currency = 0,
+	currency = 100,
+	crates = {},
+	inventory = {},
 }

@@ -5,6 +5,10 @@ local DataService = require(ReplicatedStorage.Packages.DataService).server
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
+function DataService:onPlayerInit(_player, data)
+	data.currency = 1e6
+end
+
 DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "PRE",

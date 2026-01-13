@@ -92,6 +92,7 @@ function Crate.new(
 		local prox = Instance.new("ProximityPrompt")
 		prox.RequiresLineOfSight = false
 		prox.MaxActivationDistance = 10
+		prox.HoldDuration = 1.5
 		prox.Parent = self.model.Main
 		prox.ActionText = "Buy"
 
@@ -103,7 +104,7 @@ function Crate.new(
 		end)
 
 		prox.Triggered:Connect(function()
-			print("Buy action triggered")
+			self:onBought()
 		end)
 
 		self.janitor:Add(prox)
@@ -111,6 +112,10 @@ function Crate.new(
 	end
 
 	return self
+end
+
+function Crate.onBought(_self: Crate)
+	error("onBought not implemented")
 end
 
 function Crate.despawn(self: Crate)

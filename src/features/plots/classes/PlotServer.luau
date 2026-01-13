@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
@@ -40,9 +41,10 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotSpawn
 		janitor = Janitor.new(),
 		timeOfLastCrateSpawn = 0,
 		spawnCrate = PlotServer.spawnCrate,
+		buyCrate = PlotServer.buyCrate,
 	}, PlotServer)
 
-	local networker = Networker.server.new("Plot" .. self.index, self, { self.spawnCrate })
+	local networker = Networker.server.new("Plot" .. self.index, self, { self.spawnCrate, self.buyCrate })
 	self.networker = networker
 
 	local plotModel: Model & any = PlotModel:Clone()
@@ -100,6 +102,34 @@ function PlotServer.spawnCrate(self: Plot, player: Player): boolean
 
 	self.timeOfLastCrateSpawn = os.clock()
 	self.networker:fireAll("cratesChanged", self.crates)
+
+	return true
+end
+
+function PlotServer.buyCrate(self: Plot, player: Player, crateIndex: number): boolean
+	if not self:isOwner(player) then
+		return false
+	end
+
+	local crateId = self.crates[crateIndex]
+	if not crateId then
+		return false
+	end
+
+	local crateInfo = Crates.getCrateInfo(crateId)
+	local cost = crateInfo.cost
+	if DataService:get(player, "currency") < cost then
+		return false
+	end
+
+	DataService:update(player, "currency", function(value)
+		return value - cost
+	end)
+
+	self.crates[crateIndex] = nil
+	self.networker:fireAll("crateBought", crateIndex)
+
+	-- add to player's inventory here
 
 	return true
 end
