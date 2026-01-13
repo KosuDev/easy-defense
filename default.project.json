@@ -50,6 +50,30 @@
               }
             }
           },
+          "Inventory": {
+            "$className": "Folder",
+            "InventorySlice": {
+              "$path": "src/features/inventory/InventorySlice.luau"
+            },
+            "UI": {
+              "$className": "Folder",
+              "Components": {
+                "$className": "Folder",
+                "InventoryButton": {
+                  "$path": "src/features/inventory/ui/components/InventoryButton.luau"
+                }
+              },
+              "InventoryRoot": {
+                "$path": "src/features/inventory/ui/InventoryRoot.luau"
+              },
+              "Screens": {
+                "$className": "Folder",
+                "InventoryHud": {
+                  "$path": "src/features/inventory/ui/screens/InventoryHud.luau"
+                }
+              }
+            }
+          },
           "Plots": {
             "$className": "Folder",
             "Classes": {
@@ -90,6 +114,9 @@
             },
             "Hooks": {
               "$className": "Folder",
+              "useDataState": {
+                "$path": "src/core/ui/hooks/useDataState.luau"
+              },
               "useSpring": {
                 "$path": "src/core/ui/hooks/useSpring.luau"
               },
@@ -161,6 +188,12 @@
     "ServerScriptService": {
       "Features": {
         "$className": "Folder",
+        "Inventory": {
+          "$className": "Folder",
+          "InventoryServiceServer": {
+            "$path": "src/features/inventory/InventoryServiceServer.luau"
+          }
+        },
         "Plots": {
           "$className": "Folder",
           "Classes": {

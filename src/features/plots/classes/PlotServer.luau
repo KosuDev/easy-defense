@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
@@ -129,7 +131,7 @@ function PlotServer.buyCrate(self: Plot, player: Player, crateIndex: number): bo
 	self.crates[crateIndex] = nil
 	self.networker:fireAll("crateBought", crateIndex)
 
-	-- add to player's inventory here
+	InventoryServiceServer:addCrate(player, crateId)
 
 	return true
 end
