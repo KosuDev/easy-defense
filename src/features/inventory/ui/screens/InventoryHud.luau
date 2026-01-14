@@ -10,6 +10,7 @@ local useDataState = require(ReplicatedStorage.Source.Core.UI.Hooks.useDataState
 local useDeviceInput = require(ReplicatedStorage.Source.Core.UI.Hooks.useDeviceInput)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
+local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local InventoryButton = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.InventoryButton)
 local ItemIcon = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemIcon)
@@ -108,6 +109,16 @@ local function HotbarSlot(props: HotbarSlotProps)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundTransparency = 1,
+			Activated = function()
+				if itemData then
+					local isEquipped = InventorySlice.state.equippedItemUniqueId() == uniqueId
+					if isEquipped then
+						InventoryServiceClient:unequipItem()
+					else
+						InventoryServiceClient:equipItem(uniqueId)
+					end
+				end
+			end,
 			OnDown = function()
 				if itemData then
 					setDragStart(UserInputService:GetMouseLocation() + GuiService:GetGuiInset())

@@ -7,6 +7,7 @@ local ItemIcon = require(script.Parent.ItemIcon)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
+local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local useItemDragger = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDragger)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -44,6 +45,14 @@ return function(props: InventoryButtonProps)
 	return e(Button, {
 		hoverScale = 1,
 		BackgroundTransparency = 1,
+		Activated = function()
+			local isEquipped = InventorySlice.state.equippedItemUniqueId() == uniqueId
+			if isEquipped then
+				InventoryServiceClient:unequipItem()
+			else
+				InventoryServiceClient:equipItem(uniqueId)
+			end
+		end,
 		OnDown = function()
 			setDragStart(UserInputService:GetMouseLocation() + GuiService:GetGuiInset())
 		end,

@@ -8,7 +8,22 @@ local InventoryServiceServer = {}
 function InventoryServiceServer.init(self: InventoryServiceServer)
 	self.networker = Networker.server.new("InventoryService", self, {
 		self.setHotBarUniqueId,
+		self.equipItem,
+		self.unequipItem,
 	})
+end
+
+function InventoryServiceServer.unequipItem(self: InventoryServiceServer, player: Player)
+	self.networker:fireAll("setPlayerItem", player, nil)
+end
+
+function InventoryServiceServer.equipItem(self: InventoryServiceServer, player: Player, uniqueId: string)
+	local itemData = DataService:get(player, { "inventory", uniqueId })
+	if not itemData then
+		return
+	end
+
+	self.networker:fireAll("setPlayerItem", player, itemData)
 end
 
 function InventoryServiceServer.addCrate(_self: InventoryServiceServer, player: Player, crateId: string, amt: number?)

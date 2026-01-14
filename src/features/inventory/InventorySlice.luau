@@ -8,6 +8,7 @@ local backpackOpen = atom(false)
 local draggingItemUniqueId = atom(nil :: string?)
 local hoveredSlot = atom(nil :: number?)
 local originalSlot = atom(nil :: number?)
+local equippedItemUniqueId = atom(nil :: string?)
 
 local actions = {}
 
@@ -18,5 +19,6 @@ return {
 		draggingItemUniqueId = draggingItemUniqueId,
 		hoveredSlot = hoveredSlot,
 		originalSlot = originalSlot,
+		equippedItemUniqueId = equippedItemUniqueId,
 	},
 }

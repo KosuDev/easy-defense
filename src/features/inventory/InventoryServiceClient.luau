@@ -1,13 +1,97 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).client
+local InventoryServiceUtils = require(script.Parent.InventoryServiceUtils)
 local InventorySlice = require(script.Parent.InventorySlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Sift = require(ReplicatedStorage.Packages.Sift)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
+local RENDER_TOOL_DISTANCE = 100
+local UPDATE_INTERVAL = 1
+local HOLD_ANIMATION = ReplicatedStorage.Assets.Animations.HoldItem :: Animation
 local InventoryServiceClient = {}
 
 function InventoryServiceClient.init(self: InventoryServiceClient)
+	self.equippedItems = {}
 	self.networker = Networker.client.new("InventoryService", self)
+	self.holdTrack = nil
+
+	task.spawn(function()
+		local function updateAnim(char)
+			if self.holdTrack then
+				self.holdTrack:Destroy()
+			end
+			local humanoid = char:WaitForChild("Humanoid") :: Humanoid
+			local animationTrack = humanoid.Animator:LoadAnimation(HOLD_ANIMATION) :: AnimationTrack
+			self.holdTrack = animationTrack
+
+			if self:hasItemEquipped() then
+				animationTrack:Play()
+			end
+		end
+
+		local char = Players.LocalPlayer.Character or Players.LocalPlayer.CharacterAdded:Wait()
+		updateAnim(char)
+
+		Players.LocalPlayer.CharacterAdded:Connect(updateAnim)
+	end)
+
+	task.spawn(function()
+		while true do
+			task.wait(UPDATE_INTERVAL)
+			self:update()
+		end
+	end)
+end
+
+function InventoryServiceClient.hasItemEquipped(self: InventoryServiceClient): boolean
+	local equippedItem = self.equippedItems[Players.LocalPlayer]
+	return equippedItem and equippedItem.itemData ~= nil
+end
+
+function InventoryServiceClient.setPlayerItem(
+	self: InventoryServiceClient,
+	player: Player,
+	itemData: DataTemplate.ItemData?
+)
+	local equippedItem = self.equippedItems[player]
+	if not equippedItem then
+		self.equippedItems[player] = { itemData = itemData, model = nil }
+		return
+	end
+
+	if itemData and equippedItem.itemData and Sift.Dictionary.equalsDeep(itemData, equippedItem.itemData) then
+		return
+	end
+
+	if equippedItem.model then
+		equippedItem.model:Destroy()
+	end
+
+	self.equippedItems[player] = { itemData = itemData, model = nil }
+end
+
+function InventoryServiceClient.equipItem(self: InventoryServiceClient, uniqueId: string)
+	local itemData = DataService:get({ "inventory", uniqueId })
+	self:setPlayerItem(Players.LocalPlayer, itemData)
+	InventorySlice.state.equippedItemUniqueId(uniqueId)
+	self.networker:fire("equipItem", uniqueId)
+	if self.holdTrack then
+		self.holdTrack:Play()
+	end
+	self:update()
+end
+
+function InventoryServiceClient.unequipItem(self: InventoryServiceClient)
+	self:setPlayerItem(Players.LocalPlayer, nil)
+	self.networker:fire("unequipItem")
+	InventorySlice.state.equippedItemUniqueId(nil)
+	if self.holdTrack then
+		self.holdTrack:Stop()
+	end
 end
 
 function InventoryServiceClient.dragItem(self: InventoryServiceClient, uniqueId: string)
@@ -37,8 +121,43 @@ function InventoryServiceClient.moveItem(self: InventoryServiceClient, uniqueId:
 	self.networker:fire("setHotBarUniqueId", targetSlot, uniqueId)
 end
 
+function InventoryServiceClient.update(self: InventoryServiceClient)
+	local char = Players.LocalPlayer.Character
+	if not char then
+		return
+	end
+
+	local pos = char:GetPivot().Position
+	for player, equippedItem in self.equippedItems do
+		if not equippedItem.itemData or equippedItem.model then
+			continue
+		end
+
+		local pChar = player.Character
+		if not pChar then
+			continue
+		end
+
+		local dist = (pos - pChar:GetPivot().Position).Magnitude
+		if dist > RENDER_TOOL_DISTANCE then
+			continue
+		end
+
+		local model, rootWeld = InventoryServiceUtils.getToolModel(equippedItem.itemData)
+		equippedItem.model = model
+		model:PivotTo(pChar.Head.CFrame * CFrame.new(0, 1.33, 0))
+		rootWeld.Part1 = pChar.Head
+		model.Parent = pChar
+	end
+end
+
 type InventoryServiceClient = typeof(InventoryServiceClient) & {
 	networker: Networker.Client,
+	holdTrack: AnimationTrack?,
+	equippedItems: { [Player]: {
+		itemData: DataTemplate.ItemData?,
+		model: Model & any,
+	} },
 }
 
 return InventoryServiceClient :: InventoryServiceClient

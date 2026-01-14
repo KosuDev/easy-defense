@@ -55,6 +55,9 @@
             "InventoryServiceClient": {
               "$path": "src/features/inventory/InventoryServiceClient.luau"
             },
+            "InventoryServiceUtils": {
+              "$path": "src/features/inventory/InventoryServiceUtils.luau"
+            },
             "InventorySlice": {
               "$path": "src/features/inventory/InventorySlice.luau"
             },
