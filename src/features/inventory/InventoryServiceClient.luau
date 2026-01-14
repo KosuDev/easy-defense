@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local InventoryServiceUtils = require(script.Parent.InventoryServiceUtils)
@@ -12,6 +13,19 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local RENDER_TOOL_DISTANCE = 100
 local UPDATE_INTERVAL = 1
 local HOLD_ANIMATION = ReplicatedStorage.Assets.Animations.HoldItem :: Animation
+
+local NUMBER_KEYCODES = {
+	[Enum.KeyCode.One] = 1,
+	[Enum.KeyCode.Two] = 2,
+	[Enum.KeyCode.Three] = 3,
+	[Enum.KeyCode.Four] = 4,
+	[Enum.KeyCode.Five] = 5,
+	[Enum.KeyCode.Six] = 6,
+	[Enum.KeyCode.Seven] = 7,
+	[Enum.KeyCode.Eight] = 8,
+	[Enum.KeyCode.Nine] = 9,
+}
+
 local InventoryServiceClient = {}
 
 function InventoryServiceClient.init(self: InventoryServiceClient)
@@ -43,6 +57,27 @@ function InventoryServiceClient.init(self: InventoryServiceClient)
 		while true do
 			task.wait(UPDATE_INTERVAL)
 			self:update()
+		end
+	end)
+
+	UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		if gameProcessedEvent then
+			return
+		end
+
+		local num = NUMBER_KEYCODES[input.KeyCode]
+		if num then
+			local uniqueId = DataService:get({ "hotbar", num })
+			if not uniqueId or uniqueId == "NULL" then
+				return
+			end
+
+			local equippedUniqueId = InventorySlice.state.equippedItemUniqueId()
+			if uniqueId ~= equippedUniqueId then
+				self:equipItem(uniqueId)
+			else
+				self:unequipItem()
+			end
 		end
 	end)
 end

@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local ItemButtonStroke = require(script.Parent.ItemButtonStroke)
 local React = require(ReplicatedStorage.Packages.React)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
@@ -15,6 +16,7 @@ type ItemIconProps = {
 	children: React.ReactNode?,
 	BackgroundTransparency: number?,
 	BackgroundColor3: Color3?,
+	equipped: boolean?,
 }
 
 return function(props: ItemIconProps)
@@ -51,5 +53,7 @@ return function(props: ItemIconProps)
 				ZIndex = 2,
 			})
 			else nil,
+
+		Stroke = e(ItemButtonStroke, { equipped = props.equipped, partData = props.itemData }),
 	}, props.children)
 end

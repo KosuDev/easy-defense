@@ -68,6 +68,9 @@
                 "InventoryButton": {
                   "$path": "src/features/inventory/ui/components/InventoryButton.luau"
                 },
+                "ItemButtonStroke": {
+                  "$path": "src/features/inventory/ui/components/ItemButtonStroke.luau"
+                },
                 "ItemIcon": {
                   "$path": "src/features/inventory/ui/components/ItemIcon.luau"
                 }

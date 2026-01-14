@@ -1,4 +1,3 @@
-local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
@@ -13,6 +12,7 @@ local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local InventoryButton = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.InventoryButton)
+local ItemButtonStroke = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemButtonStroke)
 local ItemIcon = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemIcon)
 local useItemDragger = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDragger)
 local e = React.createElement
@@ -64,6 +64,8 @@ local function HotbarSlot(props: HotbarSlotProps)
 	local setDragStart = useItemDragger(uniqueId)
 	local isDragging = ReactCharm.useAtom(InventorySlice.state.draggingItemUniqueId) ~= nil
 	local hoveredSlot = ReactCharm.useAtom(InventorySlice.state.hoveredSlot)
+	local equippedUniqueId = ReactCharm.useAtom(InventorySlice.state.equippedItemUniqueId)
+	local equipped = equippedUniqueId == uniqueId
 
 	if not itemData and not open then
 		return nil
@@ -103,6 +105,8 @@ local function HotbarSlot(props: HotbarSlotProps)
 			})
 			else nil,
 
+		Stroke = if itemData then e(ItemButtonStroke, { equipped = equipped, partData = itemData }) else nil,
+
 		Btn = e(Button, {
 			hoverScale = 1,
 			Size = UDim2.fromScale(1.1, 1.1),
@@ -111,7 +115,7 @@ local function HotbarSlot(props: HotbarSlotProps)
 			BackgroundTransparency = 1,
 			Activated = function()
 				if itemData then
-					local isEquipped = InventorySlice.state.equippedItemUniqueId() == uniqueId
+					local isEquipped = equippedUniqueId == uniqueId
 					if isEquipped then
 						InventoryServiceClient:unequipItem()
 					else
@@ -121,7 +125,7 @@ local function HotbarSlot(props: HotbarSlotProps)
 			end,
 			OnDown = function()
 				if itemData then
-					setDragStart(UserInputService:GetMouseLocation() + GuiService:GetGuiInset())
+					setDragStart(UserInputService:GetMouseLocation())
 				end
 			end,
 			OnEnter = function()
@@ -212,6 +216,13 @@ local function InventoryFrame(props)
 				FillDirection = Enum.FillDirection.Horizontal,
 				HorizontalAlignment = Enum.HorizontalAlignment.Left,
 				VerticalAlignment = Enum.VerticalAlignment.Top,
+			}),
+
+			Padding = e("UIPadding", {
+				PaddingTop = UDim.new(0, 5),
+				PaddingBottom = UDim.new(0, 5),
+				PaddingLeft = UDim.new(0, 5),
+				PaddingRight = UDim.new(0, 5),
 			}),
 
 			InventoryButtons = e(InventoryButtons),

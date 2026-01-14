@@ -15,7 +15,8 @@ local SLOT_SIZE = 75
 
 local function DraggedItemFrame(props)
 	local itemData = useDataState({ "inventory", props.draggedUniqueId })
-	local pos, spring = useSpring(UserInputService:GetMouseLocation(), { dampingRatio = 0.5, frequency = 3 })
+	local pos, spring =
+		useSpring(UserInputService:GetMouseLocation() - GuiService:GetGuiInset(), { dampingRatio = 0.5, frequency = 3 })
 
 	React.useEffect(function()
 		local connection = UserInputService.InputChanged:Connect(function(input)

@@ -1,4 +1,3 @@
-local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
@@ -23,6 +22,7 @@ return function(props: InventoryButtonProps)
 	local onHotBar, setOnHotBar = React.useState(false)
 	local draggingUniqueId = ReactCharm.useAtom(InventorySlice.state.draggingItemUniqueId)
 	local setDragStart = useItemDragger(uniqueId)
+	local equippedUniqueId = ReactCharm.useAtom(InventorySlice.state.equippedItemUniqueId)
 
 	React.useEffect(function()
 		local function update()
@@ -46,7 +46,7 @@ return function(props: InventoryButtonProps)
 		hoverScale = 1,
 		BackgroundTransparency = 1,
 		Activated = function()
-			local isEquipped = InventorySlice.state.equippedItemUniqueId() == uniqueId
+			local isEquipped = equippedUniqueId == uniqueId
 			if isEquipped then
 				InventoryServiceClient:unequipItem()
 			else
@@ -54,12 +54,13 @@ return function(props: InventoryButtonProps)
 			end
 		end,
 		OnDown = function()
-			setDragStart(UserInputService:GetMouseLocation() + GuiService:GetGuiInset())
+			setDragStart(UserInputService:GetMouseLocation())
 		end,
 	}, {
 		Icon = e(ItemIcon, {
 			Size = UDim2.fromScale(1, 1),
 			itemData = props.itemData,
+			equipped = equippedUniqueId == uniqueId,
 		}),
 	})
 end

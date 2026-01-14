@@ -1,3 +1,4 @@
+local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
@@ -13,10 +14,10 @@ return function(uniqueId: string)
 		end
 
 		local changedConn = UserInputService.InputChanged:Connect(function(input)
-			local pos = Vector2.new(input.Position.X, input.Position.Y)
+			local pos = Vector2.new(input.Position.X, input.Position.Y) + GuiService:GetGuiInset()
 			local delta = pos - dragStart
 			local distance = delta.Magnitude
-			if distance > 10 then
+			if distance > 20 then
 				setDragStart(nil)
 				InventoryServiceClient:dragItem(uniqueId)
 			end
