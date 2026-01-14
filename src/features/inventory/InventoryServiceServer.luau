@@ -14,6 +14,17 @@ function InventoryServiceServer.addCrate(_self: InventoryServiceServer, player: 
 	end)
 end
 
+function InventoryServiceServer.setHotBarUniqueId(
+	_self: InventoryServiceServer,
+	player: Player,
+	index: number,
+	uniqueId: string?
+)
+	assert(type(uniqueId) == "string" or uniqueId == nil, "uniqueId must be a string or nil")
+	assert(index >= 1 and index <= 9, "index must be between 1 and 9")
+	DataService:set(player, { "hotbar", index }, uniqueId or "NULL")
+end
+
 type InventoryServiceServer = typeof(InventoryServiceServer) & {
 	networker: Networker.Server,
 }

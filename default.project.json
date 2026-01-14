@@ -52,6 +52,9 @@
           },
           "Inventory": {
             "$className": "Folder",
+            "InventoryServiceClient": {
+              "$path": "src/features/inventory/InventoryServiceClient.luau"
+            },
             "InventorySlice": {
               "$path": "src/features/inventory/InventorySlice.luau"
             },
@@ -61,6 +64,9 @@
                 "$className": "Folder",
                 "InventoryButton": {
                   "$path": "src/features/inventory/ui/components/InventoryButton.luau"
+                },
+                "ItemIcon": {
+                  "$path": "src/features/inventory/ui/components/ItemIcon.luau"
                 }
               },
               "InventoryRoot": {
@@ -68,6 +74,9 @@
               },
               "Screens": {
                 "$className": "Folder",
+                "DraggedItem": {
+                  "$path": "src/features/inventory/ui/screens/DraggedItem.luau"
+                },
                 "InventoryHud": {
                   "$path": "src/features/inventory/ui/screens/InventoryHud.luau"
                 }
@@ -114,8 +123,14 @@
             },
             "Hooks": {
               "$className": "Folder",
+              "useAbsSize": {
+                "$path": "src/core/ui/hooks/useAbsSize.luau"
+              },
               "useDataState": {
                 "$path": "src/core/ui/hooks/useDataState.luau"
+              },
+              "useDeviceInput": {
+                "$path": "src/core/ui/hooks/useDeviceInput.luau"
               },
               "useSpring": {
                 "$path": "src/core/ui/hooks/useSpring.luau"
@@ -125,6 +140,9 @@
               },
               "useTween": {
                 "$path": "src/core/ui/hooks/useTween.luau"
+              },
+              "useViewportSize": {
+                "$path": "src/core/ui/hooks/useViewportSize.luau"
               }
             },
             "Primitives": {

@@ -11,21 +11,25 @@ export type CrateInfo = {
 local crates = {
 	wooden = {
 		name = "Wooden Crate",
+		image = "rbxassetid://92040501256272",
 		weight = 1e9,
 		cost = 100,
 	},
 	silver = {
 		name = "Silver Crate",
+		image = "rbxassetid://72492711846524",
 		weight = 5e8,
 		cost = 1e3,
 	},
 	gold = {
 		name = "Gold Crate",
+		image = "rbxassetid://115551403938538",
 		weight = 1e8,
 		cost = 10e3,
 	},
 	diamond = {
 		name = "Diamond Crate",
+		image = "rbxassetid://96169247372637",
 		weight = 1e7,
 		cost = 100e3,
 	},
