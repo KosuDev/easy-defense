@@ -1,24 +1,55 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
 
+local DataService = require(ReplicatedStorage.Packages.DataService).client
+local ItemIcon = require(script.Parent.ItemIcon)
 local React = require(ReplicatedStorage.Packages.React)
+local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
+local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
+local useItemDragger = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDragger)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local e = React.createElement
 
 type InventoryButtonProps = {
-	Size: UDim2,
+	itemData: DataTemplate.ItemData,
+	uniqueId: string,
 }
 
 return function(props: InventoryButtonProps)
-	local active = false
+	local uniqueId = props.uniqueId
+	local onHotBar, setOnHotBar = React.useState(false)
+	local draggingUniqueId = ReactCharm.useAtom(InventorySlice.state.draggingItemUniqueId)
+	local setDragStart = useItemDragger(uniqueId)
+
+	React.useEffect(function()
+		local function update()
+			local index = table.find(DataService:get("hotbar"), uniqueId)
+			setOnHotBar(index ~= nil)
+		end
+
+		update()
+		local conn = DataService:getChangedSignal("hotbar"):Connect(update)
+
+		return function()
+			conn:Disconnect()
+		end
+	end, { uniqueId })
+
+	if onHotBar or draggingUniqueId == uniqueId then
+		return nil
+	end
 
 	return e(Button, {
-		Size = props.Size,
-		BackgroundColor3 = Color3.fromRGB(43, 43, 43),
-		BackgroundTransparency = 0.5,
+		hoverScale = 1,
+		BackgroundTransparency = 1,
+		OnDown = function()
+			setDragStart(UserInputService:GetMouseLocation())
+		end,
 	}, {
-		Stroke = e("UIStroke", {
-			Color = Color3.fromRGB(255, 255, 255),
-			Transparency = 1,
+		Icon = e(ItemIcon, {
+			Size = UDim2.fromScale(1, 1),
+			itemData = props.itemData,
 		}),
 	})
 end

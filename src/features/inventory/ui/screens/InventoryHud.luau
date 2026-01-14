@@ -11,7 +11,9 @@ local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
+local InventoryButton = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.InventoryButton)
 local ItemIcon = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemIcon)
+local useItemDragger = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDragger)
 local e = React.createElement
 
 local SLOT_SIZE = 95
@@ -47,42 +49,6 @@ local function useHotBarItemData(index: number)
 	end, { path })
 
 	return itemData
-end
-
-local function useItemDragger(uniqueId: string)
-	local dragStart, setDragStart = React.useState(nil :: Vector2?)
-
-	React.useEffect(function()
-		if not dragStart then
-			return
-		end
-
-		local changedConn = UserInputService.InputChanged:Connect(function(input)
-			local pos = Vector2.new(input.Position.X, input.Position.Y)
-			local delta = pos - dragStart
-			local distance = delta.Magnitude
-			if distance > 10 then
-				setDragStart(nil)
-				InventoryServiceClient:dragItem(uniqueId)
-			end
-		end)
-
-		local inputEndedConn = UserInputService.InputEnded:Connect(function(input)
-			if
-				input.UserInputType == Enum.UserInputType.MouseButton1
-				or input.UserInputType == Enum.UserInputType.Touch
-			then
-				setDragStart(nil)
-			end
-		end)
-
-		return function()
-			inputEndedConn:Disconnect()
-			changedConn:Disconnect()
-		end
-	end, { dragStart, uniqueId })
-
-	return setDragStart
 end
 
 local function HotbarSlot(props: HotbarSlotProps)
@@ -186,6 +152,78 @@ local function Hotbar()
 	}, slots)
 end
 
+local function InventoryButtons()
+	local inventory = useDataState("inventory")
+	local buttons = {}
+	for uniqueId, itemData in inventory do
+		buttons[uniqueId] = e(InventoryButton, { itemData = itemData, uniqueId = uniqueId })
+	end
+
+	return buttons
+end
+
+local function InventoryFrame(props)
+	return e("Frame", {
+		Visible = props.open,
+		Size = UDim2.fromOffset(600, 300),
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.fromScale(0.5, 0.5),
+		BackgroundColor3 = Color3.fromRGB(37, 38, 41),
+		BackgroundTransparency = 0.2,
+	}, {
+		Corner = e("UICorner", {
+			CornerRadius = UDim.new(0, 6),
+		}),
+		InvButtons = e("Frame", {
+			Size = UDim2.new(0, 66, 1, 0),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Position = UDim2.new(0, -6, 0.5, 0),
+			BackgroundTransparency = 1,
+		}),
+
+		ScrollingFrame = e("ScrollingFrame", {
+			Size = UDim2.fromScale(0.98, 0.8),
+			Position = UDim2.fromScale(0.5, 0.98),
+			AnchorPoint = Vector2.new(0.5, 1),
+			BorderSizePixel = 0,
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			ScrollingDirection = Enum.ScrollingDirection.Y,
+			CanvasSize = UDim2.new(0, 0, 0, 0),
+			BackgroundTransparency = 1,
+		}, {
+			Layout = e("UIGridLayout", {
+				CellSize = UDim2.fromOffset(SLOT_SIZE, SLOT_SIZE),
+				CellPadding = UDim2.fromOffset(5, 5),
+				FillDirection = Enum.FillDirection.Horizontal,
+				HorizontalAlignment = Enum.HorizontalAlignment.Left,
+				VerticalAlignment = Enum.VerticalAlignment.Top,
+			}),
+
+			InventoryButtons = e(InventoryButtons),
+		}),
+
+		X = e(Button, {
+			hoverScale = 1,
+			Size = UDim2.fromOffset(60, 60),
+			Position = UDim2.fromScale(1, 0),
+			AnchorPoint = Vector2.new(1, 0),
+			BackgroundTransparency = 1,
+			Activated = function()
+				InventorySlice.state.backpackOpen(false)
+			end,
+		}, {
+			Text = e(TextLabel, {
+				Text = "X",
+				Size = UDim2.fromScale(0.8, 0.8),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Stroke = {},
+			}),
+		}),
+	})
+end
+
 return function()
 	local open = ReactCharm.useAtom(InventorySlice.state.backpackOpen)
 
@@ -197,21 +235,7 @@ return function()
 	}, {
 		Hotbar = e(Hotbar),
 
-		Inventory = e("Frame", {
-			Visible = open,
-			Size = UDim2.fromOffset(600, 300),
-			AnchorPoint = Vector2.new(0.5, 1),
-			Position = UDim2.fromScale(0.5, 0.5),
-			BackgroundColor3 = Color3.fromRGB(37, 38, 41),
-			BackgroundTransparency = 0.2,
-		}, {
-			InvButtons = e("Frame", {
-				Size = UDim2.new(0, 66, 1, 0),
-				AnchorPoint = Vector2.new(1, 0.5),
-				Position = UDim2.new(0, -6, 0.5, 0),
-				BackgroundTransparency = 1,
-			}),
-		}),
+		Inventory = e(InventoryFrame, { open = open }),
 
 		OpenButton = e(Button, {
 			hoverScale = 1.1,

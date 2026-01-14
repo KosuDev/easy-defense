@@ -69,6 +69,12 @@
                   "$path": "src/features/inventory/ui/components/ItemIcon.luau"
                 }
               },
+              "Hooks": {
+                "$className": "Folder",
+                "useItemDragger": {
+                  "$path": "src/features/inventory/ui/hooks/useItemDragger.luau"
+                }
+              },
               "InventoryRoot": {
                 "$path": "src/features/inventory/ui/InventoryRoot.luau"
               },
