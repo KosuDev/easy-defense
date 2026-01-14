@@ -1,3 +1,4 @@
+local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
@@ -41,9 +42,12 @@ local function DraggedItemFrame(props)
 	end, {})
 
 	return e(ItemIcon, {
+		Rotation = 15,
 		itemData = itemData,
 		Size = UDim2.fromOffset(SLOT_SIZE, SLOT_SIZE),
 		Position = pos:map(function(p)
+			local guiInset = GuiService:GetGuiInset()
+			p += guiInset
 			return UDim2.fromOffset(p.X - SLOT_SIZE / 2, p.Y - SLOT_SIZE / 2)
 		end),
 	})

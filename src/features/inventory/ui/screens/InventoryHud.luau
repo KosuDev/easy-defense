@@ -1,3 +1,4 @@
+local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
@@ -9,7 +10,6 @@ local useDataState = require(ReplicatedStorage.Source.Core.UI.Hooks.useDataState
 local useDeviceInput = require(ReplicatedStorage.Source.Core.UI.Hooks.useDeviceInput)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
-local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local InventoryButton = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.InventoryButton)
 local ItemIcon = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemIcon)
@@ -37,7 +37,11 @@ local function useHotBarItemData(index: number)
 
 		local function update()
 			local val = DataService:get({ "inventory", path })
-			setItemData(val)
+			if type(val) == "table" then
+				setItemData(table.clone(val))
+			else
+				setItemData(val)
+			end
 		end
 
 		update()
@@ -106,7 +110,7 @@ local function HotbarSlot(props: HotbarSlotProps)
 			BackgroundTransparency = 1,
 			OnDown = function()
 				if itemData then
-					setDragStart(UserInputService:GetMouseLocation())
+					setDragStart(UserInputService:GetMouseLocation() + GuiService:GetGuiInset())
 				end
 			end,
 			OnEnter = function()

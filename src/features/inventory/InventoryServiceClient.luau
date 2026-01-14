@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local InventorySlice = require(script.Parent.InventorySlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+
 local InventoryServiceClient = {}
 
 function InventoryServiceClient.init(self: InventoryServiceClient)
@@ -12,7 +13,7 @@ end
 function InventoryServiceClient.dragItem(self: InventoryServiceClient, uniqueId: string)
 	local hotbarIndex = table.find(DataService:get("hotbar"), uniqueId)
 	if hotbarIndex then
-		--self.networker:fire("setHotBarUniqueId", hotbarIndex, nil)
+		self.networker:fire("setHotBarUniqueId", hotbarIndex, nil)
 		DataService:set({ "hotbar", hotbarIndex }, "NULL")
 		InventorySlice.state.originalSlot(hotbarIndex)
 	end
@@ -29,11 +30,11 @@ function InventoryServiceClient.moveItem(self: InventoryServiceClient, uniqueId:
 	local originalSlot = InventorySlice.state.originalSlot()
 	if originalSlot and currentUniqueId then -- swap items
 		DataService:set({ "hotbar", originalSlot }, currentUniqueId)
-		--self.networker:fire("moveItem", currentUniqueId, originalSlot)
+		self.networker:fire("setHotBarUniqueId", originalSlot, currentUniqueId)
 		InventorySlice.state.originalSlot(nil)
 	end
 	DataService:set({ "hotbar", targetSlot }, uniqueId)
-	--self.networker:fire("moveItem", uniqueId, targetSlot)
+	self.networker:fire("setHotBarUniqueId", targetSlot, uniqueId)
 end
 
 type InventoryServiceClient = typeof(InventoryServiceClient) & {

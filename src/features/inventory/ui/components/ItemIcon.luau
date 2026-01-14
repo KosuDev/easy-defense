@@ -8,6 +8,7 @@ local e = React.createElement
 
 type ItemIconProps = {
 	Size: UDim2?,
+	Rotation: number?,
 	AnchorPoint: Vector2?,
 	Position: UDim2?,
 	itemData: DataTemplate.ItemData,
@@ -25,6 +26,7 @@ return function(props: ItemIconProps)
 		Position = props.Position,
 		BackgroundTransparency = props.BackgroundTransparency or 0.2,
 		BackgroundColor3 = props.BackgroundColor3 or Color3.fromRGB(37, 38, 41),
+		Rotation = props.Rotation,
 	}, {
 		Corner = e("UICorner", {
 			CornerRadius = UDim.new(0.1, 0),
@@ -46,6 +48,7 @@ return function(props: ItemIconProps)
 				Position = UDim2.fromScale(0.95, 0.95),
 				Size = UDim2.fromScale(0.66, 0.25),
 				Stroke = {},
+				ZIndex = 2,
 			})
 			else nil,
 	}, props.children)

@@ -92,7 +92,7 @@ function Crate.new(
 		local prox = Instance.new("ProximityPrompt")
 		prox.RequiresLineOfSight = false
 		prox.MaxActivationDistance = 10
-		prox.HoldDuration = 1.5
+		prox.HoldDuration = 1
 		prox.Parent = self.model.Main
 		prox.ActionText = "Buy"
 

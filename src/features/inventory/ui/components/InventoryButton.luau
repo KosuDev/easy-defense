@@ -1,3 +1,4 @@
+local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
@@ -44,7 +45,7 @@ return function(props: InventoryButtonProps)
 		hoverScale = 1,
 		BackgroundTransparency = 1,
 		OnDown = function()
-			setDragStart(UserInputService:GetMouseLocation())
+			setDragStart(UserInputService:GetMouseLocation() + GuiService:GetGuiInset())
 		end,
 	}, {
 		Icon = e(ItemIcon, {
