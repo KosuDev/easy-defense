@@ -39,7 +39,7 @@ export type Plot = typeof(setmetatable(
 	PlotServer
 ))
 
-function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotSpawn
+function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 	local self = setmetatable({
 		player = player,
 		cf = plotSpawn.part.CFrame,
@@ -136,11 +136,16 @@ function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
 	assert(self:isValidNode(node), "Invalid node" .. node)
 	local nodeData = self.nodes[node]
 	assert(nodeData, "Node data does not exist for node " .. node)
-	assert(nodeData.crateData, "Crate data does not exist for node " .. node)
-	local openTime = Crates.getCrateInfo(nodeData.crateData.crateId).openTime
-	local timeRemaining = openTime - (workspace:GetServerTimeNow() - nodeData.crateData.timeBuilt)
+	local crateData = assert(nodeData.crateData, "Crate data does not exist for node " .. node)
+	local openTime = Crates.getCrateInfo(crateData.crateId).openTime
+	local timeRemaining = openTime - (workspace:GetServerTimeNow() - crateData.timeBuilt)
 	assert(timeRemaining <= 0, "Crate is not ready to be opened")
-	print("success opening crate") --TODO actually open
+
+	self.nodes[node].crateData = nil
+	print("success opening crate", crateData) --TODO actually open
+	local towerData = nil
+	self.networker:fireAll("crateOpened", node, towerData)
+	nodeData.towerData = towerData
 end
 
 function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqueId: string)

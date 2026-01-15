@@ -16,6 +16,12 @@ local actions = {
 			return Sift.Dictionary.set(prev, root, crateData)
 		end)
 	end,
+
+	removeCrate = function(root: BasePart)
+		crates(function(prev)
+			return Sift.Dictionary.removeKey(prev, root)
+		end)
+	end,
 }
 
 return {

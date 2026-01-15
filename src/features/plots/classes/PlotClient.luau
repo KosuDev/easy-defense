@@ -12,6 +12,7 @@ local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.Inven
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 local CRATE_SPAWN_CD = PlotServiceUtils.enums.crateSpawnCooldown
 local PlotClient = {}
@@ -19,6 +20,7 @@ PlotClient.__index = PlotClient
 
 type Crate = CrateClient.Crate
 type ClientNode = PlotTypes.ClientNode
+type TowerData = DataTemplate.TowerData
 
 export type PlotClient = typeof(setmetatable(
 	{} :: {
@@ -104,14 +106,21 @@ function PlotClient.updateNodeModels(self: PlotClient)
 			newModel:PivotTo(CFrame.new(nodeData.pos) * CFrame.new(0, 1, 0))
 			newModel.Parent = self.plotModel
 			nodeData.model = newModel
+			print("added new model")
 		elseif not itemData and model then
 			model:Destroy()
 			nodeData.model = nil
+			print("destroying model")
 		end
 	end
 end
 
 function PlotClient.nodeUpdated(self: PlotClient, node: number, nodeData: ClientNode)
+	local oldNodeData = self.nodes[node]
+	if oldNodeData and oldNodeData.model then
+		oldNodeData.model:Destroy()
+	end
+
 	self.nodes[node] = nodeData
 	self.nodesUpdated:Fire()
 	if self.player ~= Players.LocalPlayer then
@@ -122,6 +131,21 @@ function PlotClient.nodeUpdated(self: PlotClient, node: number, nodeData: Client
 	if nodeData.crateData then
 		PlotSlice.actions.addCrate(nodeData.root, nodeData.crateData)
 	end
+end
+
+function PlotClient.crateOpened(self: PlotClient, node: number, towerData: TowerData)
+	local nodeData = self.nodes[node]
+	local crateModel = nodeData.model
+	PlotSlice.actions.removeCrate(nodeData.root)
+	nodeData.crateData = nil
+	nodeData.model = nil
+	self.nodesUpdated:Fire()
+
+	--do some aniamation
+	task.wait(1)
+	crateModel:Destroy()
+
+	--place tower now
 end
 
 function PlotClient.loadDefense(self: PlotClient)
@@ -140,6 +164,7 @@ function PlotClient.loadDefense(self: PlotClient)
 		local prox = Instance.new("ProximityPrompt")
 		prox.RequiresLineOfSight = false
 		prox.MaxActivationDistance = 10
+		prox.HoldDuration = 0.5
 		prox.ActionText = "Build"
 		prox.Parent = attach
 
@@ -158,12 +183,17 @@ function PlotClient.loadDefense(self: PlotClient)
 		end
 
 		prox.Triggered:Connect(function()
-			local equippedItemUniqueId = InventorySlice.state.equippedItemUniqueId()
-			if not equippedItemUniqueId then
-				return
+			if prox.ActionText == "Open" then
+				self.networker:fire("requestOpenCrate", node)
+			elseif prox.ActionText == "Remove" then
+				self.networker:fire("requestRemove", node)
+			elseif prox.ActionText == "Place" then
+				local equippedItemUniqueId = InventorySlice.state.equippedItemUniqueId()
+				if not equippedItemUniqueId then
+					return
+				end
+				self.networker:fire("requestBuild", node, equippedItemUniqueId)
 			end
-
-			self.networker:fire("requestBuild", node, equippedItemUniqueId)
 		end)
 
 		self.defenseJanitor:Add(Charm.subscribe(InventorySlice.state.equippedItemUniqueId, updateText))
