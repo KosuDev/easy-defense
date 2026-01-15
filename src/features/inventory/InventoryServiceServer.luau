@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
@@ -38,6 +39,15 @@ function InventoryServiceServer.addCrate(_self: InventoryServiceServer, player: 
 			return (prev or 0) + (amt or 1)
 		end)
 	end
+end
+
+function InventoryServiceServer.addTower(
+	_self: InventoryServiceServer,
+	player: Player,
+	towerData: DataTemplate.TowerData
+)
+	local uniqueId = HttpService:GenerateGUID(false)
+	DataService:set(player, { "inventory", uniqueId }, towerData)
 end
 
 function InventoryServiceServer.setHotBarUniqueId(

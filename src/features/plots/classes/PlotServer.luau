@@ -1,3 +1,4 @@
+---!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
@@ -20,8 +21,12 @@ local PlotServer = {}
 PlotServer.__index = PlotServer
 
 type TowerData = DataTemplate.TowerData
-type CrateData = DataTemplate.CrateData
+type CrateNode = DataTemplate.CrateNode
 type PlotSpawn = PlotTypes.PlotSpawn
+type PlotNode = DataTemplate.PlotNode
+type NodeData = DataTemplate.NodeData
+type Node = PlotTypes.Node
+
 export type Plot = typeof(setmetatable(
 	{} :: {
 		cf: CFrame,
@@ -34,7 +39,7 @@ export type Plot = typeof(setmetatable(
 		janitor: Janitor.Janitor,
 		crates: { string? },
 		timeOfLastCrateSpawn: number,
-		nodes: { DataTemplate.PlotNode },
+		nodes: { Node },
 	},
 	PlotServer
 ))
@@ -92,8 +97,7 @@ function PlotServer.loadDefense(self: Plot)
 		nodes[index] = {
 			root = node,
 			pos = pos,
-			crateData = nil,
-			itemData = nil,
+			data = nil,
 		}
 	end
 
@@ -113,19 +117,24 @@ end
 
 function PlotServer.isOccupied(self: Plot, node: number)
 	local nodeData = self.nodes[node]
-	return nodeData and (nodeData.crateData ~= nil or nodeData.itemData ~= nil)
+	return nodeData and nodeData.data ~= nil
 end
 
 function PlotServer.isOwner(self: Plot, player: Player): boolean
 	return self.player == player
 end
 
-function PlotServer.build(self: Plot, node: number, data: CrateData & TowerData)
+function PlotServer.build(self: Plot, node: number, plotNode: PlotNode)
 	local nodeData = self.nodes[node]
-	if data.crateId then
-		nodeData.crateData = data
+	if plotNode.crateId then
+		nodeData.data = plotNode
+	elseif typeof(plotNode) == "string" then
+		local towerData: TowerData? = DataService:get(self.player, { "inventory", plotNode })
+		assert(towerData, "Tower data does not exist for uniqueId " .. plotNode)
+		nodeData.data = towerData
 	else
-		nodeData.towerData = data
+		warn(plotNode)
+		error("Invalid plotNode data")
 	end
 
 	self.networker:fireAll("nodeUpdated", node, nodeData)
@@ -136,16 +145,19 @@ function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
 	assert(self:isValidNode(node), "Invalid node" .. node)
 	local nodeData = self.nodes[node]
 	assert(nodeData, "Node data does not exist for node " .. node)
-	local crateData = assert(nodeData.crateData, "Crate data does not exist for node " .. node)
-	local openTime = Crates.getCrateInfo(crateData.crateId).openTime
-	local timeRemaining = openTime - (workspace:GetServerTimeNow() - crateData.timeBuilt)
+	local crateData: CrateNode? = nodeData.data
+	assert(crateData, "No data at node " .. node)
+	local crateId, timeBuilt = crateData.crateId, crateData.timeBuilt
+	assert(crateId and timeBuilt, "No crate to open at node " .. node)
+	local openTime = Crates.getCrateInfo(crateId).openTime
+	local timeRemaining = openTime - (workspace:GetServerTimeNow() - timeBuilt)
 	assert(timeRemaining <= 0, "Crate is not ready to be opened")
 
-	self.nodes[node].crateData = nil
+	self.nodes[node].data = nil
 	print("success opening crate", crateData) --TODO actually open
-	local towerData = nil
+	local towerData = nil :: any
+	nodeData.data = towerData
 	self.networker:fireAll("crateOpened", node, towerData)
-	nodeData.towerData = towerData
 end
 
 function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqueId: string)
@@ -165,7 +177,7 @@ function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqu
 			return value - 1
 		end)
 
-		local crateData: CrateData = {
+		local crateData: CrateNode = {
 			crateId = itemData.crateId,
 			timeBuilt = workspace:GetServerTimeNow(),
 		}

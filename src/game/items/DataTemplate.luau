@@ -1,26 +1,25 @@
 local NULL = "NULL"
 
-export type ItemData = {
-	crateId: string?,
-	itemId: string?,
-	amt: number?,
+export type CrateData = {
+	crateId: string,
+	amt: number,
 }
 
 export type TowerData = {
-	uniqueId: string,
-	itemData: ItemData,
+	itemId: string,
+	level: number,
 }
 
-export type CrateData = {
+export type ItemData = CrateData & TowerData
+
+export type CrateNode = {
 	crateId: string,
 	timeBuilt: number,
 }
 
-export type PlotNode = {
-	towerData: TowerData?,
-	crateData: CrateData?,
-}
+export type NodeData = CrateNode & TowerData
 
+export type PlotNode = CrateNode & string
 export type PlotNodes = { [string]: PlotNode }
 
 return {

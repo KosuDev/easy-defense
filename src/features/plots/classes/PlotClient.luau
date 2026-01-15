@@ -96,7 +96,7 @@ function PlotClient.updateNodeModels(self: PlotClient)
 			model.Parent = self.plotModel
 		end
 
-		local itemData = nodeData.crateData or nodeData.towerData
+		local itemData = nodeData.data
 		if not model and shouldRender then
 			if not itemData then
 				continue
@@ -128,8 +128,9 @@ function PlotClient.nodeUpdated(self: PlotClient, node: number, nodeData: Client
 	end
 
 	self:updateNodeModels()
-	if nodeData.crateData then
-		PlotSlice.actions.addCrate(nodeData.root, nodeData.crateData)
+	print(nodeData)
+	if nodeData.data and nodeData.data.crateId then
+		PlotSlice.actions.addCrate(nodeData.root, nodeData.data)
 	end
 end
 
@@ -137,7 +138,7 @@ function PlotClient.crateOpened(self: PlotClient, node: number, towerData: Tower
 	local nodeData = self.nodes[node]
 	local crateModel = nodeData.model
 	PlotSlice.actions.removeCrate(nodeData.root)
-	nodeData.crateData = nil
+	nodeData.data = nil
 	nodeData.model = nil
 	self.nodesUpdated:Fire()
 
@@ -171,9 +172,9 @@ function PlotClient.loadDefense(self: PlotClient)
 		local function updateText()
 			local nodeData = self.nodes[node]
 			prox.Enabled = true
-			if nodeData.crateData then
+			if nodeData.data and nodeData.data.crateId then
 				prox.ActionText = "Open"
-			elseif nodeData.towerData then
+			elseif nodeData.data and not nodeData.data.crateId then
 				prox.ActionText = "Remove"
 			elseif InventorySlice.state.equippedItemUniqueId() ~= nil then
 				prox.ActionText = "Place"

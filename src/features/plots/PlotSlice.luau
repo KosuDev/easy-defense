@@ -5,13 +5,13 @@ local Sift = require(ReplicatedStorage.Packages.Sift)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local atom = Charm.atom
 
-type CrateData = DataTemplate.CrateData
+type CrateNode = DataTemplate.CrateNode
 type Atom<T> = Charm.Atom<T>
 
-local crates: Atom<{ [BasePart]: CrateData }> = atom({})
+local crates: Atom<{ [BasePart]: CrateNode }> = atom({})
 
 local actions = {
-	addCrate = function(root: BasePart, crateData: CrateData)
+	addCrate = function(root: BasePart, crateData: CrateNode)
 		crates(function(prev)
 			return Sift.Dictionary.set(prev, root, crateData)
 		end)

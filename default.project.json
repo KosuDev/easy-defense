@@ -127,6 +127,15 @@
                 }
               }
             }
+          },
+          "Towers": {
+            "$className": "Folder",
+            "Modules": {
+              "$className": "Folder",
+              "Towers": {
+                "$path": "src/features/towers/modules/Towers.luau"
+              }
+            }
           }
         },
         "Core": {
