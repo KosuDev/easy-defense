@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
+local DataService = require(ReplicatedStorage.Packages.DataService).server
 local PlotServer = require(ServerScriptService.Features.Plots.Classes.PlotServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local ServicePlayerData = require(ReplicatedStorage.Packages.ServicePlayerData)
@@ -64,6 +65,7 @@ function PlotServiceServer.playerAdded(self: PlotServiceServer, player: Player, 
 		return
 	end
 
+	DataService:waitForData(player)
 	local plot = PlotServer.new(plotSpawn, player)
 	playerData.plot = plot
 	self.networker:fireAll("initPlot", plot:get())

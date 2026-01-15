@@ -4,6 +4,7 @@ const path = require("path");
 const BASE_PATH = path.join(__dirname, "../src");
 
 const BLACKLISTED_DIRS = [toPosix(path.join(BASE_PATH, "startup"))];
+const NON_SERVER_NAMES = ["ServerTime"];
 
 // Tracks folders that are "claimed" by init.luau
 const initClaimedFolders = new Set();
@@ -21,7 +22,9 @@ function getVirtualPath(filepath) {
   const relativePath = path.relative(BASE_PATH, filepath);
   const parts = relativePath.split(path.sep);
   const filename = path.basename(filepath, ".luau");
-  const isServer = filename.toLowerCase().includes("server");
+  const isServer =
+    filename.toLowerCase().includes("server") &&
+    !filename.toLowerCase().includes(NON_SERVER_NAMES[0].toLowerCase());
 
   const folderName =
     parts.length > 1 ? toPascalCase(parts[parts.length - 2]) : "";

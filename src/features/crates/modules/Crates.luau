@@ -5,7 +5,9 @@ export type CrateInfo = {
 	weight: number,
 	cost: number,
 	odds: number,
+	image: string,
 	name: string,
+	openTime: number,
 }
 
 local crates = {
@@ -14,24 +16,28 @@ local crates = {
 		image = "rbxassetid://92040501256272",
 		weight = 1e9,
 		cost = 100,
+		openTime = 5,
 	},
 	silver = {
 		name = "Silver Crate",
 		image = "rbxassetid://72492711846524",
 		weight = 5e8,
 		cost = 1e3,
+		openTime = 15,
 	},
 	gold = {
 		name = "Gold Crate",
 		image = "rbxassetid://115551403938538",
 		weight = 1e8,
 		cost = 10e3,
+		openTime = 25,
 	},
 	diamond = {
 		name = "Diamond Crate",
 		image = "rbxassetid://96169247372637",
 		weight = 1e7,
 		cost = 100e3,
+		openTime = 35,
 	},
 }
 

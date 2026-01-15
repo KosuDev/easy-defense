@@ -19,7 +19,7 @@ local tiers = {
 		name = "Uncommon",
 		odds = 1 / 10,
 		gradient = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 0)),
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(172, 255, 134)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 0)),
 		}),
 	},

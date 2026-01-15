@@ -13,6 +13,7 @@ type Stroke = {
 	Thickness: CanBeBinding<number>?,
 	Color: CanBeBinding<Color3>?,
 	Transparency: CanBeBinding<number>?,
+	StrokeSizingMode: CanBeBinding<Enum.StrokeSizingMode>?,
 }
 
 type DropShadow = {

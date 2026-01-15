@@ -6,8 +6,26 @@ export type ItemData = {
 	amt: number?,
 }
 
+export type TowerData = {
+	uniqueId: string,
+	itemData: ItemData,
+}
+
+export type CrateData = {
+	crateId: string,
+	timeBuilt: number,
+}
+
+export type PlotNode = {
+	towerData: TowerData?,
+	crateData: CrateData?,
+}
+
+export type PlotNodes = { [string]: PlotNode }
+
 return {
 	currency = 100,
+	plotNodes = {},
 	inventory = {
 		wooden = {
 			crateId = "wooden",

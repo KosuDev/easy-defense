@@ -109,6 +109,9 @@
             "PlotServiceUtils": {
               "$path": "src/features/plots/PlotServiceUtils.luau"
             },
+            "PlotSlice": {
+              "$path": "src/features/plots/PlotSlice.luau"
+            },
             "PlotTypes": {
               "$path": "src/features/plots/PlotTypes.luau"
             },
@@ -116,6 +119,12 @@
               "$className": "Folder",
               "PlotRoot": {
                 "$path": "src/features/plots/ui/PlotRoot.luau"
+              },
+              "Screens": {
+                "$className": "Folder",
+                "CrateTimers": {
+                  "$path": "src/features/plots/ui/screens/CrateTimers.luau"
+                }
               }
             }
           }
@@ -133,8 +142,14 @@
             "Abbreviate": {
               "$path": "src/core/ui/Abbreviate.luau"
             },
+            "FormatTime": {
+              "$path": "src/core/ui/FormatTime.luau"
+            },
             "Hooks": {
               "$className": "Folder",
+              "serverTimeAtom": {
+                "$path": "src/core/ui/hooks/serverTimeAtom.luau"
+              },
               "useAbsSize": {
                 "$path": "src/core/ui/hooks/useAbsSize.luau"
               },
@@ -143,6 +158,12 @@
               },
               "useDeviceInput": {
                 "$path": "src/core/ui/hooks/useDeviceInput.luau"
+              },
+              "useServerTime": {
+                "$path": "src/core/ui/hooks/useServerTime.luau"
+              },
+              "useServerTimeBinding": {
+                "$path": "src/core/ui/hooks/useServerTimeBinding.luau"
               },
               "useSpring": {
                 "$path": "src/core/ui/hooks/useSpring.luau"
