@@ -14,7 +14,7 @@ export type TowerClient = typeof(setmetatable(
 		node: number,
 		data: TowerData,
 		pos: Vector3,
-		model: Model,
+		model: Model & any,
 		attackAnim: any,
 		janitor: Janitor.Janitor,
 	},

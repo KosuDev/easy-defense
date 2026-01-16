@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 local EnemyClient = {}
 EnemyClient.__index = EnemyClient
@@ -13,10 +14,11 @@ export type EnemyClient = typeof(setmetatable(
 		health: number,
 		maxHealth: number,
 		speed: number,
-		model: Model?,
+		model: Model & any,
 		dead: boolean,
 		reachedEnd: boolean,
 		path: PathUtils.Path,
+		destroyed: Signal.Signal<>,
 	},
 	EnemyClient
 ))
@@ -33,10 +35,14 @@ function EnemyClient.new(enemyId: number, uniqueId: number, path: PathUtils.Path
 		dead = false,
 		maxHealth = 100,
 		reachedEnd = false,
+		destroyed = Signal.new(),
 	}, EnemyClient)
 
 	local model = Instance.new("Part")
 	model.Size = Vector3.new(4, 4, 4)
+	local attachment = Instance.new("Attachment")
+	attachment.Name = "RootAttachment"
+	attachment.Parent = model
 	model.Anchored = true
 	model.Parent = workspace
 	self.model = model
@@ -65,10 +71,11 @@ function EnemyClient.update(self: EnemyClient, dt: number): ()
 end
 
 function EnemyClient.destroy(self: EnemyClient): ()
+	self.destroyed:Fire()
 	if self.model then
 		self.model:Destroy()
-		self.model = nil
 	end
+	self.destroyed:Destroy()
 end
 
 return EnemyClient

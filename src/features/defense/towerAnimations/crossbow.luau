@@ -14,10 +14,14 @@ local inputOptions = {
 	start = true,
 }
 
+local BEAM_BULLET_PROPS = {}
 local IMPULSE = 20
 
 return function(self: Tower & any, enemy: Enemy)
 	TowerAnimationUtils.aim(self.model, enemy.pos)
+	local beam = self.model.Rotates.Top.Barrel.Arrow.Tip.Attachment.Beam :: Beam
+	TowerAnimationUtils.beamBullet(beam, enemy, BEAM_BULLET_PROPS)
+	TowerAnimationUtils.playSound(self, "Attack")
 
 	local spring = self.spring :: Ripple.Spring<number>
 	if not spring then
