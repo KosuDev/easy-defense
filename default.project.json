@@ -78,6 +78,9 @@
             },
             "TowerAnimations": {
               "$className": "Folder",
+              "cannon": {
+                "$path": "src/features/defense/towerAnimations/cannon.luau"
+              },
               "crossbow": {
                 "$path": "src/features/defense/towerAnimations/crossbow.luau"
               },

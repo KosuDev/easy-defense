@@ -19,6 +19,15 @@ local towers = {
 		range = 20,
 		firerate = 1,
 	},
+
+	cannon = {
+		name = "Cannon",
+		image = "",
+		weight = 10e9,
+		damage = 1,
+		range = 20,
+		firerate = 1,
+	},
 }
 
 local totalWeight = 0

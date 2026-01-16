@@ -4,8 +4,9 @@ local RunService = game:GetService("RunService")
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local EnemyClient = require(ReplicatedStorage.Source.Features.Defense.Classes.EnemyClient)
 local TowerClient = require(ReplicatedStorage.Source.Features.Defense.Classes.TowerClient)
-local ROTATION_OFFSET = CFrame.Angles(0, math.rad(-90), 0)
+local VFX = ReplicatedStorage.Assets.VFX
 
+local ROTATION_OFFSET = CFrame.Angles(0, math.rad(-90), 0)
 local BEAM_OFFSET_START = -0.1
 local BEAM_OFFSET_END = 0.12
 local BEAM_BULLET_SPEED = 2
@@ -48,6 +49,12 @@ function TowerAnimationUtils.aim(model: any, target: Vector3): ()
 
 	local topPos = top:GetPivot().Position
 	top:PivotTo(CFrame.lookAt(topPos, target) * ROTATION_OFFSET)
+end
+
+function TowerAnimationUtils.aimBoth(model: any, target: Vector3): ()
+	local rotates = model:FindFirstChild("Rotates") :: any
+	local pos = rotates:GetPivot().Position
+	rotates:PivotTo(CFrame.lookAt(pos, target) * ROTATION_OFFSET)
 end
 
 function TowerAnimationUtils.beamEnemy(beam: Beam, enemy: EnemyClient.EnemyClient, useAttachment1: boolean?): () -> ()
@@ -121,6 +128,29 @@ function TowerAnimationUtils.beamBullet(beam: Beam, enemy: EnemyClient.EnemyClie
 		end
 		beamOffset += dt * speed
 		beam:SetTextureOffset(beamOffset)
+	end)
+end
+
+function TowerAnimationUtils.projectileBullet(
+	startPos: Vector3,
+	target: Vector3,
+	speed: number,
+	projectileName: string
+): ()
+	local projectile = VFX[projectileName]:Clone() :: BasePart
+	projectile.Parent = workspace.CurrentCamera
+	local connection: RBXScriptConnection
+	local progress = 0
+
+	connection = RunService.Heartbeat:Connect(function(dt: number)
+		progress += speed * dt
+		if progress >= 1 then
+			projectile:Destroy()
+			connection:Disconnect()
+			return
+		end
+
+		projectile:PivotTo(CFrame.lookAt(startPos:Lerp(target, progress), target))
 	end)
 end
 

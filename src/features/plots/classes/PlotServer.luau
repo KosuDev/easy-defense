@@ -160,7 +160,7 @@ function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
 
 	self.nodes[node].data = nil
 	print("success opening crate", crateData) --TODO actually open
-	local towerData: TowerData = { itemId = "crossbow", level = 1 }
+	local towerData: TowerData = { itemId = "cannon", level = 1 }
 	nodeData.data = towerData
 	self.networker:fireAll("crateOpened", node, towerData)
 
