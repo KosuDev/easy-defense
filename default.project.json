@@ -50,6 +50,21 @@
               }
             }
           },
+          "Defense": {
+            "$className": "Folder",
+            "Modules": {
+              "$className": "Folder",
+              "Enemies": {
+                "$path": "src/features/defense/modules/Enemies.luau"
+              },
+              "PathUtils": {
+                "$path": "src/features/defense/modules/PathUtils.luau"
+              },
+              "Towers": {
+                "$path": "src/features/defense/modules/Towers.luau"
+              }
+            }
+          },
           "Inventory": {
             "$className": "Folder",
             "InventoryServiceClient": {
@@ -125,15 +140,6 @@
                 "CrateTimers": {
                   "$path": "src/features/plots/ui/screens/CrateTimers.luau"
                 }
-              }
-            }
-          },
-          "Towers": {
-            "$className": "Folder",
-            "Modules": {
-              "$className": "Folder",
-              "Towers": {
-                "$path": "src/features/towers/modules/Towers.luau"
               }
             }
           }
@@ -248,6 +254,21 @@
     "ServerScriptService": {
       "Features": {
         "$className": "Folder",
+        "Defense": {
+          "$className": "Folder",
+          "Classes": {
+            "$className": "Folder",
+            "DefenseServer": {
+              "$path": "src/features/defense/classes/DefenseServer.luau"
+            },
+            "EnemyServer": {
+              "$path": "src/features/defense/classes/EnemyServer.luau"
+            },
+            "TowerServer": {
+              "$path": "src/features/defense/classes/TowerServer.luau"
+            }
+          }
+        },
         "Inventory": {
           "$className": "Folder",
           "InventoryServiceServer": {

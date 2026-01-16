@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local DefenseServer = require(ServerScriptService.Features.Defense.Classes.DefenseServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -54,6 +55,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 		janitor = Janitor.new(),
 		timeOfLastCrateSpawn = 0,
 		defenseLevel = 1,
+		defense = DefenseServer.new(plotSpawn.index, player),
 		spawnCrate = PlotServer.spawnCrate,
 		buyCrate = PlotServer.buyCrate,
 		requestBuild = PlotServer.requestBuild,
@@ -76,6 +78,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 
 	self:loadDefense()
 	self:charInit()
+	self.defense:updatePath(self.defenseModel)
 
 	return self
 end
