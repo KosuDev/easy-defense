@@ -40,6 +40,12 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 	self.networker = Networker.server.new("Defense" .. index, self, {})
 	self:start()
 
+	task.delay(2, function()
+		print("Spawning test enemies")
+		local enemy = EnemyServer.new(1)
+		self:addEnemy(enemy)
+	end)
+
 	return self
 end
 
@@ -76,7 +82,7 @@ function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: To
 	tower.enemies = self.enemies
 	tower.networker = self.networker
 	self.towers[uniqueId] = tower
-	self.networker:fireAll("towerAdded", uniqueId, tower.node, tower.pos, tower.data)
+	self.networker:fireAll("towerAdded", tower.node, tower.pos, tower.data)
 end
 
 function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)

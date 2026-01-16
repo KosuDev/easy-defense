@@ -75,6 +75,15 @@
               "Towers": {
                 "$path": "src/features/defense/modules/Towers.luau"
               }
+            },
+            "TowerAnimations": {
+              "$className": "Folder",
+              "crossbow": {
+                "$path": "src/features/defense/towerAnimations/crossbow.luau"
+              },
+              "TowerAnimationUtils": {
+                "$path": "src/features/defense/towerAnimations/TowerAnimationUtils.luau"
+              }
             }
           },
           "Inventory": {

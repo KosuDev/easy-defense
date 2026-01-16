@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local DefenseServer = require(ServerScriptService.Features.Defense.Classes.DefenseServer)
+local TowerServer = require(ServerScriptService.Features.Defense.Classes.TowerServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -41,6 +42,7 @@ export type Plot = typeof(setmetatable(
 		crates: { string? },
 		timeOfLastCrateSpawn: number,
 		nodes: { Node },
+		defense: DefenseServer.DefenseServer,
 	},
 	PlotServer
 ))
@@ -158,9 +160,12 @@ function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
 
 	self.nodes[node].data = nil
 	print("success opening crate", crateData) --TODO actually open
-	local towerData = nil :: any
+	local towerData: TowerData = { itemId = "crossbow", level = 1 }
 	nodeData.data = towerData
 	self.networker:fireAll("crateOpened", node, towerData)
+
+	local tower = TowerServer.new(node, nodeData.pos, towerData)
+	self.defense:addTower("testId", tower)
 end
 
 function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqueId: string)

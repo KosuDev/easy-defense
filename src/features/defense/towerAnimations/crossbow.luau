@@ -1,0 +1,35 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Ripple = require(ReplicatedStorage.Packages.Ripple)
+local TowerAnimationUtils = require(script.Parent.TowerAnimationUtils)
+local EnemyClient = require(ReplicatedStorage.Source.Features.Defense.Classes.EnemyClient)
+local TowerClient = require(ReplicatedStorage.Source.Features.Defense.Classes.TowerClient)
+
+type Tower = TowerClient.TowerClient
+type Enemy = EnemyClient.EnemyClient
+
+local inputOptions = {
+	dampingRatio = 0.6,
+	frequency = 5,
+	start = true,
+}
+
+local IMPULSE = 20
+
+return function(self: Tower & any, enemy: Enemy)
+	TowerAnimationUtils.aim(self.model, enemy.pos)
+
+	local spring = self.spring :: Ripple.Spring<number>
+	if not spring then
+		local barrel = self.model.Rotates.Top.Barrel
+		local topRoot: BasePart = self.model.Rotates.Top.Root
+		local newSpring = Ripple.createSpring(0, inputOptions)
+		self.janitor:Add(newSpring:onChange(function(v)
+			barrel:PivotTo(topRoot:GetPivot() * CFrame.new(math.clamp(v, -3, 3), 0, 0))
+		end))
+		self.spring = newSpring
+		spring = newSpring
+	end
+
+	spring:impulse(IMPULSE)
+end

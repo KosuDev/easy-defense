@@ -1,3 +1,4 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 export type TowerInfo = {
 	name: string,
 	image: string,
@@ -51,6 +52,12 @@ function Towers.rollTowerId(luck: number): string
 	end
 
 	return sortedTowers[1].id
+end
+
+function Towers.getTowerModel(towerId: string): Model
+	assert(towers[towerId], "Invalid tower ID" .. towerId)
+	local model = ReplicatedStorage.Assets.Towers[towerId]:Clone()
+	return model
 end
 
 function Towers.getTowerInfo(towerId: string): TowerInfo

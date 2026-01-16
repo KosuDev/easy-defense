@@ -14,7 +14,7 @@ DefenseClient.__index = DefenseClient
 
 export type DefenseClient = typeof(setmetatable(
 	{} :: {
-		towers: { [string]: any },
+		towers: { [number]: any },
 		enemies: { any },
 		index: number,
 		player: Player,
@@ -34,6 +34,7 @@ function DefenseClient.new(index: number, player: Player): DefenseClient
 	}, DefenseClient)
 
 	self.networker = Networker.client.new("Defense" .. index, self)
+	self:start()
 
 	return self
 end
@@ -62,15 +63,9 @@ function DefenseClient.pathUpdated(self: DefenseClient, path: PathUtils.Path): (
 	end
 end
 
-function DefenseClient.towerAdded(
-	self: DefenseClient,
-	uniqueId: string,
-	node: number,
-	pos: Vector3,
-	data: TowerData
-): ()
+function DefenseClient.towerAdded(self: DefenseClient, node: number, pos: Vector3, data: TowerData): ()
 	local tower = TowerClient.new(node, pos, data)
-	self.towers[uniqueId] = tower
+	self.towers[node] = tower
 end
 
 function DefenseClient.enemyAdded(self: DefenseClient, uniqueId: number, enemyId: number): ()
@@ -86,9 +81,9 @@ function DefenseClient.removeEnemy(self: DefenseClient, uniqueId: number): ()
 	end
 end
 
-function DefenseClient.towerAttack(self: DefenseClient, uniqueId: string, enemyUniqueId: number, damage: number): ()
+function DefenseClient.towerAttack(self: DefenseClient, node: number, enemyUniqueId: number, damage: number): ()
 	local enemy = self.enemies[enemyUniqueId]
-	local tower = self.towers[uniqueId]
+	local tower = self.towers[node]
 	tower:attack(enemy, damage)
 	if enemy.dead then
 		self:removeEnemy(enemyUniqueId)
