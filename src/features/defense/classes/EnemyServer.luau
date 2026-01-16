@@ -6,6 +6,7 @@ EnemyServer.__index = EnemyServer
 
 export type EnemyServer = typeof(setmetatable(
 	{} :: {
+		enemyId: number,
 		dist: number,
 		pos: Vector3,
 		health: number,
@@ -27,6 +28,7 @@ end
 
 function EnemyServer.new(id: number): EnemyServer
 	local self = setmetatable({
+		enemyId = id,
 		uniqueId = getUniqueId(),
 		dist = 0,
 		pos = Vector3.new(),

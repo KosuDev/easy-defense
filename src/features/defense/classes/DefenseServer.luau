@@ -38,6 +38,7 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 	}, DefenseServer)
 
 	self.networker = Networker.server.new("Defense" .. index, self, {})
+	self:start()
 
 	return self
 end
@@ -50,6 +51,8 @@ function DefenseServer.updatePath(self: DefenseServer, defenseModel: Model & any
 	for _, enemy in self.enemies do
 		enemy.path = path
 	end
+
+	self.networker:fireAll("pathUpdated", path)
 end
 
 function DefenseServer.start(self: DefenseServer)
@@ -73,11 +76,13 @@ function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: To
 	tower.enemies = self.enemies
 	tower.networker = self.networker
 	self.towers[uniqueId] = tower
+	self.networker:fireAll("towerAdded", uniqueId, tower.node, tower.pos, tower.data)
 end
 
 function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)
 	enemy.path = self.path
 	table.insert(self.enemies, enemy)
+	self.networker:fireAll("enemyAdded", enemy.uniqueId, enemy.enemyId)
 end
 
 function DefenseServer.update(self: DefenseServer, dt: number): ()

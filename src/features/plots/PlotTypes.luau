@@ -15,6 +15,7 @@ export type PlotData = {
 	player: Player,
 	plotModel: Model,
 	nodes: { Node },
+	defensePath: any,
 }
 
 export type ClientNode = Node & {

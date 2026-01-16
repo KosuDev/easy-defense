@@ -52,6 +52,18 @@
           },
           "Defense": {
             "$className": "Folder",
+            "Classes": {
+              "$className": "Folder",
+              "DefenseClient": {
+                "$path": "src/features/defense/classes/DefenseClient.luau"
+              },
+              "EnemyClient": {
+                "$path": "src/features/defense/classes/EnemyClient.luau"
+              },
+              "TowerClient": {
+                "$path": "src/features/defense/classes/TowerClient.luau"
+              }
+            },
             "Modules": {
               "$className": "Folder",
               "Enemies": {

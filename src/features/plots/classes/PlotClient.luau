@@ -7,6 +7,7 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local Ripple = require(ReplicatedStorage.Packages.Ripple)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.CrateClient)
+local DefenseClient = require(ReplicatedStorage.Source.Features.Defense.Classes.DefenseClient)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
@@ -38,6 +39,7 @@ export type PlotClient = typeof(setmetatable(
 		nodesUpdated: Signal.Signal<>,
 		defenseJanitor: Janitor.Janitor,
 		nodeUpdateThread: thread,
+		defense: DefenseClient.DefenseClient,
 	},
 	PlotClient
 ))
@@ -60,8 +62,10 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 		buttonSpring = Ripple.createSpring(0, { start = true, damping = 0.5, frequency = 6 }),
 		conveyorSpeed = Charm.atom(0),
 		defenseJanitor = Janitor.new(),
+		defense = DefenseClient.new(plotData.index, plotData.player),
 	}, PlotClient)
 
+	self.defense:pathUpdated(plotData.defensePath)
 	self.janitor:Add(self.buttonSpring, "destroy")
 	self.networker = Networker.client.new("Plot" .. self.index, self)
 	if self.player == Players.LocalPlayer then
@@ -273,6 +277,7 @@ function PlotClient.destroy(self: PlotClient)
 	self.networker:destroy()
 	self.janitor:Destroy()
 	task.cancel(self.nodeUpdateThread)
+	self.defense:destroy()
 end
 
 return PlotClient

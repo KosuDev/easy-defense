@@ -197,6 +197,7 @@ function PlotServer.get(self: Plot): PlotTypes.PlotData
 		cf = self.cf,
 		plotModel = self.plotModel,
 		nodes = self.nodes,
+		defensePath = self.defense.path,
 	}
 end
 
