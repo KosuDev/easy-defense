@@ -7,6 +7,7 @@ local InventoryServiceUtils = require(script.Parent.InventoryServiceUtils)
 local InventorySlice = require(script.Parent.InventorySlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 local RENDER_TOOL_DISTANCE = 100
@@ -102,6 +103,9 @@ function InventoryServiceClient.setPlayerItem(
 	end
 
 	if equippedItem.model then
+		if equippedItem.itemData and equippedItem.itemData.itemId then
+			DefenseSlice.actions.removeTower(equippedItem.model.PrimaryPart)
+		end
 		equippedItem.model:Destroy()
 	end
 
@@ -182,6 +186,9 @@ function InventoryServiceClient.update(self: InventoryServiceClient)
 		model:PivotTo(pChar.Head.CFrame * CFrame.new(0, 1.33, 0))
 		rootWeld.Part1 = pChar.Head
 		model.Parent = pChar
+		if equippedItem.itemData.itemId then
+			DefenseSlice.actions.addTower(model.PrimaryPart, equippedItem.itemData)
+		end
 	end
 end
 

@@ -15,18 +15,18 @@ local towers = {
 		name = "Crossbow",
 		image = "",
 		weight = 10e9,
-		damage = 1,
+		damage = 4,
 		range = 20,
-		firerate = 1,
+		firerate = 2,
 	},
 
 	cannon = {
 		name = "Cannon",
 		image = "",
 		weight = 10e9,
-		damage = 1,
+		damage = 10,
 		range = 20,
-		firerate = 1,
+		firerate = 0.5,
 	},
 }
 

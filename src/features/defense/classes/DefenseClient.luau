@@ -63,7 +63,16 @@ function DefenseClient.pathUpdated(self: DefenseClient, path: PathUtils.Path): (
 	end
 end
 
+function DefenseClient.towerRemoved(self: DefenseClient, node: number): ()
+	local tower = self.towers[node]
+	if tower then
+		tower:destroy()
+		self.towers[node] = nil
+	end
+end
+
 function DefenseClient.towerAdded(self: DefenseClient, node: number, pos: Vector3, data: TowerData): ()
+	print("Adding tower at node", node)
 	local tower = TowerClient.new(node, pos, data)
 	self.towers[node] = tower
 end

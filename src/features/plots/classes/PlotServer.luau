@@ -9,6 +9,7 @@ local InventoryServiceServer = require(ServerScriptService.Features.Inventory.In
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -62,6 +63,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 		buyCrate = PlotServer.buyCrate,
 		requestBuild = PlotServer.requestBuild,
 		requestOpenCrate = PlotServer.requestOpenCrate,
+		requestRemove = PlotServer.requestRemove,
 	}, PlotServer)
 
 	local networker = Networker.server.new("Plot" .. self.index, self, {
@@ -69,7 +71,9 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 		self.buyCrate,
 		self.requestBuild,
 		self.requestOpenCrate,
+		self.requestRemove,
 	})
+
 	self.networker = networker
 
 	local plotModel: Model & any = PlotModel:Clone()
@@ -137,6 +141,8 @@ function PlotServer.build(self: Plot, node: number, plotNode: PlotNode)
 		local towerData: TowerData? = DataService:get(self.player, { "inventory", plotNode })
 		assert(towerData, "Tower data does not exist for uniqueId " .. plotNode)
 		nodeData.data = towerData
+		local tower = TowerServer.new(node, nodeData.pos, towerData :: TowerData)
+		self.defense:addTower(plotNode, tower)
 	else
 		warn(plotNode)
 		error("Invalid plotNode data")
@@ -158,14 +164,38 @@ function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
 	local timeRemaining = openTime - (workspace:GetServerTimeNow() - timeBuilt)
 	assert(timeRemaining <= 0, "Crate is not ready to be opened")
 
+	DataService:set(self.player, { "plotNodes", tostring(node) }, nil)
 	self.nodes[node].data = nil
-	print("success opening crate", crateData) --TODO actually open
-	local towerData: TowerData = { itemId = "cannon", level = 1 }
+
+	local towerId = Towers.rollTowerId(1)
+	local towerData: TowerData = { itemId = towerId, level = 1 }
+	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
 	nodeData.data = towerData
 	self.networker:fireAll("crateOpened", node, towerData)
 
 	local tower = TowerServer.new(node, nodeData.pos, towerData)
-	self.defense:addTower("testId", tower)
+	self.defense:addTower(uniqueId, tower)
+	DataService:set(self.player, { "plotNodes", tostring(node) }, uniqueId)
+	self.networker:fireAll("nodeUpdated", node, nodeData)
+end
+
+function PlotServer.requestRemove(self: Plot, player: Player, node: number)
+	print("requestRemove called")
+	assert(player == self.player, "Player is not the owner of this plot")
+	local nodeData = self.nodes[node]
+	if not nodeData or not nodeData.data or nodeData.data.crateId then
+		return
+	end
+
+	local uniqueId = DataService:get(self.player, { "plotNodes", tostring(node) })
+	if not uniqueId then
+		return
+	end
+
+	self.defense:removeTower(uniqueId)
+	self.nodes[node].data = nil
+	self.networker:fireAll("nodeUpdated", node, nodeData)
+	DataService:set(self.player, { "plotNodes", tostring(node) }, nil)
 end
 
 function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqueId: string)
@@ -176,23 +206,30 @@ function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqu
 	local itemData: DataTemplate.ItemData = DataService:get(self.player, { "inventory", uniqueId })
 	assert(itemData, "Item data does not exist for uniqueId " .. uniqueId)
 
-	if itemData.crateId then -- trying to build a crate
-		if itemData.amt <= 0 then
-			return
-		end
-
-		DataService:update(self.player, { "inventory", uniqueId, "amt" }, function(value)
-			return value - 1
-		end)
-
-		local crateData: CrateNode = {
-			crateId = itemData.crateId,
-			timeBuilt = workspace:GetServerTimeNow(),
-		}
-
-		self:build(node, crateData)
-		DataService:set(self.player, { "plotNodes", tostring(node) }, crateData)
+	if itemData.itemId then
+		self:build(node, uniqueId)
+		return
 	end
+
+	if not itemData.crateId then
+		error("Invalid item data for uniqueId " .. uniqueId)
+	end
+
+	if itemData.amt <= 0 then
+		return
+	end
+
+	DataService:update(self.player, { "inventory", uniqueId, "amt" }, function(value)
+		return value - 1
+	end)
+
+	local crateData: CrateNode = {
+		crateId = itemData.crateId,
+		timeBuilt = workspace:GetServerTimeNow(),
+	}
+
+	self:build(node, crateData)
+	DataService:set(self.player, { "plotNodes", tostring(node) }, crateData)
 end
 
 function PlotServer.get(self: Plot): PlotTypes.PlotData

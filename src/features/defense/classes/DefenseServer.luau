@@ -78,6 +78,26 @@ function DefenseServer.stop(self: DefenseServer)
 	end
 end
 
+function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
+	print(self.towers)
+	local tower = self.towers[uniqueId]
+	if not tower then
+		warn("Attempted to remove non-existent tower: " .. uniqueId)
+		return
+	end
+	self.towers[uniqueId] = nil
+	self.networker:fireAll("towerRemoved", tower.node)
+end
+
+function DefenseServer.getUniqueIdByNode(self: DefenseServer, node: number): string?
+	for uniqueId, tower in self.towers do
+		if tower.node == node then
+			return uniqueId
+		end
+	end
+	return nil
+end
+
 function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: TowerServer)
 	tower.enemies = self.enemies
 	tower.networker = self.networker

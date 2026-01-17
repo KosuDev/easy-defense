@@ -102,7 +102,7 @@ function PlotClient.updateNodeModels(self: PlotClient)
 
 		local itemData = nodeData.data
 		if not model and shouldRender then
-			if not itemData then
+			if not itemData or itemData.itemId then
 				continue
 			end
 

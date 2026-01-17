@@ -45,9 +45,10 @@ function InventoryServiceServer.addTower(
 	_self: InventoryServiceServer,
 	player: Player,
 	towerData: DataTemplate.TowerData
-)
+): string
 	local uniqueId = HttpService:GenerateGUID(false)
 	DataService:set(player, { "inventory", uniqueId }, towerData)
+	return uniqueId
 end
 
 function InventoryServiceServer.setHotBarUniqueId(

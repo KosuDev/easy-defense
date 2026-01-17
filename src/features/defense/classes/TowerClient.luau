@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local EnemyClient = require(script.Parent.EnemyClient)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -32,6 +33,7 @@ function TowerClient.new(node: number, pos: Vector3, data: TowerData)
 	local model = Towers.getTowerModel(data.itemId)
 	model.Parent = workspace
 	model:PivotTo(CFrame.new(pos) * CFrame.new(0, 0.5, 0))
+	DefenseSlice.actions.addTower(model.PrimaryPart, data)
 	self.model = model
 
 	local attackAnimModule = script.Parent.Parent.TowerAnimations:FindFirstChild(data.itemId)
@@ -50,6 +52,7 @@ function TowerClient.attack(self: TowerClient, enemy: EnemyClient.EnemyClient, d
 end
 
 function TowerClient.destroy(self: TowerClient): ()
+	DefenseSlice.actions.removeTower(self.model.PrimaryPart)
 	self.janitor:Destroy()
 	if self.model then
 		self.model:Destroy()

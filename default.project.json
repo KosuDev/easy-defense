@@ -64,6 +64,9 @@
                 "$path": "src/features/defense/classes/TowerClient.luau"
               }
             },
+            "DefenseSlice": {
+              "$path": "src/features/defense/DefenseSlice.luau"
+            },
             "Modules": {
               "$className": "Folder",
               "Enemies": {
@@ -86,6 +89,18 @@
               },
               "TowerAnimationUtils": {
                 "$path": "src/features/defense/towerAnimations/TowerAnimationUtils.luau"
+              }
+            },
+            "UI": {
+              "$className": "Folder",
+              "DefenseRoot": {
+                "$path": "src/features/defense/ui/DefenseRoot.luau"
+              },
+              "Screens": {
+                "$className": "Folder",
+                "TowerBillboards": {
+                  "$path": "src/features/defense/ui/screens/TowerBillboards.luau"
+                }
               }
             }
           },
