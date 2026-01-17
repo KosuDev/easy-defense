@@ -33,6 +33,9 @@
             },
             "Modules": {
               "$className": "Folder",
+              "CrateOpenVfx": {
+                "$path": "src/features/crates/modules/CrateOpenVfx.luau"
+              },
               "Crates": {
                 "$path": "src/features/crates/modules/Crates.luau"
               }
@@ -189,6 +192,9 @@
             "$className": "Folder",
             "SoundController": {
               "$path": "src/core/platform/SoundController.luau"
+            },
+            "VfxUtils": {
+              "$path": "src/core/platform/VfxUtils.luau"
             }
           },
           "UI": {

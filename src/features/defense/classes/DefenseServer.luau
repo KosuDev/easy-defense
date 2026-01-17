@@ -98,11 +98,13 @@ function DefenseServer.getUniqueIdByNode(self: DefenseServer, node: number): str
 	return nil
 end
 
-function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: TowerServer)
+function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: TowerServer, dontReplicate: boolean?)
 	tower.enemies = self.enemies
 	tower.networker = self.networker
 	self.towers[uniqueId] = tower
-	self.networker:fireAll("towerAdded", tower.node, tower.pos, tower.data)
+	if not dontReplicate then
+		self.networker:fireAll("towerAdded", tower.node, tower.cf, tower.data)
+	end
 end
 
 function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)

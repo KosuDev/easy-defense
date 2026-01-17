@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
+local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
@@ -12,6 +13,7 @@ local e = React.createElement
 
 type TowerBillboardProps = {
 	root: BasePart,
+	forcedParent: Instance?,
 	towerData: DataTemplate.TowerData,
 }
 
@@ -20,7 +22,7 @@ local function TowerBillboard(props: TowerBillboardProps)
 	local tier = Tiers.getTierForOdds(towerInfo.odds)
 	local dps = Abbreviate(towerInfo.damage * towerInfo.firerate)
 
-	return e("BillboardGui", {
+	local localBillboardGui = e("BillboardGui", {
 		LightInfluence = 0,
 		Adornee = props.root,
 		StudsOffsetWorldSpace = Vector3.new(0, 6, 0),
@@ -64,15 +66,22 @@ local function TowerBillboard(props: TowerBillboardProps)
 			Stroke = { Thickness = 0.1, StrokeSizingMode = Enum.StrokeSizingMode.ScaledSize },
 		}),
 	})
+
+	if props.forcedParent then
+		return e(React.Fragment, nil, ReactRoblox.createPortal(localBillboardGui, props.forcedParent))
+	end
+
+	return localBillboardGui
 end
 
 return function()
 	local towersData = ReactCharm.useAtom(DefenseSlice.states.towers)
 	local towers = {}
-	for root, towerData in towersData do
+	for root, towerUiData in towersData do
 		towers[root] = e(TowerBillboard, {
 			root = root,
-			towerData = towerData,
+			forcedParent = towerUiData.forcedParent,
+			towerData = towerUiData.towerData,
 		})
 	end
 

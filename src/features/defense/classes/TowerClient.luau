@@ -14,7 +14,7 @@ export type TowerClient = typeof(setmetatable(
 	{} :: {
 		node: number,
 		data: TowerData,
-		pos: Vector3,
+		cf: CFrame,
 		model: Model & any,
 		attackAnim: any,
 		janitor: Janitor.Janitor,
@@ -22,17 +22,17 @@ export type TowerClient = typeof(setmetatable(
 	TowerClient
 ))
 
-function TowerClient.new(node: number, pos: Vector3, data: TowerData)
+function TowerClient.new(node: number, cf: CFrame, data: TowerData)
 	local self = setmetatable({
 		node = node,
 		data = data,
-		pos = pos,
+		cf = cf,
 		janitor = Janitor.new(),
 	}, TowerClient)
 
 	local model = Towers.getTowerModel(data.itemId)
 	model.Parent = workspace
-	model:PivotTo(CFrame.new(pos) * CFrame.new(0, 0.5, 0))
+	model:PivotTo(cf * CFrame.new(0, 0.5, 0))
 	DefenseSlice.actions.addTower(model.PrimaryPart, data)
 	self.model = model
 

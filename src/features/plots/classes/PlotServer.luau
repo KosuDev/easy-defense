@@ -102,10 +102,10 @@ function PlotServer.loadDefense(self: Plot)
 	local nodes = {}
 	for _, node in defense:QueryDescendants(".TowerPlacement") do
 		local index = node:GetAttribute("Index") :: number
-		local pos = node.CFrame.Position
+		local cf = node.CFrame
 		nodes[index] = {
 			root = node,
-			pos = pos,
+			cf = cf * CFrame.Angles(0, math.rad(90), 0),
 			data = nil,
 		}
 	end
@@ -141,7 +141,7 @@ function PlotServer.build(self: Plot, node: number, plotNode: PlotNode)
 		local towerData: TowerData? = DataService:get(self.player, { "inventory", plotNode })
 		assert(towerData, "Tower data does not exist for uniqueId " .. plotNode)
 		nodeData.data = towerData
-		local tower = TowerServer.new(node, nodeData.pos, towerData :: TowerData)
+		local tower = TowerServer.new(node, nodeData.cf, towerData :: TowerData)
 		self.defense:addTower(plotNode, tower)
 	else
 		warn(plotNode)
@@ -171,11 +171,11 @@ function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
 	local towerData: TowerData = { itemId = towerId, level = 1 }
 	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
 	nodeData.data = towerData
-	self.networker:fireAll("crateOpened", node, towerData)
 
-	local tower = TowerServer.new(node, nodeData.pos, towerData)
-	self.defense:addTower(uniqueId, tower)
+	local tower = TowerServer.new(node, nodeData.cf, towerData)
+	self.defense:addTower(uniqueId, tower, true)
 	DataService:set(self.player, { "plotNodes", tostring(node) }, uniqueId)
+	self.networker:fireAll("crateOpened", node, towerData, nodeData.cf)
 	self.networker:fireAll("nodeUpdated", node, nodeData)
 end
 

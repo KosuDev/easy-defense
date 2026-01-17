@@ -1,3 +1,4 @@
+---!strict
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -7,6 +8,7 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local Ripple = require(ReplicatedStorage.Packages.Ripple)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.CrateClient)
+local CrateOpenVfx = require(ReplicatedStorage.Source.Features.Crates.Modules.CrateOpenVfx)
 local DefenseClient = require(ReplicatedStorage.Source.Features.Defense.Classes.DefenseClient)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
@@ -107,7 +109,7 @@ function PlotClient.updateNodeModels(self: PlotClient)
 			end
 
 			local newModel = InventoryServiceUtils.getModel(itemData)
-			newModel:PivotTo(CFrame.new(nodeData.pos) * CFrame.new(0, 1, 0))
+			newModel:PivotTo(nodeData.cf * CFrame.new(0, 1, 0))
 			newModel.Parent = self.plotModel
 			nodeData.model = newModel
 			print("added new model")
@@ -138,7 +140,7 @@ function PlotClient.nodeUpdated(self: PlotClient, node: number, nodeData: Client
 	end
 end
 
-function PlotClient.crateOpened(self: PlotClient, node: number, towerData: TowerData)
+function PlotClient.crateOpened(self: PlotClient, node: number, towerData: TowerData, towerCf: CFrame)
 	local nodeData = self.nodes[node]
 	local crateModel = nodeData.model
 	PlotSlice.actions.removeCrate(nodeData.root)
@@ -147,10 +149,11 @@ function PlotClient.crateOpened(self: PlotClient, node: number, towerData: Tower
 	self.nodesUpdated:Fire()
 
 	--do some aniamation
-	task.wait(1)
-	crateModel:Destroy()
 
-	--place tower now
+	crateModel:Destroy()
+	CrateOpenVfx(nodeData.cf)
+
+	self.defense:towerAdded(node, towerCf, towerData)
 end
 
 function PlotClient.loadDefense(self: PlotClient)

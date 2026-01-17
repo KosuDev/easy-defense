@@ -71,9 +71,8 @@ function DefenseClient.towerRemoved(self: DefenseClient, node: number): ()
 	end
 end
 
-function DefenseClient.towerAdded(self: DefenseClient, node: number, pos: Vector3, data: TowerData): ()
-	print("Adding tower at node", node)
-	local tower = TowerClient.new(node, pos, data)
+function DefenseClient.towerAdded(self: DefenseClient, node: number, cf: CFrame, data: TowerData): ()
+	local tower = TowerClient.new(node, cf, data)
 	self.towers[node] = tower
 end
 

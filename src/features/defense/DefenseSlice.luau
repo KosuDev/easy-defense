@@ -8,12 +8,12 @@ local atom = Charm.atom
 type TowerData = DataTemplate.TowerData
 type Atom<T> = Charm.Atom<T>
 
-local towers: Atom<{ [BasePart]: TowerData }> = atom({})
+local towers: Atom<{ [BasePart]: { towerData: TowerData, forcedParent: Instance? } }> = atom({})
 
 local actions = {
-	addTower = function(root: BasePart, towerData: TowerData)
+	addTower = function(root: BasePart, towerData: TowerData, forcedParent: Instance?)
 		towers(function(prev)
-			return Sift.Dictionary.set(prev, root, towerData)
+			return Sift.Dictionary.set(prev, root, { towerData = towerData, forcedParent = forcedParent })
 		end)
 	end,
 

@@ -8,6 +8,7 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 function DataService:onPlayerInit(_player, data)
 	data.currency = 1e6
+	data.inventory.wooden.amt = 100
 end
 
 DataService:init({

@@ -5,7 +5,7 @@ export type PlotSpawn = { part: BasePart, index: number, fakePlot: Model, owner:
 
 export type Node = {
 	root: BasePart,
-	pos: Vector3,
+	cf: CFrame,
 	data: DataTemplate.NodeData?,
 }
 
