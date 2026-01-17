@@ -2,9 +2,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Signal = require(ReplicatedStorage.Packages.Signal)
+local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundController)
 local VfxUtils = require(ReplicatedStorage.Source.Core.Platform.VfxUtils)
 local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 
 local function xToScale(x: number, i: number): number
@@ -14,6 +16,7 @@ end
 return function(cf)
 	cf *= CFrame.new(0, 0.5, 0)
 	VfxUtils.emitAllAtPosition("CrateOpen", cf.Position)
+	SoundController:Play(Sounds.misc.woosh)
 	local prevId = nil
 	local finishedSignal = Signal.new()
 
@@ -44,6 +47,11 @@ return function(cf)
 		local isFinal = i == 1
 		local hasBeenMax = false
 		local conn
+		if isFinal then
+			SoundController:Play(Sounds.misc.rollEnd)
+			VfxUtils.emitAllAtPosition("CrateEnd", cf.Position)
+		end
+		SoundController:Play(Sounds.misc.roll)
 
 		conn = RunService.Heartbeat:Connect(function(dt: number)
 			if isFinal and hasBeenMax then
