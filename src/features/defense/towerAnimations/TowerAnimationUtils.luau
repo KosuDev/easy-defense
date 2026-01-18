@@ -36,6 +36,13 @@ function TowerAnimationUtils.playSound(tower: TowerClient.TowerClient, soundName
 	end
 end
 
+function TowerAnimationUtils.aimBot(model: any, target: Vector3): ()
+	local rotates = model:FindFirstChild("Rotates") :: any
+	local pos = rotates:GetPivot().Position
+	local groundTarget = Vector3.new(target.X, pos.Y, target.Z)
+	rotates:PivotTo(CFrame.lookAt(pos, groundTarget) * ROTATION_OFFSET)
+end
+
 function TowerAnimationUtils.aim(model: any, target: Vector3): ()
 	local rotates = model:FindFirstChild("Rotates") :: any
 	local pos = rotates:GetPivot().Position

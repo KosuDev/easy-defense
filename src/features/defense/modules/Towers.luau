@@ -20,6 +20,15 @@ local towers = {
 		firerate = 2,
 	},
 
+	catapult = {
+		name = "Catapult",
+		image = "",
+		weight = 10e9,
+		damage = 6,
+		range = 20,
+		firerate = 1,
+	},
+
 	cannon = {
 		name = "Cannon",
 		image = "",

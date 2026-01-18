@@ -70,6 +70,10 @@ function EnemyClient.update(self: EnemyClient, dt: number): ()
 	end
 end
 
+function EnemyClient.getPosition(self: EnemyClient): Vector3
+	return self.pos
+end
+
 function EnemyClient.destroy(self: EnemyClient): ()
 	self.destroyed:Fire()
 	if self.model then

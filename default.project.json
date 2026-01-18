@@ -87,6 +87,9 @@
               "cannon": {
                 "$path": "src/features/defense/towerAnimations/cannon.luau"
               },
+              "catapult": {
+                "$path": "src/features/defense/towerAnimations/catapult.luau"
+              },
               "crossbow": {
                 "$path": "src/features/defense/towerAnimations/crossbow.luau"
               },
