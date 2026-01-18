@@ -46,6 +46,15 @@ local towers = {
 		range = 20,
 		firerate = 1,
 	},
+
+	minigun = {
+		name = "Minigun",
+		image = "",
+		weight = 10e9,
+		damage = 1,
+		range = 20,
+		firerate = 4,
+	},
 }
 
 local totalWeight = 0
