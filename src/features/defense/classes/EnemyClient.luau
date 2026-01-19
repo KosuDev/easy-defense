@@ -2,6 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
+
+local ANIMATION = ReplicatedStorage.Assets.Animations.EnemyMovement
+
 local EnemyClient = {}
 EnemyClient.__index = EnemyClient
 
@@ -29,7 +32,7 @@ function EnemyClient.new(enemyId: number, uniqueId: number, path: PathUtils.Path
 		path = path,
 		enemyId = enemyId,
 		uniqueId = uniqueId,
-		pos = Vector3.new(),
+		pos = PathUtils.getPosFromDist(path, 0),
 		health = 100,
 		speed = 5,
 		dead = false,
@@ -38,13 +41,11 @@ function EnemyClient.new(enemyId: number, uniqueId: number, path: PathUtils.Path
 		destroyed = Signal.new(),
 	}, EnemyClient)
 
-	local model = Instance.new("Part")
-	model.Size = Vector3.new(4, 4, 4)
-	local attachment = Instance.new("Attachment")
-	attachment.Name = "RootAttachment"
-	attachment.Parent = model
-	model.Anchored = true
+	local model = ReplicatedStorage.Assets.Misc.Enemy:Clone()
+	model.Name = "Enemy_" .. uniqueId
+	model:PivotTo(CFrame.new(self.pos))
 	model.Parent = workspace
+	model.AnimationController.Animator:LoadAnimation(ANIMATION):Play()
 	self.model = model
 
 	return self

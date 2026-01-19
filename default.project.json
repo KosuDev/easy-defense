@@ -96,6 +96,9 @@
               "minigun": {
                 "$path": "src/features/defense/towerAnimations/minigun.luau"
               },
+              "tesla": {
+                "$path": "src/features/defense/towerAnimations/tesla.luau"
+              },
               "TowerAnimationUtils": {
                 "$path": "src/features/defense/towerAnimations/TowerAnimationUtils.luau"
               },

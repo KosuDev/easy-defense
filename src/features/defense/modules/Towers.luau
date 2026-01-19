@@ -55,6 +55,15 @@ local towers = {
 		range = 20,
 		firerate = 4,
 	},
+
+	tesla = {
+		name = "Tesla",
+		image = "",
+		weight = 10e9,
+		damage = 10,
+		range = 25,
+		firerate = 1,
+	},
 }
 
 local totalWeight = 0
