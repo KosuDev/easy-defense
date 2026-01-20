@@ -1,9 +1,11 @@
 export type Path = {
 	length: number,
-	nodes: { Vector3 },
+	nodes: { CFrame },
 }
 
 local PathUtils = {}
+
+local EPS = 1e-8
 
 function PathUtils.calcpath(defenseModel: Model & any): Path
 	local nonLerpedNodes = {}
@@ -12,14 +14,17 @@ function PathUtils.calcpath(defenseModel: Model & any): Path
 
 	while true do
 		table.insert(nonLerpedNodes, currentNode.Position)
+
 		local nextObj: ObjectValue? = currentNode:FindFirstChild("Next")
 		if not nextObj then
 			break
 		end
+
 		currentNode = nextObj.Value
 	end
 
-	local lerpedNodes = { nonLerpedNodes[1] }
+	-- Sample positions every 1 stud along the polyline
+	local lerpedPositions = { nonLerpedNodes[1] }
 	local totalLength = 0
 	local cursorPos = nonLerpedNodes[1]
 	local carry = 0
@@ -29,7 +34,7 @@ function PathUtils.calcpath(defenseModel: Model & any): Path
 		local segment = goal - cursorPos
 		local segmentLen = segment.Magnitude
 
-		if segmentLen <= 1e-8 then
+		if segmentLen <= EPS then
 			cursorPos = goal
 			continue
 		end
@@ -42,7 +47,7 @@ function PathUtils.calcpath(defenseModel: Model & any): Path
 		while remainingOnSegment + carry >= 1 do
 			local need = 1 - carry
 			cursorPos = cursorPos + dir * need
-			table.insert(lerpedNodes, cursorPos)
+			table.insert(lerpedPositions, cursorPos)
 			remainingOnSegment -= need
 			carry = 0
 		end
@@ -51,28 +56,83 @@ function PathUtils.calcpath(defenseModel: Model & any): Path
 		cursorPos = goal
 	end
 
+	-- Ensure final endpoint is included
 	local lastOriginal = nonLerpedNodes[#nonLerpedNodes]
-	local lastSample = lerpedNodes[#lerpedNodes]
+	local lastSample = lerpedPositions[#lerpedPositions]
 	if (lastOriginal - lastSample).Magnitude > 1e-4 then
-		table.insert(lerpedNodes, lastOriginal)
+		table.insert(lerpedPositions, lastOriginal)
+	end
+
+	-- Convert sampled positions -> oriented CFrames (facing next sample)
+	local cframes = table.create(#lerpedPositions)
+
+	for i = 1, #lerpedPositions - 1 do
+		local p0 = lerpedPositions[i]
+		local p1 = lerpedPositions[i + 1]
+		local delta = p1 - p0
+
+		-- Yaw-only facing (prevents pitching/rolling)
+		local flat = Vector3.new(delta.X, 0, delta.Z)
+
+		if flat.Magnitude <= EPS then
+			-- Degenerate: fall back to a neutral rotation at this point
+			cframes[i] = CFrame.new(p0)
+		else
+			cframes[i] = CFrame.lookAt(p0, p0 + flat, Vector3.yAxis)
+		end
+
+		-- If you *want* pitch for elevation changes, replace the above with:
+		-- cframes[i] = CFrame.lookAt(p0, p1, Vector3.yAxis)
+	end
+
+	-- Last node: keep the last segment's facing if possible
+	local lastIndex = #lerpedPositions
+	if lastIndex == 1 then
+		cframes[1] = CFrame.new(lerpedPositions[1])
+	else
+		local lastPos = lerpedPositions[lastIndex]
+		local prevPos = lerpedPositions[lastIndex - 1]
+		local delta = lastPos - prevPos
+		local flat = Vector3.new(delta.X, 0, delta.Z)
+
+		if flat.Magnitude > EPS then
+			cframes[lastIndex] = CFrame.lookAt(lastPos, lastPos + flat, Vector3.yAxis)
+		else
+			local prevCf = cframes[lastIndex - 1]
+			-- Same rotation as previous, updated position
+			cframes[lastIndex] = CFrame.fromMatrix(lastPos, prevCf.RightVector, prevCf.UpVector, prevCf.BackVector)
+		end
 	end
 
 	return {
 		length = totalLength,
-		nodes = lerpedNodes,
+		nodes = cframes,
 	}
 end
 
-function PathUtils.getPosFromDist(path: Path, dist: number): Vector3
-	local currentIndex = 1 + math.floor(dist)
-	local currentNode = path.nodes[currentIndex]
-	local nextNode = path.nodes[1 + currentIndex]
-	if not nextNode then
-		return currentNode
+function PathUtils.getCFrameFromDist(path: Path, dist: number): CFrame
+	-- Clamp to [0, path.length] to avoid out-of-range
+	if dist <= 0 then
+		return path.nodes[1]
+	end
+	if dist >= path.length then
+		return path.nodes[#path.nodes]
 	end
 
-	local partialDist = dist - math.floor(dist)
-	return currentNode:Lerp(nextNode, partialDist)
+	local baseIndex = math.floor(dist) + 1
+	local currentCf = path.nodes[baseIndex]
+	local nextCf = path.nodes[baseIndex + 1]
+	if not nextCf then
+		return currentCf
+	end
+
+	local alpha = dist - math.floor(dist)
+	return currentCf:Lerp(nextCf, alpha)
+end
+
+-- Optional convenience wrapper if you still want position-only access
+function PathUtils.getPosFromDist(path: Path, dist: number): Vector3
+	return PathUtils.getCFrameFromDist(path, dist).Position
 end
 
 return PathUtils

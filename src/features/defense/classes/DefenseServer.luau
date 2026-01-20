@@ -40,10 +40,12 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 	self.networker = Networker.server.new("Defense" .. index, self, {})
 	self:start()
 
-	task.delay(2, function()
-		print("Spawning test enemies")
-		local enemy = EnemyServer.new(1)
-		self:addEnemy(enemy)
+	task.spawn(function()
+		while true do
+			task.wait(3)
+			local enemy = EnemyServer.new(1)
+			self:addEnemy(enemy)
+		end
 	end)
 
 	return self

@@ -18,10 +18,10 @@ local IMPULSE = 50
 local PROJECTILE_SPEED = 8
 
 return function(self: Tower & any, enemy: Enemy)
-	TowerAnimationUtils.aimBoth(self.model, enemy.pos)
+	TowerAnimationUtils.aimBoth(self.model, enemy:getPosition())
 	TowerAnimationUtils.playSound(self, "Attack")
 	local start = self.model.Rotates.Barrel.Start.Position
-	TowerAnimationUtils.projectileBullet(start, enemy.pos, PROJECTILE_SPEED, "CannonBall")
+	TowerAnimationUtils.projectileBullet(start, enemy:getPosition(), PROJECTILE_SPEED, "CannonBall")
 
 	local spring = self.spring :: Ripple.Spring<number>
 	if not spring then

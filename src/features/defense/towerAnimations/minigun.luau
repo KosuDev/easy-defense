@@ -13,7 +13,7 @@ local XZ = Vector3.new(1, 0, 1)
 local BARREL_SPEED = 4 * 360
 
 return function(self: any, enemy: Enemy)
-	TowerAnimationUtils.aim(self.model, enemy.pos)
+	TowerAnimationUtils.aim(self.model, enemy:getPosition())
 	local range = Towers.getTowerInfo(self.data.itemId).range
 	TowerAnimationUtils.playSound(self, "Attack")
 
@@ -41,7 +41,7 @@ return function(self: any, enemy: Enemy)
 	self.attackConn = RunService.Heartbeat:Connect(function(dt: number)
 		self.attackCd -= dt
 		self.barrelAngle = (self.barrelAngle + dt * BARREL_SPEED) % 360
-		local dist = ((self.cf.Position - enemy.pos) * XZ).Magnitude * 0.95
+		local dist = ((self.cf.Position - enemy:getPosition()) * XZ).Magnitude * 0.95
 		if self.attackCd <= 0 or dist > range then
 			beam.Enabled = false
 			self.attackConn:Disconnect()

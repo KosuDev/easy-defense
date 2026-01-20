@@ -67,7 +67,7 @@ end
 function TowerAnimationUtils.beamEnemy(beam: Beam, enemy: EnemyClient.EnemyClient, useAttachment1: boolean?): () -> ()
 	local attachment: Attachment
 	local diedConn: Signal.Connection?
-	local pos = enemy.pos
+	local pos = enemy:getPosition()
 
 	local function setNewAttachment()
 		attachment = getAttachment()
@@ -102,7 +102,7 @@ function TowerAnimationUtils.beamEnemy(beam: Beam, enemy: EnemyClient.EnemyClien
 			beam.Attachment0 = enemyAttachment
 		end
 		diedConn = enemy.destroyed:Once(function()
-			pos = enemy.pos
+			pos = enemy:getPosition()
 			setNewAttachment()
 		end)
 	end

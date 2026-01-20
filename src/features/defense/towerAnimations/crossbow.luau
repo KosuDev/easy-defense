@@ -18,7 +18,7 @@ local BEAM_BULLET_PROPS = {}
 local IMPULSE = 20
 
 return function(self: Tower & any, enemy: Enemy)
-	TowerAnimationUtils.aim(self.model, enemy.pos)
+	TowerAnimationUtils.aim(self.model, enemy:getPosition())
 	local beam = self.model.Rotates.Top.Barrel.Arrow.Tip.Attachment.Beam :: Beam
 	TowerAnimationUtils.beamBullet(beam, enemy, BEAM_BULLET_PROPS)
 	TowerAnimationUtils.playSound(self, "Attack")

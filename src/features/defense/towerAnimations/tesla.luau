@@ -23,13 +23,13 @@ return function(self: any, enemy: Enemy)
 	local enemies = { enemy }
 	local startPoint = self.model.Start.Position
 	table.sort(enemies, function(a, b)
-		local distanceA = (a.pos - startPoint).Magnitude
-		local distanceB = (b.pos - startPoint).Magnitude
+		local distanceA = (a:getPosition() - startPoint).Magnitude
+		local distanceB = (b:getPosition() - startPoint).Magnitude
 		return distanceA < distanceB
 	end)
 
 	for i = 1, #enemies, 1 do
-		local enemyPos = enemies[i].pos
+		local enemyPos = enemies[i]:getPosition()
 		local bolt = self.bolts[tostring(i)]
 		local startPos: Vector3
 		if i > 1 then
@@ -43,8 +43,6 @@ return function(self: any, enemy: Enemy)
 		bolt.Size = Vector3.new(0.7, (startPos - enemyPos).Magnitude, 0.7)
 		bolt.CFrame = CFrame.new(midpoint, enemyPos) * CFrame.Angles(math.pi / 2, math.rad(math.random(0, 360)), 0)
 		bolt.Transparency = 0
-
-		print(startPos)
 	end
 
 	for i = #enemies + 1, 3, 1 do

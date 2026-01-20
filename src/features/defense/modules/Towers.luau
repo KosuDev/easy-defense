@@ -64,6 +64,15 @@ local towers = {
 		range = 25,
 		firerate = 1,
 	},
+
+	orbOfLight = {
+		name = "Orb of Light",
+		image = "",
+		weight = 10e9,
+		damage = 10,
+		range = 25,
+		firerate = 1,
+	},
 }
 
 local totalWeight = 0
