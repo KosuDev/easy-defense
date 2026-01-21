@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Signal = require(ReplicatedStorage.Packages.Signal)
+local ColorTweaker = require(ReplicatedStorage.Source.Core.Platform.ColorTweaker)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
@@ -51,6 +52,10 @@ function EnemyClient.new(enemyStats: Enemies.EnemyStats, uniqueId: number, path:
 	model:ScaleTo(enemyStats.size)
 	model.Name = "Enemy_" .. uniqueId
 	model:PivotTo(self.cf * MODEL_OFFSET)
+	ColorTweaker.fromContainer(model, {
+		primaryColor = ColorTweaker.enums.primaryColors.master,
+		hue = enemyStats.x / 8,
+	})
 	model.Parent = workspace
 	local track: AnimationTrack = model.AnimationController.Animator:LoadAnimation(ANIMATION)
 	self.track = track

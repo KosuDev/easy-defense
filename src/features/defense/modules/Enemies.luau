@@ -2,7 +2,7 @@ export type EnemyStats = {
 	health: number,
 	speed: number,
 	size: number,
-	color: Color3,
+	x: number,
 }
 
 local HP_SCALAR = 0.1
@@ -50,17 +50,13 @@ local function rollEnemyType(): string
 	return "normal"
 end
 
-local function getEnemyColor(x: number): Color3
-	return Color3.new()
-end
-
 local function getEnemyStats(x: number, enemyType: string): EnemyStats
 	local base = enemies[enemyType]
 	return {
 		health = base.health * HP_SCALAR * 2 ^ x,
 		speed = base.speed,
 		size = base.size,
-		color = getEnemyColor(x),
+		x = x,
 	}
 end
 

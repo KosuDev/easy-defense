@@ -205,6 +205,9 @@
           "$className": "Folder",
           "Platform": {
             "$className": "Folder",
+            "ColorTweaker": {
+              "$path": "src/core/platform/ColorTweaker.luau"
+            },
             "SoundController": {
               "$path": "src/core/platform/SoundController.luau"
             },
