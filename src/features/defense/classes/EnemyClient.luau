@@ -4,6 +4,7 @@ local Signal = require(ReplicatedStorage.Packages.Signal)
 local ColorTweaker = require(ReplicatedStorage.Source.Core.Platform.ColorTweaker)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
+local HitSplat = require(ReplicatedStorage.Source.Features.Defense.Modules.HitSplat)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 
 local ANIMATION = ReplicatedStorage.Assets.Animations.EnemyMovement
@@ -102,6 +103,8 @@ function EnemyClient.damage(self: EnemyClient, amt: number): ()
 	self.health -= amt
 	if self.health <= 0 then
 		self.dead = true
+		local color = self.model.Inner.Color
+		HitSplat(self:getPosition(), color, self.baseStats.health)
 	else
 		self:updateHpBar()
 	end

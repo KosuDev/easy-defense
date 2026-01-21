@@ -84,6 +84,9 @@
               "Enemies": {
                 "$path": "src/features/defense/modules/Enemies.luau"
               },
+              "HitSplat": {
+                "$path": "src/features/defense/modules/HitSplat.luau"
+              },
               "PathUtils": {
                 "$path": "src/features/defense/modules/PathUtils.luau"
               },
