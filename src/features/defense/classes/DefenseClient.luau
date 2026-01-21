@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local EnemyClient = require(script.Parent.EnemyClient)
 local TowerClient = require(script.Parent.TowerClient)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -76,8 +77,8 @@ function DefenseClient.towerAdded(self: DefenseClient, node: number, cf: CFrame,
 	self.towers[node] = tower
 end
 
-function DefenseClient.enemyAdded(self: DefenseClient, uniqueId: number, enemyId: number): ()
-	local enemy = EnemyClient.new(enemyId, uniqueId, self.path)
+function DefenseClient.enemyAdded(self: DefenseClient, uniqueId: number, enemyStats: Enemies.EnemyStats): ()
+	local enemy = EnemyClient.new(enemyStats, uniqueId, self.path)
 	self.enemies[uniqueId] = enemy
 end
 

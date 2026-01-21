@@ -24,6 +24,7 @@ export type TowerServer = typeof(setmetatable(
 		towerInfo: Towers.TowerInfo,
 		enemies: { EnemyServer },
 		networker: Networker.Server,
+		dps: number,
 	},
 	TowerServer
 ))
@@ -40,6 +41,7 @@ function TowerServer.new(node: number, cf: CFrame, data: TowerData): TowerServer
 	}, TowerServer)
 
 	self.cd = 1 / self.towerInfo.firerate
+	self.dps = self.towerInfo.damage * self.towerInfo.firerate
 
 	return self
 end

@@ -4,12 +4,14 @@ local RunService = game:GetService("RunService")
 local EnemyServer = require(script.Parent.EnemyServer)
 local TowerServer = require(script.Parent.TowerServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 
 type TowerServer = TowerServer.TowerServer
 type EnemyServer = EnemyServer.EnemyServer
 type Path = PathUtils.Path
 
+local SPAWN_COOLDOWN = 3
 local SORT_COOLDOWN = 1
 local DefenseServer = {}
 DefenseServer.__index = DefenseServer
@@ -24,6 +26,8 @@ export type DefenseServer = typeof(setmetatable(
 		networker: Networker.Server,
 		updateConn: RBXScriptConnection?,
 		sortCooldown: number,
+		strength: number,
+		spawnCd: number,
 	},
 	DefenseServer
 ))
@@ -35,26 +39,33 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 		index = index,
 		player = player,
 		sortCooldown = SORT_COOLDOWN,
+		strength = 0,
+		spawnCd = SPAWN_COOLDOWN,
 	}, DefenseServer)
 
 	self.networker = Networker.server.new("Defense" .. index, self, {})
 	self:start()
 
-	task.spawn(function()
-		while true do
-			task.wait(3)
-			local enemy = EnemyServer.new(1)
-			self:addEnemy(enemy)
-		end
-	end)
-
 	return self
+end
+
+function DefenseServer.spawnEnemy(self: DefenseServer)
+	local enemyStats = Enemies.getEnemyForStrength(self.strength)
+	local enemy = EnemyServer.new(enemyStats)
+	self:addEnemy(enemy)
+end
+
+function DefenseServer.strengthChanged(self: DefenseServer)
+	local strength = 0
+	for _, tower in self.towers do
+		strength += tower.dps
+	end
+	self.strength = strength
 end
 
 function DefenseServer.updatePath(self: DefenseServer, defenseModel: Model & any)
 	local path = PathUtils.calcpath(defenseModel)
 	self.path = path
-	print(path)
 
 	for _, enemy in self.enemies do
 		enemy.path = path
@@ -89,6 +100,7 @@ function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
 	end
 	self.towers[uniqueId] = nil
 	self.networker:fireAll("towerRemoved", tower.node)
+	self:strengthChanged()
 end
 
 function DefenseServer.getUniqueIdByNode(self: DefenseServer, node: number): string?
@@ -107,15 +119,22 @@ function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: To
 	if not dontReplicate then
 		self.networker:fireAll("towerAdded", tower.node, tower.cf, tower.data)
 	end
+	self:strengthChanged()
 end
 
 function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)
 	enemy.path = self.path
 	table.insert(self.enemies, enemy)
-	self.networker:fireAll("enemyAdded", enemy.uniqueId, enemy.enemyId)
+	self.networker:fireAll("enemyAdded", enemy.uniqueId, enemy.baseStats)
 end
 
 function DefenseServer.update(self: DefenseServer, dt: number): ()
+	self.spawnCd -= dt
+	if self.spawnCd <= 0 then
+		self:spawnEnemy()
+		self.spawnCd = SPAWN_COOLDOWN
+	end
+
 	for i = #self.enemies, 1, -1 do
 		local enemy = self.enemies[i]
 		enemy:update(dt)

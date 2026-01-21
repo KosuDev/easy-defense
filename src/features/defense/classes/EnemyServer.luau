@@ -1,12 +1,14 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 local EnemyServer = {}
 EnemyServer.__index = EnemyServer
 
+type EnemyStats = Enemies.EnemyStats
+
 export type EnemyServer = typeof(setmetatable(
 	{} :: {
-		enemyId: number,
 		dist: number,
 		pos: Vector3,
 		health: number,
@@ -16,6 +18,7 @@ export type EnemyServer = typeof(setmetatable(
 		killed: boolean,
 		path: any,
 		uniqueId: number,
+		baseStats: EnemyStats,
 	},
 	EnemyServer
 ))
@@ -26,17 +29,17 @@ local function getUniqueId(): number
 	return uniqueIdCounter
 end
 
-function EnemyServer.new(id: number): EnemyServer
+function EnemyServer.new(enemyStats: EnemyStats): EnemyServer
 	local self = setmetatable({
-		enemyId = id,
+		baseStats = enemyStats,
 		uniqueId = getUniqueId(),
 		dist = 0,
 		pos = Vector3.new(),
 		dead = false,
 		killed = false,
-		health = 100,
-		maxHealth = 100,
-		speed = 5,
+		health = enemyStats.health,
+		maxHealth = enemyStats.health,
+		speed = enemyStats.speed,
 	}, EnemyServer)
 
 	return self

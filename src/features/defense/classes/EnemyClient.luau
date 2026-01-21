@@ -2,10 +2,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
+local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 
 local ANIMATION = ReplicatedStorage.Assets.Animations.EnemyMovement
 local MODEL_OFFSET = CFrame.new(0, 0.125, 0)
+local ANIMATION_SPEED = 6
 
 local EnemyClient = {}
 EnemyClient.__index = EnemyClient
@@ -13,7 +15,6 @@ EnemyClient.__index = EnemyClient
 export type EnemyClient = typeof(setmetatable(
 	{} :: {
 		dist: number,
-		enemyId: number,
 		uniqueId: number,
 		cf: CFrame,
 		health: number,
@@ -25,32 +26,36 @@ export type EnemyClient = typeof(setmetatable(
 		path: PathUtils.Path,
 		hpBar: BillboardGui & any,
 		destroyed: Signal.Signal<>,
+		baseStats: Enemies.EnemyStats,
+		track: AnimationTrack,
 	},
 	EnemyClient
 ))
 
-function EnemyClient.new(enemyId: number, uniqueId: number, path: PathUtils.Path): EnemyClient
+function EnemyClient.new(enemyStats: Enemies.EnemyStats, uniqueId: number, path: PathUtils.Path): EnemyClient
 	local self = setmetatable({
 		dist = 0,
 		path = path,
-		enemyId = enemyId,
+		baseStats = enemyStats,
 		uniqueId = uniqueId,
 		cf = PathUtils.getCFrameFromDist(path, 0),
-		health = 100,
-		speed = 5,
+		health = enemyStats.health,
+		speed = enemyStats.speed,
 		dead = false,
-		maxHealth = 100,
+		maxHealth = enemyStats.health,
 		reachedEnd = false,
 		destroyed = Signal.new(),
 	}, EnemyClient)
 
 	local model = ReplicatedStorage.Assets.Misc.Enemy:Clone()
+	model:ScaleTo(enemyStats.size)
 	model.Name = "Enemy_" .. uniqueId
 	model:PivotTo(self.cf * MODEL_OFFSET)
 	model.Parent = workspace
 	local track: AnimationTrack = model.AnimationController.Animator:LoadAnimation(ANIMATION)
+	self.track = track
 	track.Looped = true
-	track:Play()
+	track:Play(nil, nil, enemyStats.speed / ANIMATION_SPEED)
 	self.model = model
 	self.hpBar = model.Root.EnemyHealthBillboard
 	self:updateHpBar()
@@ -74,6 +79,11 @@ local function percentToGradient(percent: number): ColorSequence
 		ColorSequenceKeypoint.new(percent + 0.001, RED),
 		ColorSequenceKeypoint.new(1, RED),
 	})
+end
+
+function EnemyClient.updateSpeed(self: EnemyClient, newSpeed: number): ()
+	self.speed = newSpeed
+	self.track:AdjustSpeed(self.speed / ANIMATION_SPEED)
 end
 
 function EnemyClient.updateHpBar(self: EnemyClient): ()
