@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local DataService = require(ReplicatedStorage.Packages.DataService).server
 local EnemyServer = require(script.Parent.EnemyServer)
 local TowerServer = require(script.Parent.TowerServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -92,7 +93,6 @@ function DefenseServer.stop(self: DefenseServer)
 end
 
 function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
-	print(self.towers)
 	local tower = self.towers[uniqueId]
 	if not tower then
 		warn("Attempted to remove non-existent tower: " .. uniqueId)
@@ -142,7 +142,9 @@ function DefenseServer.update(self: DefenseServer, dt: number): ()
 		if enemy.dead then
 			table.remove(self.enemies, i)
 			if enemy.killed then
-				print("Enemy killed reward player")
+				DataService:update(self.player, "currency", function(amt: number)
+					return amt + enemy.maxHealth
+				end)
 			end
 		elseif enemy.dist >= self.path.length then
 			enemy.dead = true

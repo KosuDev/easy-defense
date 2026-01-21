@@ -12,6 +12,15 @@
             "$className": "Folder",
             "UI": {
               "$className": "Folder",
+              "Hud": {
+                "$className": "Folder",
+                "BottomBar": {
+                  "$path": "src/features/app/ui/hud/BottomBar.luau"
+                },
+                "HudRoot": {
+                  "$path": "src/features/app/ui/hud/HudRoot.luau"
+                }
+              },
               "root.story": {
                 "$path": "src/features/app/ui/root.story.luau"
               },
@@ -222,6 +231,9 @@
             "$className": "Folder",
             "Abbreviate": {
               "$path": "src/core/ui/Abbreviate.luau"
+            },
+            "FormatCurrency": {
+              "$path": "src/core/ui/FormatCurrency.luau"
             },
             "FormatTime": {
               "$path": "src/core/ui/FormatTime.luau"
