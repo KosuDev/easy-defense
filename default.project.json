@@ -93,6 +93,9 @@
               "crossbow": {
                 "$path": "src/features/defense/towerAnimations/crossbow.luau"
               },
+              "laserBlaster": {
+                "$path": "src/features/defense/towerAnimations/laserBlaster.luau"
+              },
               "minigun": {
                 "$path": "src/features/defense/towerAnimations/minigun.luau"
               },

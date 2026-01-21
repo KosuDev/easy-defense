@@ -73,6 +73,15 @@ local towers = {
 		range = 25,
 		firerate = 1,
 	},
+
+	laserBlaster = {
+		name = "Laser Blaster",
+		image = "",
+		weight = 10e9,
+		damage = 4,
+		range = 20,
+		firerate = 1,
+	},
 }
 
 local totalWeight = 0
