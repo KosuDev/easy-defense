@@ -30,6 +30,18 @@
                   "$path": "src/features/app/ui/hud/LeftSideBar.luau"
                 }
               },
+              "Menus": {
+                "$className": "Folder",
+                "Menu": {
+                  "$path": "src/features/app/ui/menus/Menu.luau"
+                },
+                "MenuRoot": {
+                  "$path": "src/features/app/ui/menus/MenuRoot.luau"
+                },
+                "RebirthMenu": {
+                  "$path": "src/features/app/ui/menus/RebirthMenu.luau"
+                }
+              },
               "root.story": {
                 "$path": "src/features/app/ui/root.story.luau"
               },
@@ -296,6 +308,9 @@
               },
               "ImageLabel": {
                 "$path": "src/core/ui/primitives/ImageLabel.luau"
+              },
+              "SlideOutFrame": {
+                "$path": "src/core/ui/primitives/SlideOutFrame.luau"
               },
               "TextLabel": {
                 "$path": "src/core/ui/primitives/TextLabel.luau"

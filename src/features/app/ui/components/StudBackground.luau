@@ -15,5 +15,6 @@ return function(props: UITypes.ImageLabelProps)
 	safeProps.Image = ImageIds.studBackground
 	safeProps.ScaleType = Enum.ScaleType.Tile
 	safeProps.TileSize = props.TileSize or DEFAULTS.TileSize
+	safeProps.BorderSizePixel = 0
 	return e("ImageLabel", safeProps)
 end
