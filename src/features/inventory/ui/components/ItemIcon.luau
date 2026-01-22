@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ItemButtonStroke = require(script.Parent.ItemButtonStroke)
 local React = require(ReplicatedStorage.Packages.React)
+local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
@@ -68,6 +69,25 @@ return function(props: ItemIconProps)
 				Size = UDim2.fromScale(0.66, 0.25),
 				Stroke = {},
 				ZIndex = 2,
+			})
+			else nil,
+
+		Strength = if isTower
+			then e(TextLabel, {
+				Text = "💪 " .. Abbreviate(math.round(info.damage * info.firerate)),
+				AnchorPoint = Vector2.new(1, 1),
+				TextXAlignment = Enum.TextXAlignment.Right,
+				Position = UDim2.fromScale(0.95, 0.95),
+				Size = UDim2.fromScale(0.9, 0.25),
+				Stroke = {},
+				ZIndex = 2,
+				Gradient = {
+					Color = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 223, 93)),
+						ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 121, 121)),
+					}),
+					Rotation = 90,
+				},
 			})
 			else nil,
 

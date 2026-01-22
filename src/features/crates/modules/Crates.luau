@@ -8,6 +8,7 @@ export type CrateInfo = {
 	image: string,
 	name: string,
 	openTime: number,
+	layoutOrder: number,
 }
 
 local crates = {
@@ -55,6 +56,10 @@ end
 table.sort(sortedCrates, function(a, b)
 	return a.weight > b.weight
 end)
+
+for i, crate in sortedCrates do
+	crates[crate.id].layoutOrder = i
+end
 
 local Crates = {}
 

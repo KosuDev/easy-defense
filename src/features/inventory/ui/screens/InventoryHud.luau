@@ -320,6 +320,7 @@ local function InventoryFrame(props)
 				FillDirection = Enum.FillDirection.Horizontal,
 				HorizontalAlignment = Enum.HorizontalAlignment.Left,
 				VerticalAlignment = Enum.VerticalAlignment.Top,
+				SortOrder = Enum.SortOrder.LayoutOrder,
 			}),
 
 			Padding = e("UIPadding", {

@@ -11,6 +11,7 @@ export type TowerInfo = {
 	odds: number,
 	id: string,
 	height: number,
+	layoutOrder: number,
 }
 
 local towers = {
@@ -110,6 +111,10 @@ end
 table.sort(sortedTowers, function(a, b)
 	return a.weight > b.weight
 end)
+
+for i, tower in sortedTowers do
+	tower.layoutOrder = i
+end
 
 local Towers = {}
 

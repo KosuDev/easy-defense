@@ -5,6 +5,8 @@ local ItemIcon = require(script.Parent.ItemIcon)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
+local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local useInventoryItemVisibility =
@@ -18,11 +20,22 @@ type InventoryButtonProps = {
 	uniqueId: string,
 }
 
+local function useItemDataLayout(itemData: DataTemplate.ItemData)
+	return React.useMemo(function()
+		if itemData.crateId then
+			return -Crates.getCrateInfo(itemData.crateId).layoutOrder
+		else
+			return 1e3 - Towers.getTowerInfo(itemData.itemId).layoutOrder
+		end
+	end, { itemData })
+end
+
 return function(props: InventoryButtonProps)
 	local uniqueId = props.uniqueId
 	local setDragStart = useItemDragger(uniqueId)
 	local equippedUniqueId = ReactCharm.useAtom(InventorySlice.state.equippedItemUniqueId)
 	local visible = useInventoryItemVisibility(uniqueId, false)
+	local layoutOrder = useItemDataLayout(props.itemData)
 	if not visible then
 		return nil
 	end
@@ -30,6 +43,7 @@ return function(props: InventoryButtonProps)
 	return e(Button, {
 		hoverScale = 1,
 		BackgroundTransparency = 1,
+		LayoutOrder = layoutOrder,
 		Activated = function()
 			local isEquipped = equippedUniqueId == uniqueId
 			if isEquipped then

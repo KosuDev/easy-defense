@@ -1,6 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 
 local e = React.createElement
@@ -13,11 +16,14 @@ local DEFAULT_TRANSPARENCY = NumberSequence.new({
 
 type ItemButtonStrokeProps = {
 	equipped: boolean?,
-	partData: any,
+	partData: DataTemplate.ItemData,
 }
 
 return function(props: ItemButtonStrokeProps)
-	local tier = Tiers.getTierForOdds(0.5) --TODO use actual odds from itemData
+	local info = if props.partData.crateId
+		then Crates.getCrateInfo(props.partData.crateId)
+		else Towers.getTowerInfo(props.partData.itemId)
+	local tier = Tiers.getTierForOdds(info.odds)
 
 	return e("UIStroke", {
 		Color = Color3.fromRGB(255, 255, 255),
