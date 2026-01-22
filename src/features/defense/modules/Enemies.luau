@@ -5,7 +5,7 @@ export type EnemyStats = {
 	x: number,
 }
 
-local HP_SCALAR = 0.1
+local HP_SCALAR = 0.08
 
 local enemies = {
 	normal = {
@@ -53,7 +53,7 @@ end
 local function getEnemyStats(x: number, enemyType: string): EnemyStats
 	local base = enemies[enemyType]
 	return {
-		health = base.health * HP_SCALAR * 2 ^ x,
+		health = math.round(base.health * HP_SCALAR * 2 ^ x),
 		speed = base.speed,
 		size = base.size,
 		x = x,

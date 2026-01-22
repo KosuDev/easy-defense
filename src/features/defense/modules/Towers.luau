@@ -1,4 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 export type TowerInfo = {
 	name: string,
 	image: string,
@@ -17,7 +19,7 @@ local towers = {
 		image = "rbxassetid://137282012852812",
 		weight = 10e9,
 		damage = 4,
-		range = 20,
+		range = 25,
 		firerate = 2,
 		height = 6,
 	},
@@ -25,9 +27,9 @@ local towers = {
 	catapult = {
 		name = "Catapult",
 		image = "rbxassetid://83891927108386",
-		weight = 10e9,
-		damage = 6,
-		range = 20,
+		weight = 4e9,
+		damage = 15,
+		range = 25,
 		firerate = 1,
 		height = 6,
 	},
@@ -35,19 +37,19 @@ local towers = {
 	cannon = {
 		name = "Cannon",
 		image = "rbxassetid://71141124599337",
-		weight = 10e9,
-		damage = 10,
-		range = 20,
-		firerate = 0.5,
+		weight = 1.5e9,
+		damage = 40,
+		range = 25,
+		firerate = 0.66,
 		height = 6.5,
 	},
 
 	turret = {
 		name = "Turret",
 		image = "rbxassetid://120894736547855",
-		weight = 10e9,
-		damage = 6,
-		range = 20,
+		weight = 600e6,
+		damage = 60,
+		range = 25,
 		firerate = 1,
 		height = 7,
 	},
@@ -55,9 +57,9 @@ local towers = {
 	minigun = {
 		name = "Minigun",
 		image = "rbxassetid://109830357002566",
-		weight = 10e9,
-		damage = 1,
-		range = 20,
+		weight = 187e6,
+		damage = 33,
+		range = 25,
 		firerate = 4,
 		height = 7,
 	},
@@ -65,8 +67,8 @@ local towers = {
 	tesla = {
 		name = "Tesla",
 		image = "rbxassetid://103187875630362",
-		weight = 10e9,
-		damage = 10,
+		weight = 64e6,
+		damage = 250,
 		range = 25,
 		firerate = 1,
 		height = 10,
@@ -75,20 +77,20 @@ local towers = {
 	orbOfLight = {
 		name = "Orb of Light",
 		image = "rbxassetid://135703405395373",
-		weight = 10e9,
-		damage = 10,
+		weight = 28e6,
+		damage = 600,
 		range = 25,
-		firerate = 1,
+		firerate = 0.75,
 		height = 9.5,
 	},
 
 	laserBlaster = {
 		name = "Laser Blaster",
 		image = "rbxassetid://88729081935706",
-		weight = 10e9,
-		damage = 4,
-		range = 20,
-		firerate = 1,
+		weight = 16e6,
+		damage = 800,
+		range = 25,
+		firerate = 1.25,
 		height = 8.5,
 	},
 }
@@ -135,6 +137,20 @@ end
 function Towers.getTowerInfo(towerId: string): TowerInfo
 	assert(towers[towerId], "Invalid towerId: " .. towerId)
 	return towers[towerId]
+end
+
+local function _listOdds()
+	print("--------------------------------")
+	for _, tower in sortedTowers do
+		print(
+			"1/"
+				.. Abbreviate(math.ceil(1 / tower.odds))
+				.. " "
+				.. math.round(tower.odds * 10000) / 100
+				.. "% "
+				.. tower.name
+		)
+	end
 end
 
 return Towers

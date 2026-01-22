@@ -38,7 +38,8 @@ return function(position: Vector3, primaryColor: Color3, currencyReward: number)
 	hitsplat.Parent = workspace
 	hitsplat.Primary:Emit(DEFAULT_EMIT_COUNT)
 	hitsplat.Secondary:Emit(DEFAULT_EMIT_COUNT)
-	hitsplat.Sound:Play()
+	hitsplat.Coins:Play()
+	hitsplat.Pop:Play()
 
 	local gui = hitsplat.CurrencyRewardGui
 	local textLabel = gui.TextLabel

@@ -58,11 +58,11 @@ return function(self: any, enemy: Enemy)
 	self.attackConnection = RunService.Heartbeat:Connect(function(dt: number)
 		self.attackTimer -= dt
 		if self.attackTimer <= 0 then
+			self.attackConnection:Disconnect()
+			self.attackConnection = nil
 			for _, bolt in self.bolts:GetChildren() do
 				bolt.Transparency = 1
 			end
-			self.attackConnection:Disconnect()
-			self.attackConnection = nil
 		end
 	end)
 end

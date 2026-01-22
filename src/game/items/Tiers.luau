@@ -23,6 +23,60 @@ local tiers = {
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 200, 0)),
 		}),
 	},
+
+	rare = {
+		name = "Rare",
+		odds = 1 / 50,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(134, 221, 255)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 100, 200)),
+		}),
+	},
+
+	epic = {
+		name = "Epic",
+		odds = 1 / 200,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 134, 255)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 0, 200)),
+		}),
+	},
+
+	legendary = {
+		name = "Legendary",
+		odds = 1 / 1000,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 204, 102)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 102, 0)),
+		}),
+	},
+
+	mythic = {
+		name = "Mythic",
+		odds = 1 / 5e3,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 75, 75)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 0, 0)),
+		}),
+	},
+
+	divine = {
+		name = "Divine",
+		odds = 1 / 20e3,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(187, 39, 255)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 192, 118)),
+		}),
+	},
+
+	exotic = {
+		name = "Exotic",
+		odds = 1 / 100e3,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 150)),
+		}),
+	},
 }
 
 local sortedTiers = {}
