@@ -12,6 +12,12 @@
             "$className": "Folder",
             "UI": {
               "$className": "Folder",
+              "Components": {
+                "$className": "Folder",
+                "StudBackground": {
+                  "$path": "src/features/app/ui/components/StudBackground.luau"
+                }
+              },
               "Hud": {
                 "$className": "Folder",
                 "BottomBar": {
@@ -19,6 +25,9 @@
                 },
                 "HudRoot": {
                   "$path": "src/features/app/ui/hud/HudRoot.luau"
+                },
+                "LeftSideBar": {
+                  "$path": "src/features/app/ui/hud/LeftSideBar.luau"
                 }
               },
               "root.story": {
@@ -279,6 +288,9 @@
             },
             "Primitives": {
               "$className": "Folder",
+              "AutoScaledFrame": {
+                "$path": "src/core/ui/primitives/AutoScaledFrame.luau"
+              },
               "Button": {
                 "$path": "src/core/ui/primitives/Button.luau"
               },

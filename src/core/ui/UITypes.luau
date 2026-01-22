@@ -29,6 +29,7 @@ export type ImageLabelProps = GenericUIProps & {
 	ImageRectOffset: CanBeBinding<Vector2>?,
 	ImageRectSize: CanBeBinding<Vector2>?,
 	SliceCenter: CanBeBinding<Rect>?,
+	TileSize: CanBeBinding<UDim2>?,
 }
 
 return nil

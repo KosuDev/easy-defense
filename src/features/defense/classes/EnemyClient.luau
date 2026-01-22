@@ -55,7 +55,7 @@ function EnemyClient.new(enemyStats: Enemies.EnemyStats, uniqueId: number, path:
 	model:PivotTo(self.cf * MODEL_OFFSET)
 	ColorTweaker.fromContainer(model, {
 		primaryColor = ColorTweaker.enums.primaryColors.master,
-		hue = enemyStats.x / 8,
+		hue = enemyStats.x / 16,
 	})
 	model.Parent = workspace
 	local track: AnimationTrack = model.AnimationController.Animator:LoadAnimation(ANIMATION)
