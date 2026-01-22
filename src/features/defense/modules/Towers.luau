@@ -8,6 +8,7 @@ export type TowerInfo = {
 	firerate: number,
 	odds: number,
 	id: string,
+	height: number,
 }
 
 local towers = {
@@ -18,6 +19,7 @@ local towers = {
 		damage = 4,
 		range = 20,
 		firerate = 2,
+		height = 6,
 	},
 
 	catapult = {
@@ -27,6 +29,7 @@ local towers = {
 		damage = 6,
 		range = 20,
 		firerate = 1,
+		height = 6,
 	},
 
 	cannon = {
@@ -36,6 +39,7 @@ local towers = {
 		damage = 10,
 		range = 20,
 		firerate = 0.5,
+		height = 6.5,
 	},
 
 	turret = {
@@ -45,6 +49,7 @@ local towers = {
 		damage = 6,
 		range = 20,
 		firerate = 1,
+		height = 7,
 	},
 
 	minigun = {
@@ -54,6 +59,7 @@ local towers = {
 		damage = 1,
 		range = 20,
 		firerate = 4,
+		height = 7,
 	},
 
 	tesla = {
@@ -63,6 +69,7 @@ local towers = {
 		damage = 10,
 		range = 25,
 		firerate = 1,
+		height = 10,
 	},
 
 	orbOfLight = {
@@ -72,6 +79,7 @@ local towers = {
 		damage = 10,
 		range = 25,
 		firerate = 1,
+		height = 9.5,
 	},
 
 	laserBlaster = {
@@ -81,6 +89,7 @@ local towers = {
 		damage = 4,
 		range = 20,
 		firerate = 1,
+		height = 8.5,
 	},
 }
 

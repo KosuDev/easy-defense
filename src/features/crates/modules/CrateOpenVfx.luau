@@ -7,13 +7,14 @@ local VfxUtils = require(ReplicatedStorage.Source.Core.Platform.VfxUtils)
 local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 
 local function xToScale(x: number, i: number): number
 	return math.clamp(1.2 * (-(2 * i * x - 1) ^ 2 + 1), 0.001, 1.2)
 end
 
-return function(cf)
+return function(cf: CFrame, towerData: DataTemplate.TowerData): ()
 	cf *= CFrame.new(0, 0.5, 0)
 	VfxUtils.emitAllAtPosition("CrateOpen", cf.Position)
 	SoundController:Play(Sounds.misc.woosh)
@@ -23,8 +24,10 @@ return function(cf)
 	local newTower
 
 	newTower = function(i: number)
-		local towerId = Towers.rollTowerId(1)
-		while towerId == prevId do
+		local isFinal = i == 1
+		local isBeforeFinal = i == 2
+		local towerId = if isFinal then towerData.itemId else Towers.rollTowerId(1)
+		while (towerId == prevId and not isFinal) or (isBeforeFinal and towerId == towerData.itemId) do
 			towerId = Towers.rollTowerId(1)
 		end
 
@@ -33,6 +36,7 @@ return function(cf)
 		local gui = ReplicatedStorage.Assets.VFX.TowerBillboard:Clone()
 		local towerInfo = Towers.getTowerInfo(towerId)
 		local tier = Tiers.getTierForOdds(towerInfo.odds)
+		gui.StudsOffsetWorldSpace = Vector3.new(0, towerInfo.height, 0)
 		gui.TowerName.TextLabel.Text = towerInfo.name
 		gui.Rarity.TextLabel.Text = tier.name
 		gui.Rarity.TextLabel.Gradient.Color = tier.gradient
@@ -44,7 +48,7 @@ return function(cf)
 		local x = 0
 		local hasBeenOne = false
 		local hasSpawnedNext = false
-		local isFinal = i == 1
+
 		local hasBeenMax = false
 		local conn
 		if isFinal then

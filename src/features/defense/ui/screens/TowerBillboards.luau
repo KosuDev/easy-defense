@@ -25,7 +25,7 @@ local function TowerBillboard(props: TowerBillboardProps)
 	local localBillboardGui = e("BillboardGui", {
 		LightInfluence = 0,
 		Adornee = props.root,
-		StudsOffsetWorldSpace = Vector3.new(0, 6, 0),
+		StudsOffsetWorldSpace = Vector3.new(0, towerInfo.height, 0),
 		Size = UDim2.fromScale(7, 3.5),
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	}, {

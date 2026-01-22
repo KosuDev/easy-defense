@@ -148,10 +148,8 @@ function PlotClient.crateOpened(self: PlotClient, node: number, towerData: Tower
 	nodeData.model = nil
 	self.nodesUpdated:Fire()
 
-	--do some aniamation
-
 	crateModel:Destroy()
-	CrateOpenVfx(nodeData.cf)
+	CrateOpenVfx(nodeData.cf, towerData)
 
 	self.defense:towerAdded(node, towerCf, towerData)
 end
