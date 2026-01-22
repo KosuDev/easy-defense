@@ -14,7 +14,7 @@ export type TowerInfo = {
 local towers = {
 	crossbow = {
 		name = "Crossbow",
-		image = "",
+		image = "rbxassetid://137282012852812",
 		weight = 10e9,
 		damage = 4,
 		range = 20,
@@ -24,7 +24,7 @@ local towers = {
 
 	catapult = {
 		name = "Catapult",
-		image = "",
+		image = "rbxassetid://83891927108386",
 		weight = 10e9,
 		damage = 6,
 		range = 20,
@@ -34,7 +34,7 @@ local towers = {
 
 	cannon = {
 		name = "Cannon",
-		image = "",
+		image = "rbxassetid://71141124599337",
 		weight = 10e9,
 		damage = 10,
 		range = 20,
@@ -44,7 +44,7 @@ local towers = {
 
 	turret = {
 		name = "Turret",
-		image = "",
+		image = "rbxassetid://120894736547855",
 		weight = 10e9,
 		damage = 6,
 		range = 20,
@@ -54,7 +54,7 @@ local towers = {
 
 	minigun = {
 		name = "Minigun",
-		image = "",
+		image = "rbxassetid://109830357002566",
 		weight = 10e9,
 		damage = 1,
 		range = 20,
@@ -64,7 +64,7 @@ local towers = {
 
 	tesla = {
 		name = "Tesla",
-		image = "",
+		image = "rbxassetid://103187875630362",
 		weight = 10e9,
 		damage = 10,
 		range = 25,
@@ -74,7 +74,7 @@ local towers = {
 
 	orbOfLight = {
 		name = "Orb of Light",
-		image = "",
+		image = "rbxassetid://135703405395373",
 		weight = 10e9,
 		damage = 10,
 		range = 25,
@@ -84,7 +84,7 @@ local towers = {
 
 	laserBlaster = {
 		name = "Laser Blaster",
-		image = "",
+		image = "rbxassetid://88729081935706",
 		weight = 10e9,
 		damage = 4,
 		range = 20,

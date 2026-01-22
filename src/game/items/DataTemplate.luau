@@ -3,11 +3,13 @@ local NULL = "NULL"
 export type CrateData = {
 	crateId: string,
 	amt: number,
+	fav: boolean?,
 }
 
 export type TowerData = {
 	itemId: string,
 	level: number,
+	fav: boolean?,
 }
 
 export type ItemData = CrateData & TowerData

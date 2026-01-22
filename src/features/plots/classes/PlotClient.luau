@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Charm = require(ReplicatedStorage.Packages.Charm)
+local DataService = require(ReplicatedStorage.Packages.DataService).client
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Ripple = require(ReplicatedStorage.Packages.Ripple)
@@ -10,6 +11,7 @@ local Signal = require(ReplicatedStorage.Packages.Signal)
 local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.CrateClient)
 local CrateOpenVfx = require(ReplicatedStorage.Source.Features.Crates.Modules.CrateOpenVfx)
 local DefenseClient = require(ReplicatedStorage.Source.Features.Defense.Classes.DefenseClient)
+local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
@@ -112,11 +114,9 @@ function PlotClient.updateNodeModels(self: PlotClient)
 			newModel:PivotTo(nodeData.cf * CFrame.new(0, 1, 0))
 			newModel.Parent = self.plotModel
 			nodeData.model = newModel
-			print("added new model")
 		elseif not itemData and model then
 			model:Destroy()
 			nodeData.model = nil
-			print("destroying model")
 		end
 	end
 end
@@ -199,6 +199,11 @@ function PlotClient.loadDefense(self: PlotClient)
 					return
 				end
 				self.networker:fire("requestBuild", node, equippedItemUniqueId)
+
+				local data = DataService:get({ "inventory", equippedItemUniqueId }) :: DataTemplate.ItemData
+				if data.itemId or (data.crateId and data.amt <= 0) then
+					InventoryServiceClient:unequipItem()
+				end
 			end
 		end)
 

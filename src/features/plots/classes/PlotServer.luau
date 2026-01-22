@@ -44,6 +44,7 @@ export type Plot = typeof(setmetatable(
 		timeOfLastCrateSpawn: number,
 		nodes: { Node },
 		defense: DefenseServer.DefenseServer,
+		serviceNetworker: Networker.Server,
 	},
 	PlotServer
 ))
@@ -64,6 +65,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 		requestBuild = PlotServer.requestBuild,
 		requestOpenCrate = PlotServer.requestOpenCrate,
 		requestRemove = PlotServer.requestRemove,
+		serviceNetworker = InventoryServiceServer.networker,
 	}, PlotServer)
 
 	local networker = Networker.server.new("Plot" .. self.index, self, {
@@ -116,7 +118,7 @@ function PlotServer.loadDefense(self: Plot)
 	local userNodes: DataTemplate.PlotNodes = DataService:get(self.player, "plotNodes")
 	for i, nodeData in userNodes do
 		local index = tonumber(i)
-		self:build(index, nodeData)
+		self:build(index, nodeData, true)
 	end
 end
 
@@ -133,7 +135,26 @@ function PlotServer.isOwner(self: Plot, player: Player): boolean
 	return self.player == player
 end
 
-function PlotServer.build(self: Plot, node: number, plotNode: PlotNode)
+function PlotServer.remove(self: Plot, uniqueId: string): ()
+	local node: number? = nil
+	for nodeString, uId in DataService:get(self.player, "plotNodes") do
+		if uId == uniqueId then
+			node = tonumber(nodeString)
+			break
+		end
+	end
+
+	if not node then
+		return
+	end
+
+	self.defense:removeTower(uniqueId)
+	self.nodes[node].data = nil
+	self.networker:fireAll("nodeUpdated", node, self.nodes[node])
+	DataService:set(self.player, { "plotNodes", tostring(node) }, nil)
+end
+
+function PlotServer.build(self: Plot, node: number, plotNode: PlotNode, fromLoad: boolean?)
 	local nodeData = self.nodes[node]
 	if plotNode.crateId then
 		nodeData.data = plotNode
@@ -141,8 +162,13 @@ function PlotServer.build(self: Plot, node: number, plotNode: PlotNode)
 		local towerData: TowerData? = DataService:get(self.player, { "inventory", plotNode })
 		assert(towerData, "Tower data does not exist for uniqueId " .. plotNode)
 		nodeData.data = towerData
+		if not fromLoad then
+			self:remove(plotNode)
+		end
+
 		local tower = TowerServer.new(node, nodeData.cf, towerData :: TowerData)
 		self.defense:addTower(plotNode, tower)
+		DataService:set(self.player, { "plotNodes", tostring(node) }, plotNode)
 	else
 		warn(plotNode)
 		error("Invalid plotNode data")
@@ -180,7 +206,6 @@ function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
 end
 
 function PlotServer.requestRemove(self: Plot, player: Player, node: number)
-	print("requestRemove called")
 	assert(player == self.player, "Player is not the owner of this plot")
 	local nodeData = self.nodes[node]
 	if not nodeData or not nodeData.data or nodeData.data.crateId then
@@ -196,6 +221,7 @@ function PlotServer.requestRemove(self: Plot, player: Player, node: number)
 	self.nodes[node].data = nil
 	self.networker:fireAll("nodeUpdated", node, nodeData)
 	DataService:set(self.player, { "plotNodes", tostring(node) }, nil)
+	self.serviceNetworker:fire(self.player, "addToHotbar", uniqueId)
 end
 
 function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqueId: string)
@@ -300,6 +326,7 @@ function PlotServer.buyCrate(self: Plot, player: Player, crateIndex: number): bo
 	self.networker:fireAll("crateBought", crateIndex)
 
 	InventoryServiceServer:addCrate(player, crateId)
+	self.serviceNetworker:fire(player, "addToHotbar", crateId)
 
 	return true
 end

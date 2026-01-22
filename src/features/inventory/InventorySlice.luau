@@ -9,6 +9,9 @@ local draggingItemUniqueId = atom(nil :: string?)
 local hoveredSlot = atom(nil :: number?)
 local originalSlot = atom(nil :: number?)
 local equippedItemUniqueId = atom(nil :: string?)
+local tab: Atom<string> = atom("all")
+local searchQuery: Atom<string?> = atom(nil)
+local numItemsVisible: Atom<number> = atom(0)
 
 local actions = {}
 
@@ -20,5 +23,8 @@ return {
 		hoveredSlot = hoveredSlot,
 		originalSlot = originalSlot,
 		equippedItemUniqueId = equippedItemUniqueId,
+		tab = tab,
+		searchQuery = searchQuery,
+		numItemsVisible = numItemsVisible,
 	},
 }

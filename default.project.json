@@ -164,6 +164,9 @@
               },
               "Hooks": {
                 "$className": "Folder",
+                "useInventoryItemVisibility": {
+                  "$path": "src/features/inventory/ui/hooks/useInventoryItemVisibility.luau"
+                },
                 "useItemDragger": {
                   "$path": "src/features/inventory/ui/hooks/useItemDragger.luau"
                 }

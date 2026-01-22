@@ -7,7 +7,7 @@ local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotService
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 function DataService:onPlayerInit(_player, data)
-	data.currency = 100
+	data.currency = 10e3
 	data.inventory.wooden.amt = 100
 end
 

@@ -64,7 +64,6 @@ function Enemies.getEnemyForStrength(strength: number): EnemyStats
 	local mult = rollStrengthMultiplier()
 	strength *= mult
 	local x = math.max(1, math.round(math.log(strength / 4, 2)))
-	print("Strength", math.round(strength), "   Mult:", mult, "   X:", x)
 	local enemyType = rollEnemyType()
 	return getEnemyStats(x, enemyType)
 end

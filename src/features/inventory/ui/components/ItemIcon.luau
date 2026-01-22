@@ -4,6 +4,7 @@ local ItemButtonStroke = require(script.Parent.ItemButtonStroke)
 local React = require(ReplicatedStorage.Packages.React)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local e = React.createElement
 
@@ -20,7 +21,12 @@ type ItemIconProps = {
 }
 
 return function(props: ItemIconProps)
-	local info = if props.itemData.crateId then Crates.getCrateInfo(props.itemData.crateId) else {} :: any
+	local isTower = not props.itemData.crateId
+	local info = if not isTower
+		then Crates.getCrateInfo(props.itemData.crateId)
+		else Towers.getTowerInfo(props.itemData.itemId)
+
+	local iconSize = if isTower then UDim2.fromScale(1, 1) else UDim2.fromScale(0.9, 0.9)
 
 	return e("Frame", {
 		Size = props.Size,
@@ -36,10 +42,21 @@ return function(props: ItemIconProps)
 
 		Icon = e("ImageLabel", {
 			Image = info.image,
-			Size = UDim2.fromScale(0.9, 0.9),
+			Size = iconSize,
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundTransparency = 1,
+		}),
+
+		Background = e("ImageLabel", {
+			Image = info.image,
+			ImageTransparency = 0.7,
+			ImageColor3 = Color3.fromRGB(0, 0, 0),
+			Size = iconSize,
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.55),
+			BackgroundTransparency = 1,
+			ZIndex = 0,
 		}),
 
 		Quantity = if props.itemData.amt

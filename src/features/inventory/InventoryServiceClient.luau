@@ -80,6 +80,61 @@ function InventoryServiceClient.init(self: InventoryServiceClient)
 			end
 		end
 	end)
+
+	local function isUniqueIdBuilt(uniqueId: string): boolean
+		for _, uId in DataService:get("plotNodes") do
+			if uniqueId == uId then
+				return true
+			end
+		end
+		return false
+	end
+
+	DataService:getChangedSignal("plotNodes"):Connect(function()
+		for index, uniqueId in DataService:get("hotbar") do
+			local data = DataService:get({ "inventory", uniqueId })
+			if not data or (data.amt and data.amt <= 0) then
+				self.networker:fire("setHotBarUniqueId", index, nil)
+				DataService:set({ "hotbar", index }, "NULL")
+				if InventorySlice.state.equippedItemUniqueId() == uniqueId then
+					self:unequipItem()
+				end
+				continue
+			end
+
+			if not isUniqueIdBuilt(uniqueId) then
+				continue
+			end
+
+			self.networker:fire("setHotBarUniqueId", index, nil)
+			DataService:set({ "hotbar", index }, "NULL")
+			if InventorySlice.state.equippedItemUniqueId() == uniqueId then
+				self:unequipItem()
+			end
+		end
+	end)
+end
+
+function InventoryServiceClient.addToHotbar(self: InventoryServiceClient, uniqueId: string)
+	for _, slotUniqueId in DataService:get("hotbar") do
+		if slotUniqueId == uniqueId then
+			if not self:hasItemEquipped() then
+				self:equipItem(uniqueId)
+			end
+			return
+		end
+	end
+
+	for index, slotUniqueId in DataService:get("hotbar") do
+		if slotUniqueId == "NULL" then
+			DataService:set({ "hotbar", index }, uniqueId)
+			self.networker:fire("setHotBarUniqueId", index, uniqueId)
+			if not self:hasItemEquipped() then
+				self:equipItem(uniqueId)
+			end
+			return
+		end
+	end
 end
 
 function InventoryServiceClient.hasItemEquipped(self: InventoryServiceClient): boolean

@@ -27,17 +27,17 @@ type HotbarSlotProps = {
 }
 
 local function useHotBarItemData(index: number)
-	local path = useDataState({ "hotbar", index })
+	local uniqueId = useDataState({ "hotbar", index })
 	local itemData, setItemData = React.useState(nil)
 
 	React.useEffect(function()
-		if path == NULL or not path then
+		if uniqueId == NULL or not uniqueId then
 			setItemData(nil)
 			return
 		end
 
 		local function update()
-			local val = DataService:get({ "inventory", path })
+			local val = DataService:get({ "inventory", uniqueId })
 			if type(val) == "table" then
 				setItemData(table.clone(val))
 			else
@@ -46,12 +46,12 @@ local function useHotBarItemData(index: number)
 		end
 
 		update()
-		local conn = DataService:getChangedSignal({ "inventory", path }):Connect(update)
+		local conn = DataService:getChangedSignal({ "inventory", uniqueId }):Connect(update)
 
 		return function()
 			conn:Destroy()
 		end
-	end, { path })
+	end, { uniqueId })
 
 	return itemData
 end
@@ -181,6 +181,113 @@ local function InventoryButtons()
 	return buttons
 end
 
+local function Tab(props)
+	return e(Button, {
+		hoverScale = 1,
+		Size = UDim2.fromScale(1, 1),
+		SizeConstraint = Enum.SizeConstraint.RelativeXX,
+		BackgroundColor3 = Color3.fromRGB(37, 38, 41),
+		BackgroundTransparency = 0.2,
+		LayoutOrder = props.layout,
+		Activated = function()
+			InventorySlice.state.tab(props.tab)
+		end,
+	}, {
+		Corner = e("UICorner", {
+			CornerRadius = UDim.new(0, 6),
+		}),
+
+		Image = e("ImageLabel", {
+			Image = props.icon,
+			Size = UDim2.fromScale(0.75, 0.75),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5),
+			BackgroundTransparency = 1,
+		}),
+	})
+end
+
+local function Tabs()
+	return e("Frame", {
+		Size = UDim2.new(0, 66, 1, 0),
+		AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(0, -6, 0.5, 0),
+		BackgroundTransparency = 1,
+	}, {
+		Layout = e("UIListLayout", {
+			FillDirection = Enum.FillDirection.Vertical,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Top,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 6),
+		}),
+
+		AllTab = e(Tab, { tab = "all", layout = 1, icon = "" }),
+		TowersTab = e(Tab, { tab = "towers", layout = 2, icon = "" }),
+		CratesTab = e(Tab, { tab = "crates", layout = 3, icon = "" }),
+		FavTab = e(Tab, { tab = "favorites", layout = 4, icon = "" }),
+	})
+end
+
+local function SearchBox()
+	local ref = React.useRef(nil :: TextBox?)
+	React.useEffect(function()
+		if not ref.current then
+			return
+		end
+
+		local conn = ref.current:GetPropertyChangedSignal("Text"):Connect(function()
+			local txt = ref.current.Text
+			if txt == "" then
+				txt = nil
+			end
+			InventorySlice.state.searchQuery(txt)
+		end)
+
+		return function()
+			conn:Disconnect()
+		end
+	end, { ref })
+
+	return e("TextBox", {
+		ref = ref,
+		Size = UDim2.fromOffset(200, 42),
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(0.9, 0, 0, 8),
+		BackgroundColor3 = Color3.fromRGB(217, 219, 227),
+		BackgroundTransparency = 0.8,
+		TextColor3 = Color3.fromRGB(255, 255, 255),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		PlaceholderText = "Search",
+		Text = "",
+		TextScaled = true,
+		Font = Enum.Font.BuilderSansExtraBold,
+		ClipsDescendants = true,
+	}, {
+		Corner = e("UICorner", {
+			CornerRadius = UDim.new(0, 6),
+		}),
+
+		Padding = e("UIPadding", {
+			PaddingLeft = UDim.new(0, 10),
+			PaddingRight = UDim.new(0, 10),
+			PaddingTop = UDim.new(0, 3),
+			PaddingBottom = UDim.new(0, 3),
+		}),
+	})
+end
+
+local function TitleText()
+	return e(TextLabel, {
+		Text = "Backpack",
+		Size = UDim2.fromOffset(200, 36),
+		Position = UDim2.new(0, 15, 0.02, 0),
+		TextColor3 = Color3.fromRGB(229, 232, 238),
+		Stroke = {},
+		TextXAlignment = Enum.TextXAlignment.Left,
+	})
+end
+
 local function InventoryFrame(props)
 	return e("Frame", {
 		Visible = props.open,
@@ -193,12 +300,9 @@ local function InventoryFrame(props)
 		Corner = e("UICorner", {
 			CornerRadius = UDim.new(0, 6),
 		}),
-		InvButtons = e("Frame", {
-			Size = UDim2.new(0, 66, 1, 0),
-			AnchorPoint = Vector2.new(1, 0.5),
-			Position = UDim2.new(0, -6, 0.5, 0),
-			BackgroundTransparency = 1,
-		}),
+		Tabs = e(Tabs),
+		SearchBox = e(SearchBox),
+		TitleText = e(TitleText),
 
 		ScrollingFrame = e("ScrollingFrame", {
 			Size = UDim2.fromScale(0.98, 0.8),
@@ -211,7 +315,7 @@ local function InventoryFrame(props)
 			BackgroundTransparency = 1,
 		}, {
 			Layout = e("UIGridLayout", {
-				CellSize = UDim2.fromOffset(SLOT_SIZE, SLOT_SIZE),
+				CellSize = UDim2.fromOffset(85, 85),
 				CellPadding = UDim2.fromOffset(5, 5),
 				FillDirection = Enum.FillDirection.Horizontal,
 				HorizontalAlignment = Enum.HorizontalAlignment.Left,
