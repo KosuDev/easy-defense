@@ -274,6 +274,12 @@
             "Abbreviate": {
               "$path": "src/core/ui/Abbreviate.luau"
             },
+            "Components": {
+              "$className": "Folder",
+              "ErrorMessage": {
+                "$path": "src/core/ui/components/ErrorMessage.luau"
+              }
+            },
             "FormatCurrency": {
               "$path": "src/core/ui/FormatCurrency.luau"
             },

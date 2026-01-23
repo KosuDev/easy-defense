@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local ErrorMessage = require(ReplicatedStorage.Source.Core.UI.Components.ErrorMessage)
+local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
 local PlotClient = require(ReplicatedStorage.Source.Features.Plots.Classes.PlotClient)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 
@@ -26,6 +28,16 @@ function PlotServiceClient.removePlot(self: PlotServiceClient, index: number)
 		plot:destroy()
 	end
 	self.plots[index] = nil
+end
+
+function PlotServiceClient.rebirth(self: PlotServiceClient)
+	local result, msg = self.networker:fetch("rebirth")
+	print(result, msg)
+	if result then
+		Menu.setOpenedMenu(nil)
+	else
+		ErrorMessage.add(msg)
+	end
 end
 
 type PlotServiceClient = typeof(PlotServiceClient) & {

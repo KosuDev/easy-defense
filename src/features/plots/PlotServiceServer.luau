@@ -24,7 +24,7 @@ type PlayerData = {
 }
 
 function PlotServiceServer.init(self: PlotServiceServer)
-	self.networker = Networker.server.new("PlotService", self, {})
+	self.networker = Networker.server.new("PlotService", self, { self.rebirth })
 	self.playerData = ServicePlayerData.new(PLAYER_DATA_TEMPLATE :: PlayerData, self)
 	self.plotSpawns = {}
 
@@ -89,17 +89,24 @@ function PlotServiceServer.playerRemoving(self: PlotServiceServer, player: Playe
 	self.networker:fireAll("removePlot", index)
 end
 
-function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player)
-	local rebirths: number = DataService:getPlayerData(player, "rebirths")
+function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (boolean, string?)
+	local rebirths: number = DataService:get(player, "rebirths")
 	local reqs = RebirthUtils.getRequirements(rebirths)
 	if DataService:get(player, "currency") < reqs.currency then
-		return false, "Not enough currency"
+		return false, "Not enough money"
 	end
 
 	local hasUnlockedTower = DataService:get(player, { "towerIndex", reqs.towerId }) ~= nil
 	if not hasUnlockedTower then
 		return false, "Required tower not unlocked"
 	end
+
+	DataService:set(player, "currency", 0)
+	DataService:update(player, "rebirths", function(oldRebirths: number)
+		return oldRebirths + 1
+	end)
+
+	return true
 end
 
 type PlotServiceServer = typeof(PlotServiceServer) & {

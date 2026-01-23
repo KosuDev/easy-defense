@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local ErrorMessage = require(ReplicatedStorage.Source.Core.UI.Components.ErrorMessage)
 local e = React.createElement
 
 local capturedRoots = {}
@@ -18,7 +19,9 @@ local function RootUI()
 		Sift.Dictionary.map(capturedRoots, function(rootModule, rootName)
 			return e(rootModule, { Name = rootName })
 		end),
-		{}
+		{
+			e(ErrorMessage.Component),
+		}
 	)
 end
 

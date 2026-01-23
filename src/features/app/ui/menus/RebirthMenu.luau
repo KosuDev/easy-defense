@@ -10,6 +10,7 @@ local StudButton = require(ReplicatedStorage.Source.Features.App.UI.Components.S
 local TransparentFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.TransparentFrame)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
+local PlotServiceClient = require(ReplicatedStorage.Source.Features.Plots.PlotServiceClient)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 local e = React.createElement
@@ -281,7 +282,9 @@ return function()
 			Size = UDim2.fromOffset(200, 60),
 			Position = UDim2.fromScale(0.5, 0.88),
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			Activated = function() end,
+			Activated = function()
+				PlotServiceClient:rebirth()
+			end,
 		}),
 
 		Warning = e(TextLabel, {
