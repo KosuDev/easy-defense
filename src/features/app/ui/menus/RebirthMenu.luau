@@ -39,7 +39,7 @@ local function RequirementsFrame()
 		AnchorPoint = Vector2.new(0.5, 0),
 	}, {
 		Layout = e("UIListLayout", {
-			Padding = UDim.new(0, 10),
+			Padding = UDim.new(0, 20),
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -141,17 +141,99 @@ local function RequirementsFrame()
 end
 
 local function RewardsFrame()
+	local rebirths: number = useDataState("rebirths")
+	local rewards = RebirthUtils.rebirthRewards[rebirths + 1]
+
 	return e(InsetFrame, {
 		Size = UDim2.new(0.9, 0, 0, 160),
 		Position = UDim2.fromScale(0.5, 0.48),
 		AnchorPoint = Vector2.new(0.5, 0),
 	}, {
 		Layout = e("UIListLayout", {
-			Padding = UDim.new(0, 10),
+			Padding = UDim.new(0, 20),
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
 			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+
+		Slots = e(TransparentFrame, {
+			Size = UDim2.fromScale(0.7, 0.7),
+			SizeConstraint = Enum.SizeConstraint.RelativeYY,
+			LayoutOrder = 2,
+		}, {
+			Currency = e(TextLabel, {
+				Text = "Tower Slot",
+				Size = UDim2.fromScale(1.1, 0.3),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0),
+				ZIndex = 2,
+				Stroke = {},
+				Gradient = {
+					Rotation = 90,
+					Color = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, Color3.fromRGB(192, 255, 255)),
+						ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 110, 255)),
+					}),
+				},
+			}),
+
+			Text = e(TextLabel, {
+				Text = "+" .. rewards.towerSlots,
+				Size = UDim2.fromScale(1, 0.3),
+				Position = UDim2.fromScale(0.5, 0.95),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Stroke = { Thickness = 3 },
+				ZIndex = 2,
+			}),
+
+			Icon = e("ImageLabel", {
+				Size = UDim2.fromScale(0.9, 0.9),
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = ImageIds.extraSlot,
+			}),
+		}),
+
+		CurrencyMult = e(TransparentFrame, {
+			Size = UDim2.fromScale(0.7, 0.7),
+			SizeConstraint = Enum.SizeConstraint.RelativeYY,
+			LayoutOrder = 1,
+		}, {
+
+			Currency = e(TextLabel, {
+				Text = "+10%",
+				Size = UDim2.fromScale(1, 0.3),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0),
+				ZIndex = 2,
+				Stroke = {},
+				Gradient = {
+					Rotation = 90,
+					Color = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, Color3.fromRGB(226, 255, 192)),
+						ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 255, 0)),
+					}),
+				},
+			}),
+
+			Text = e(TextLabel, {
+				Text = "Money Bonus",
+				Size = UDim2.fromScale(1, 0.25),
+				Position = UDim2.fromScale(0.5, 1),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Stroke = { Thickness = 2 },
+				ZIndex = 2,
+			}),
+
+			Icon = e("ImageLabel", {
+				Size = UDim2.fromScale(0.9, 0.9),
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = ImageIds.currency,
+			}),
 		}),
 	})
 end
@@ -197,9 +279,18 @@ return function()
 		Button = e(StudButton.Green, {
 			Text = "Rebirth!",
 			Size = UDim2.fromOffset(200, 60),
-			Position = UDim2.fromScale(0.5, 0.9),
+			Position = UDim2.fromScale(0.5, 0.88),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Activated = function() end,
+		}),
+
+		Warning = e(TextLabel, {
+			Text = "[ ! ]  Money is RESET, eveything else is kept! [ ! ]",
+			Size = UDim2.new(1, 0, 0, 20),
+			Position = UDim2.fromScale(0.5, 0.97),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Stroke = { Thickness = 2, Color = Color3.fromRGB(102, 0, 0) },
+			TextColor3 = Color3.fromRGB(255, 46, 46),
 		}),
 	})
 end

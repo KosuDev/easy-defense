@@ -1,4 +1,13 @@
-local RebirthUtils = {}
+local rebirthRewards = {
+	[1] = {
+		towerSlots = 1,
+		currencyMultiplier = 1.1,
+	},
+}
+
+local RebirthUtils = {
+	rebirthRewards = rebirthRewards,
+}
 
 function RebirthUtils.getRebirthCost(rebirths: number)
 	return 1e3 * (2 ^ rebirths)

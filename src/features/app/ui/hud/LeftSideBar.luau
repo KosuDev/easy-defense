@@ -12,10 +12,12 @@ type SideBarButtonProps = {
 	Position: UDim2,
 	Text: string,
 	Image: string,
+	IconScale: number?,
 	Activated: () -> (),
 }
 
 local function SideBarButton(props: SideBarButtonProps)
+	local iconScale = props.IconScale or 1
 	return e(Button, {
 		hoverScale = 1.1,
 		Size = UDim2.fromOffset(80, 80),
@@ -40,7 +42,7 @@ local function SideBarButton(props: SideBarButtonProps)
 		}),
 
 		Icon = e("ImageLabel", {
-			Size = UDim2.fromScale(0.925, 0.925),
+			Size = UDim2.fromScale(iconScale, iconScale),
 			Position = UDim2.fromScale(0.5, 0.475),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
@@ -59,6 +61,7 @@ return function()
 		Rebirth = e(SideBarButton, {
 			Position = UDim2.fromScale(0.75, 0.5),
 			Text = "Rebirth",
+			IconScale = 0.925,
 			Image = ImageIds.rebirth,
 			Activated = function()
 				Menu.setOpenedMenu("RebirthMenu")
@@ -68,6 +71,8 @@ return function()
 		Index = e(SideBarButton, {
 			Position = UDim2.fromScale(0.25, 0.5),
 			Text = "Index",
+			IconScale = 0.925,
+			Image = ImageIds.index,
 			Activated = function() end,
 		}),
 	})
