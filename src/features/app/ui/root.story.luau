@@ -21,6 +21,7 @@ return function(parent)
 	})
 
 	local menuCleanup = Menu.init()
+	Menu.setOpenedMenu("RebirthMenu")
 
 	return function()
 		menuCleanup()

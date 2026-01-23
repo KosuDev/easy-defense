@@ -5,6 +5,7 @@ local AutoScaledFrame = require(ReplicatedStorage.Source.Core.UI.Primitives.Auto
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
+local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local e = React.createElement
 
 type SideBarButtonProps = {
@@ -38,8 +39,8 @@ local function SideBarButton(props: SideBarButtonProps)
 		}),
 
 		Icon = e("ImageLabel", {
-			Size = UDim2.fromScale(0.8, 0.8),
-			Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromScale(0.925, 0.925),
+			Position = UDim2.fromScale(0.5, 0.375),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
 			Image = props.Image,
@@ -57,6 +58,7 @@ return function()
 		Rebirth = e(SideBarButton, {
 			Position = UDim2.fromScale(0.75, 0.5),
 			Text = "Rebirth",
+			Image = ImageIds.rebirth,
 			Activated = function()
 				Menu.setOpenedMenu("RebirthMenu")
 			end,

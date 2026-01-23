@@ -82,6 +82,13 @@ local function Menu(props: MenuProps)
 			Color = Color3.fromRGB(20, 20, 20),
 		}),
 
+		Content = e("Frame", {
+			Size = UDim2.new(1, 0, 1, -50),
+			Position = UDim2.fromScale(0, 1),
+			AnchorPoint = Vector2.new(0, 1),
+			BackgroundTransparency = 1,
+		}, props.children),
+
 		TopBar = e(StudBackground, {
 			Size = UDim2.new(1, 0, 0, 50),
 			Position = UDim2.fromScale(0, 0),

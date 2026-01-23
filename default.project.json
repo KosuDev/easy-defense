@@ -14,6 +14,9 @@
               "$className": "Folder",
               "Components": {
                 "$className": "Folder",
+                "InsetFrame": {
+                  "$path": "src/features/app/ui/components/InsetFrame.luau"
+                },
                 "StudBackground": {
                   "$path": "src/features/app/ui/components/StudBackground.luau"
                 }
