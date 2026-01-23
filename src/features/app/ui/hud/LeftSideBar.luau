@@ -36,11 +36,12 @@ local function SideBarButton(props: SideBarButtonProps)
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.975),
 			Stroke = {},
+			ZIndex = 2,
 		}),
 
 		Icon = e("ImageLabel", {
 			Size = UDim2.fromScale(0.925, 0.925),
-			Position = UDim2.fromScale(0.5, 0.375),
+			Position = UDim2.fromScale(0.5, 0.475),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
 			Image = props.Image,

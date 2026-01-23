@@ -24,7 +24,9 @@ export type PlotNode = CrateNode & string
 export type PlotNodes = { [string]: PlotNode }
 
 return {
-	currency = 100,
+	currency = 10000,
+	rebirths = 0,
+	towerIndex = {},
 	plotNodes = {},
 	inventory = {
 		wooden = {

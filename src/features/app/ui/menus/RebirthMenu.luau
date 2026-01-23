@@ -2,32 +2,204 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Menu = require(script.Parent.Menu)
 local React = require(ReplicatedStorage.Packages.React)
+local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
+local useDataState = require(ReplicatedStorage.Source.Core.UI.Hooks.useDataState)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local InsetFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.InsetFrame)
+local StudButton = require(ReplicatedStorage.Source.Features.App.UI.Components.StudButton)
+local TransparentFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.TransparentFrame)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
+local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 local e = React.createElement
+
+local function ClaimedCheckMark()
+	return e("ImageLabel", {
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		Image = ImageIds.checkmark,
+		ZIndex = 9,
+	})
+end
+
+local function RequirementsFrame()
+	local rebirths: number = useDataState("rebirths")
+	local reqs = RebirthUtils.getRequirements(rebirths + 1)
+	local towerInfo = Towers.getTowerInfo(reqs.towerId)
+	local tier = Tiers.getTierForOdds(towerInfo.odds)
+	local currency = useDataState("currency")
+	local towerIndex = useDataState("towerIndex")
+	local currencyReqMet = currency >= reqs.currency
+	local towerReqMet = towerIndex[reqs.towerId] ~= nil
+
+	return e(InsetFrame, {
+		Size = UDim2.new(0.9, 0, 0, 160),
+		Position = UDim2.fromScale(0.5, 0.075),
+		AnchorPoint = Vector2.new(0.5, 0),
+	}, {
+		Layout = e("UIListLayout", {
+			Padding = UDim.new(0, 10),
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+
+		TowerReq = e(TransparentFrame, {
+			Size = UDim2.fromScale(0.7, 0.7),
+			SizeConstraint = Enum.SizeConstraint.RelativeYY,
+			LayoutOrder = 2,
+		}, {
+			Tier = e(TextLabel, {
+				Text = tier.name,
+				Size = UDim2.fromScale(1, 0.3),
+				Position = UDim2.fromScale(0.5, 0),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Stroke = { Thickness = 2 },
+				ZIndex = 2,
+				Gradient = {
+					Rotation = 90,
+					Color = tier.gradient,
+				},
+			}),
+
+			Tower = e(TextLabel, {
+				Text = towerInfo.name,
+				Size = UDim2.fromScale(1, 0.25),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 1),
+				ZIndex = 2,
+				Stroke = {},
+			}),
+
+			Icon = e("ImageLabel", {
+				Size = UDim2.fromScale(1, 1),
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = towerInfo.image,
+				ImageColor3 = if towerReqMet then Color3.fromRGB(51, 51, 51) else Color3.fromRGB(255, 255, 255),
+			}),
+
+			Background = e("ImageLabel", {
+				Size = UDim2.fromScale(1, 1),
+				Position = UDim2.fromScale(0.5, 0.55),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				ImageColor3 = Color3.fromRGB(0, 0, 0),
+				ImageTransparency = 0.4,
+				Image = towerInfo.image,
+				ZIndex = 0,
+			}),
+
+			Checkmark = if towerReqMet then e(ClaimedCheckMark) else nil,
+		}),
+
+		CurrencyReq = e(TransparentFrame, {
+			Size = UDim2.fromScale(0.7, 0.7),
+			SizeConstraint = Enum.SizeConstraint.RelativeYY,
+			LayoutOrder = 1,
+		}, {
+			Checkmark = if currencyReqMet then e(ClaimedCheckMark) else nil,
+
+			Currency = e(TextLabel, {
+				Text = "$" .. Abbreviate(reqs.currency),
+				Size = UDim2.fromScale(1, 0.3),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0),
+				ZIndex = 2,
+				Stroke = {},
+				Gradient = {
+					Rotation = 90,
+					Color = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, Color3.fromRGB(226, 255, 192)),
+						ColorSequenceKeypoint.new(1, Color3.fromRGB(212, 255, 0)),
+					}),
+				},
+			}),
+
+			Text = e(TextLabel, {
+				Text = "Money",
+				Size = UDim2.fromScale(1, 0.25),
+				Position = UDim2.fromScale(0.5, 1),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Stroke = { Thickness = 2 },
+				ZIndex = 2,
+			}),
+
+			Icon = e("ImageLabel", {
+				Size = UDim2.fromScale(0.9, 0.9),
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				BackgroundTransparency = 1,
+				Image = ImageIds.currency,
+				ImageColor3 = if currencyReqMet then Color3.fromRGB(51, 51, 51) else Color3.fromRGB(255, 255, 255),
+			}),
+		}),
+	})
+end
+
+local function RewardsFrame()
+	return e(InsetFrame, {
+		Size = UDim2.new(0.9, 0, 0, 160),
+		Position = UDim2.fromScale(0.5, 0.48),
+		AnchorPoint = Vector2.new(0.5, 0),
+	}, {
+		Layout = e("UIListLayout", {
+			Padding = UDim.new(0, 10),
+			FillDirection = Enum.FillDirection.Horizontal,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+		}),
+	})
+end
 
 return function()
 	return e(Menu.Component, {
 		menuName = "RebirthMenu",
 		Title = "Rebirth",
+		From = UDim2.fromScale(0.5, 0.45),
+		Size = UDim2.fromOffset(600, 530),
 		Prefix = {
 			Image = ImageIds.rebirth,
 			HorizontalAlignment = Enum.HorizontalAlignment.Left,
 		},
 	}, {
-		Requirements = e(TextLabel, {
+		RequirementsTitle = e(TextLabel, {
 			Text = "- YOU NEED -",
-			Size = UDim2.fromScale(1, 0.11),
-			Position = UDim2.fromScale(0.5, 0.01),
+			Size = UDim2.new(1, 0, 0, 38),
+			Position = UDim2.fromScale(0.5, 0.007),
 			AnchorPoint = Vector2.new(0.5, 0),
 			Stroke = { Thickness = 3 },
 		}),
 
-		reqs = e(InsetFrame, {
-			Size = UDim2.fromScale(0.9, 0.3),
-			Position = UDim2.fromScale(0.5, 0.15),
+		Requirements = e(RequirementsFrame),
+
+		RewardsTitle = e(TextLabel, {
+			Text = "- REWARDS -",
+			Size = UDim2.new(1, 0, 0, 38),
+			Position = UDim2.fromScale(0.5, 0.41),
 			AnchorPoint = Vector2.new(0.5, 0),
+			Stroke = { Thickness = 3 },
+			Gradient = {
+				Rotation = 90,
+				Color = ColorSequence.new({
+					ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 233, 162)),
+					ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 187, 0)),
+				}),
+			},
+		}),
+
+		Rewards = e(RewardsFrame),
+
+		Button = e(StudButton.Green, {
+			Text = "Rebirth!",
+			Size = UDim2.fromOffset(200, 60),
+			Position = UDim2.fromScale(0.5, 0.9),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Activated = function() end,
 		}),
 	})
 end

@@ -61,6 +61,9 @@ type MenuProps = {
 	children: React.ReactNode?,
 	Title: string?,
 	Prefix: any?,
+	Size: UDim2?,
+	From: UDim2?,
+	To: UDim2?,
 }
 
 local function Menu(props: MenuProps)
@@ -70,10 +73,10 @@ local function Menu(props: MenuProps)
 
 	return e(SlideOutFrame, {
 		Shown = isOpen,
-		From = UDim2.fromScale(0.5, 0.5),
-		To = UDim2.fromScale(0.5, -0.5),
+		From = props.From or UDim2.fromScale(0.5, 0.5),
+		To = props.To or UDim2.fromScale(0.5, -0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Size = UDim2.fromOffset(600, 400),
+		Size = props.Size or UDim2.fromOffset(600, 400),
 		BackgroundColor3 = Color3.fromRGB(20, 20, 20),
 		BackgroundTransparency = 0.5,
 	}, {
@@ -127,6 +130,7 @@ local function Menu(props: MenuProps)
 			Position = UDim2.fromScale(1, 0),
 			AnchorPoint = Vector2.new(1, 0),
 			BackgroundTransparency = 1,
+			ZIndex = 2,
 			Activated = function()
 				if openedMenu() == props.menuName then
 					openedMenu(nil)

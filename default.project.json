@@ -19,6 +19,12 @@
                 },
                 "StudBackground": {
                   "$path": "src/features/app/ui/components/StudBackground.luau"
+                },
+                "StudButton": {
+                  "$path": "src/features/app/ui/components/StudButton.luau"
+                },
+                "TransparentFrame": {
+                  "$path": "src/features/app/ui/components/TransparentFrame.luau"
                 }
               },
               "Hud": {
@@ -215,6 +221,12 @@
               "$className": "Folder",
               "PlotClient": {
                 "$path": "src/features/plots/classes/PlotClient.luau"
+              }
+            },
+            "Modules": {
+              "$className": "Folder",
+              "RebirthUtils": {
+                "$path": "src/features/plots/modules/RebirthUtils.luau"
               }
             },
             "PlotServiceClient": {

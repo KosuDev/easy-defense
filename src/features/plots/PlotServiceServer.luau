@@ -7,6 +7,7 @@ local DataService = require(ReplicatedStorage.Packages.DataService).server
 local PlotServer = require(ServerScriptService.Features.Plots.Classes.PlotServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local ServicePlayerData = require(ReplicatedStorage.Packages.ServicePlayerData)
+local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 
 type Plot = PlotServer.Plot
@@ -86,6 +87,19 @@ function PlotServiceServer.playerRemoving(self: PlotServiceServer, player: Playe
 	end
 
 	self.networker:fireAll("removePlot", index)
+end
+
+function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player)
+	local rebirths: number = DataService:getPlayerData(player, "rebirths")
+	local reqs = RebirthUtils.getRequirements(rebirths)
+	if DataService:get(player, "currency") < reqs.currency then
+		return false, "Not enough currency"
+	end
+
+	local hasUnlockedTower = DataService:get(player, { "towerIndex", reqs.towerId }) ~= nil
+	if not hasUnlockedTower then
+		return false, "Required tower not unlocked"
+	end
 end
 
 type PlotServiceServer = typeof(PlotServiceServer) & {
