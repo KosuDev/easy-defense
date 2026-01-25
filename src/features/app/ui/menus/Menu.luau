@@ -10,6 +10,7 @@ local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local SlideOutFrame = require(ReplicatedStorage.Source.Core.UI.Primitives.SlideOutFrame)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local StudBackground = require(ReplicatedStorage.Source.Features.App.UI.Components.StudBackground)
+local Screen = require(ReplicatedStorage.Source.Features.App.UI.Screens.Screen)
 local e = React.createElement
 
 local openedMenu = Charm.atom(nil :: string?)
@@ -27,13 +28,15 @@ local function init()
 	blur.Name = "MenuBlur"
 	blur.Parent = Lighting
 	local camera = workspace.CurrentCamera
-	local spring = Ripple.createSpring(0, { frequency = 3, dampingRatio = 1, start = true })
+	local spring = Ripple.createSpring(0, { frequency = 3, dampingRatio = 0.8, start = true })
 	spring:onChange(function(value)
 		blur.Size = value * 16
 		camera.FieldOfView = 70 - value * 10
 	end)
 
-	local discon = Charm.subscribe(openedMenu, function(menuName)
+	local discon = Charm.subscribe(function()
+		return openedMenu() or Screen.openedScreen()
+	end, function(menuName)
 		if menuName then
 			spring:setGoal(1)
 		else
@@ -67,12 +70,13 @@ type MenuProps = {
 }
 
 local function Menu(props: MenuProps)
+	local openedScreen = ReactCharm.useAtom(Screen.openedScreen)
 	local isOpen = ReactCharm.useAtom(function()
 		return openedMenu() == props.menuName
 	end)
 
 	return e(SlideOutFrame, {
-		Shown = isOpen,
+		Shown = isOpen and openedScreen == nil,
 		From = props.From or UDim2.fromScale(0.5, 0.5),
 		To = props.To or UDim2.fromScale(0.5, -0.5),
 		AnchorPoint = Vector2.new(0.5, 0.5),

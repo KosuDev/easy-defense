@@ -1,8 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local PlotSlice = require(script.Parent.PlotSlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local ErrorMessage = require(ReplicatedStorage.Source.Core.UI.Components.ErrorMessage)
 local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
+local Screen = require(ReplicatedStorage.Source.Features.App.UI.Screens.Screen)
 local PlotClient = require(ReplicatedStorage.Source.Features.Plots.Classes.PlotClient)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 
@@ -34,7 +36,9 @@ function PlotServiceClient.rebirth(self: PlotServiceClient)
 	local result, msg = self.networker:fetch("rebirth")
 	print(result, msg)
 	if result then
+		PlotSlice.states.rebirthReward(result)
 		Menu.setOpenedMenu(nil)
+		Screen.setOpenedScreen("RebirthReward")
 	else
 		ErrorMessage.add(msg)
 	end

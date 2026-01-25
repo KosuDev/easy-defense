@@ -56,6 +56,18 @@
               },
               "RootUI": {
                 "$path": "src/features/app/ui/RootUI.luau"
+              },
+              "Screens": {
+                "$className": "Folder",
+                "RebirthRewardScreen": {
+                  "$path": "src/features/app/ui/screens/RebirthRewardScreen.luau"
+                },
+                "Screen": {
+                  "$path": "src/features/app/ui/screens/Screen.luau"
+                },
+                "ScreenRoot": {
+                  "$path": "src/features/app/ui/screens/ScreenRoot.luau"
+                }
               }
             }
           },

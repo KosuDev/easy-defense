@@ -9,6 +9,7 @@ type CrateNode = DataTemplate.CrateNode
 type Atom<T> = Charm.Atom<T>
 
 local crates: Atom<{ [BasePart]: CrateNode }> = atom({})
+local rebirthReward: Atom<any?> = atom(nil)
 
 local actions = {
 	addCrate = function(root: BasePart, crateData: CrateNode)
@@ -28,5 +29,6 @@ return {
 	actions = actions,
 	states = {
 		crates = crates,
+		rebirthReward = rebirthReward,
 	},
 }

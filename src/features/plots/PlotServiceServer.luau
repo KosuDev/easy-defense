@@ -89,9 +89,9 @@ function PlotServiceServer.playerRemoving(self: PlotServiceServer, player: Playe
 	self.networker:fireAll("removePlot", index)
 end
 
-function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (boolean, string?)
+function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (boolean | any, string?)
 	local rebirths: number = DataService:get(player, "rebirths")
-	local reqs = RebirthUtils.getRequirements(rebirths)
+	--[[local reqs = RebirthUtils.getRequirements(rebirths)
 	if DataService:get(player, "currency") < reqs.currency then
 		return false, "Not enough money"
 	end
@@ -104,9 +104,9 @@ function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (b
 	DataService:set(player, "currency", 0)
 	DataService:update(player, "rebirths", function(oldRebirths: number)
 		return oldRebirths + 1
-	end)
+	end)]]
 
-	return true
+	return RebirthUtils.rebirthRewards[rebirths + 1]
 end
 
 type PlotServiceServer = typeof(PlotServiceServer) & {
