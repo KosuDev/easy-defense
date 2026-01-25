@@ -36,9 +36,9 @@ function PlotServiceClient.rebirth(self: PlotServiceClient)
 	local result, msg = self.networker:fetch("rebirth")
 	print(result, msg)
 	if result then
-		PlotSlice.states.rebirthReward(result)
 		Menu.setOpenedMenu(nil)
 		Screen.setOpenedScreen("RebirthReward")
+		PlotSlice.states.rebirthReward(result)
 	else
 		ErrorMessage.add(msg)
 	end
