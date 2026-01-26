@@ -116,7 +116,9 @@ for i, tower in sortedTowers do
 	tower.layoutOrder = i
 end
 
-local Towers = {}
+local Towers = {
+	towers = towers,
+}
 
 function Towers.rollTowerId(luck: number): string
 	local roll = math.random()

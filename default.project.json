@@ -41,6 +41,9 @@
               },
               "Menus": {
                 "$className": "Folder",
+                "IndexMenu": {
+                  "$path": "src/features/app/ui/menus/IndexMenu.luau"
+                },
                 "Menu": {
                   "$path": "src/features/app/ui/menus/Menu.luau"
                 },
@@ -202,6 +205,9 @@
                 },
                 "ItemIcon": {
                   "$path": "src/features/inventory/ui/components/ItemIcon.luau"
+                },
+                "MutationIcons": {
+                  "$path": "src/features/inventory/ui/components/MutationIcons.luau"
                 }
               },
               "Hooks": {

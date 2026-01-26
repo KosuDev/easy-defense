@@ -6,10 +6,16 @@ export type CrateData = {
 	fav: boolean?,
 }
 
+export type Mutations = {
+	gold: boolean?,
+	diamond: boolean?,
+}
+
 export type TowerData = {
 	itemId: string,
 	level: number,
 	fav: boolean?,
+	mutations: Mutations?,
 }
 
 export type ItemData = CrateData & TowerData
@@ -26,7 +32,11 @@ export type PlotNodes = { [string]: PlotNode }
 return {
 	currency = 10000,
 	rebirths = 0,
-	towerIndex = {},
+	towerIndex = {
+		normal = {},
+		gold = {},
+		diamond = {},
+	},
 	plotNodes = {},
 	inventory = {
 		wooden = {

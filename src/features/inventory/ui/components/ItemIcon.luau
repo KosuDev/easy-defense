@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local ItemButtonStroke = require(script.Parent.ItemButtonStroke)
+local MutationIcons = require(script.Parent.MutationIcons)
 local React = require(ReplicatedStorage.Packages.React)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
@@ -14,11 +15,13 @@ type ItemIconProps = {
 	Rotation: number?,
 	AnchorPoint: Vector2?,
 	Position: UDim2?,
+	ImageColor3: Color3?,
 	itemData: DataTemplate.ItemData,
 	children: React.ReactNode?,
 	BackgroundTransparency: number?,
 	BackgroundColor3: Color3?,
 	equipped: boolean?,
+	showStrength: boolean?,
 }
 
 return function(props: ItemIconProps)
@@ -44,6 +47,7 @@ return function(props: ItemIconProps)
 		Icon = e("ImageLabel", {
 			Image = info.image,
 			Size = iconSize,
+			ImageColor3 = props.ImageColor3 or Color3.fromRGB(255, 255, 255),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundTransparency = 1,
@@ -72,7 +76,7 @@ return function(props: ItemIconProps)
 			})
 			else nil,
 
-		Strength = if isTower
+		Strength = if isTower and props.showStrength ~= false
 			then e(TextLabel, {
 				Text = "💪 " .. Abbreviate(math.round(info.damage * info.firerate)),
 				AnchorPoint = Vector2.new(1, 1),
@@ -88,6 +92,17 @@ return function(props: ItemIconProps)
 					}),
 					Rotation = 90,
 				},
+			})
+			else nil,
+
+		Mutations = if isTower and props.itemData.mutations
+			then e(MutationIcons, {
+				mutations = props.itemData.mutations,
+				Size = UDim2.fromScale(0.8, 0.2),
+				Position = UDim2.fromScale(0.95, 0.05),
+				AnchorPoint = Vector2.new(1, 0),
+				HorizontalAlignment = Enum.HorizontalAlignment.Right,
+				ZIndex = 3,
 			})
 			else nil,
 

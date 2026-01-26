@@ -73,7 +73,9 @@ return function()
 			Text = "Index",
 			IconScale = 0.925,
 			Image = ImageIds.index,
-			Activated = function() end,
+			Activated = function()
+				Menu.setOpenedMenu("IndexMenu")
+			end,
 		}),
 	})
 end

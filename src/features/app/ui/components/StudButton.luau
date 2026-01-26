@@ -61,6 +61,32 @@ local GREEN_GRADIENT = ColorSequence.new({
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 117, 4)),
 })
 
+local WHITE_GRADIENT = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 200, 200)),
+})
+
+local BLUE_GRADIENT = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(0.21, Color3.fromRGB(71, 108, 255)),
+	ColorSequenceKeypoint.new(0.87, Color3.fromRGB(10, 51, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(4, 40, 117)),
+})
+
+local TEAL_GRADIENT = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(0.21, Color3.fromRGB(71, 255, 216)),
+	ColorSequenceKeypoint.new(0.87, Color3.fromRGB(10, 205, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(4, 117, 157)),
+})
+
+local GOLD_GRADIENT = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(0.21, Color3.fromRGB(255, 211, 108)),
+	ColorSequenceKeypoint.new(0.87, Color3.fromRGB(255, 215, 57)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(201, 107, 0)),
+})
+
 local function Green(props: StudButtonProps)
 	return e(
 		StudButton,
@@ -70,7 +96,47 @@ local function Green(props: StudButtonProps)
 	)
 end
 
+local function White(props: StudButtonProps)
+	return e(
+		StudButton,
+		Sift.Dictionary.merge(props, {
+			StudGradient = WHITE_GRADIENT,
+		})
+	)
+end
+
+local function Blue(props: StudButtonProps)
+	return e(
+		StudButton,
+		Sift.Dictionary.merge(props, {
+			StudGradient = BLUE_GRADIENT,
+		})
+	)
+end
+
+local function Gold(props: StudButtonProps)
+	return e(
+		StudButton,
+		Sift.Dictionary.merge(props, {
+			StudGradient = GOLD_GRADIENT,
+		})
+	)
+end
+
+local function Teal(props: StudButtonProps)
+	return e(
+		StudButton,
+		Sift.Dictionary.merge(props, {
+			StudGradient = TEAL_GRADIENT,
+		})
+	)
+end
+
 return {
 	Green = Green,
 	Component = StudButton,
+	White = White,
+	Blue = Blue,
+	Gold = Gold,
+	Teal = Teal,
 }

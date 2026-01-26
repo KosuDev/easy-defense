@@ -32,7 +32,7 @@ local function RequirementsFrame()
 	local currency = useDataState("currency")
 	local towerIndex = useDataState("towerIndex")
 	local currencyReqMet = currency >= reqs.currency
-	local towerReqMet = towerIndex[reqs.towerId] ~= nil
+	local towerReqMet = towerIndex.normal[reqs.towerId] ~= nil
 
 	return e(InsetFrame, {
 		Size = UDim2.new(0.9, 0, 0, 160),
