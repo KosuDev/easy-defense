@@ -58,7 +58,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 		nodes = {},
 		janitor = Janitor.new(),
 		timeOfLastCrateSpawn = 0,
-		defenseLevel = 1,
+		defenseLevel = DataService:get(player, "rebirths") + 1,
 		defense = DefenseServer.new(plotSpawn.index, player),
 		spawnCrate = PlotServer.spawnCrate,
 		buyCrate = PlotServer.buyCrate,
@@ -86,7 +86,11 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 
 	self:loadDefense()
 	self:charInit()
-	self.defense:updatePath(self.defenseModel)
+
+	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function(rebirths)
+		self.defenseLevel = rebirths + 1
+		self:loadDefense()
+	end))
 
 	return self
 end
@@ -114,6 +118,9 @@ function PlotServer.loadDefense(self: Plot)
 
 	self.defenseModel = defense
 	self.nodes = nodes
+	self.defense:removeAll()
+	self.defense:updatePath(self.defenseModel)
+	self.networker:fireAll("loadDefense", self.nodes)
 
 	local userNodes: DataTemplate.PlotNodes = DataService:get(self.player, "plotNodes")
 	for i, nodeData in userNodes do
@@ -156,6 +163,11 @@ end
 
 function PlotServer.build(self: Plot, node: number, plotNode: PlotNode, fromLoad: boolean?)
 	local nodeData = self.nodes[node]
+	if not nodeData then
+		warn("Invalid node: " .. node)
+		return
+	end
+
 	if plotNode.crateId then
 		nodeData.data = plotNode
 	elseif typeof(plotNode) == "string" then

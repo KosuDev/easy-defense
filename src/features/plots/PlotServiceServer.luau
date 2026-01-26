@@ -100,11 +100,12 @@ function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (b
 	if not hasUnlockedTower then
 		return false, "Required tower not unlocked"
 	end
+	]]
 
 	DataService:set(player, "currency", 0)
 	DataService:update(player, "rebirths", function(oldRebirths: number)
 		return oldRebirths + 1
-	end)]]
+	end)
 
 	return RebirthUtils.rebirthRewards[rebirths + 1]
 end

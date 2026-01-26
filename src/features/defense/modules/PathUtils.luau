@@ -9,18 +9,16 @@ local EPS = 1e-8
 
 function PathUtils.calcpath(defenseModel: Model & any): Path
 	local nonLerpedNodes = {}
-	local currentNode = defenseModel.Path.Start
-	assert(currentNode, "Defense model is missing a Start part in its Path folder")
+	local iNode = 1
 
 	while true do
-		table.insert(nonLerpedNodes, currentNode.Position)
-
-		local nextObj: ObjectValue? = currentNode:FindFirstChild("Next")
-		if not nextObj then
+		local nodePart = defenseModel.Path:FindFirstChild(tostring(iNode))
+		if not nodePart then
 			break
 		end
 
-		currentNode = nextObj.Value
+		table.insert(nonLerpedNodes, nodePart.Position)
+		iNode += 1
 	end
 
 	-- Sample positions every 1 stud along the polyline

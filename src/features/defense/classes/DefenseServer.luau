@@ -92,6 +92,12 @@ function DefenseServer.stop(self: DefenseServer)
 	end
 end
 
+function DefenseServer.removeAll(self: DefenseServer)
+	for uniqueId, _ in self.towers do
+		self:removeTower(uniqueId)
+	end
+end
+
 function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
 	local tower = self.towers[uniqueId]
 	if not tower then

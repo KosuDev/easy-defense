@@ -134,7 +134,6 @@ function PlotClient.nodeUpdated(self: PlotClient, node: number, nodeData: Client
 	end
 
 	self:updateNodeModels()
-	print(nodeData)
 	if nodeData.data and nodeData.data.crateId then
 		PlotSlice.actions.addCrate(nodeData.root, nodeData.data)
 	end
@@ -154,7 +153,10 @@ function PlotClient.crateOpened(self: PlotClient, node: number, towerData: Tower
 	self.defense:towerAdded(node, towerCf, towerData)
 end
 
-function PlotClient.loadDefense(self: PlotClient)
+function PlotClient.loadDefense(self: PlotClient, nodes)
+	if nodes then
+		self.nodes = nodes
+	end
 	self.defenseJanitor:Cleanup()
 
 	local isLocalPlot = self.player == Players.LocalPlayer
