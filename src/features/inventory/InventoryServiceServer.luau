@@ -48,6 +48,17 @@ function InventoryServiceServer.addTower(
 ): string
 	local uniqueId = HttpService:GenerateGUID(false)
 	DataService:set(player, { "inventory", uniqueId }, towerData)
+
+	local towerTier = if towerData.mutations and towerData.mutations.diamond
+		then "diamond"
+		elseif towerData.mutations and towerData.mutations.gold then "gold"
+		else "normal"
+
+	local hasObtained = DataService:get(player, { "towerIndex", towerTier, towerData.itemId }) == true
+	if not hasObtained then
+		DataService:set(player, { "towerIndex", towerTier, towerData.itemId }, true)
+	end
+
 	return uniqueId
 end
 

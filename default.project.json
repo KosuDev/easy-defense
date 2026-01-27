@@ -150,6 +150,9 @@
               "crossbow": {
                 "$path": "src/features/defense/towerAnimations/crossbow.luau"
               },
+              "flamethrower": {
+                "$path": "src/features/defense/towerAnimations/flamethrower.luau"
+              },
               "laserBlaster": {
                 "$path": "src/features/defense/towerAnimations/laserBlaster.luau"
               },

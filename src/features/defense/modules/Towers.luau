@@ -94,6 +94,16 @@ local towers = {
 		firerate = 1.25,
 		height = 8.5,
 	},
+
+	flamethrower = {
+		name = "Flamethrower",
+		image = "rbxassetid://137282012852812",
+		weight = 7.5e6,
+		damage = 456,
+		range = 25,
+		firerate = 4.2,
+		height = 8,
+	},
 }
 
 local totalWeight = 0
