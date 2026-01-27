@@ -162,6 +162,9 @@
               "orbOfLight": {
                 "$path": "src/features/defense/towerAnimations/orbOfLight.luau"
               },
+              "plasmaCannon": {
+                "$path": "src/features/defense/towerAnimations/plasmaCannon.luau"
+              },
               "tesla": {
                 "$path": "src/features/defense/towerAnimations/tesla.luau"
               },

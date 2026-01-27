@@ -104,6 +104,16 @@ local towers = {
 		firerate = 4.2,
 		height = 8,
 	},
+
+	plasmaCannon = {
+		name = "Plasma Cannon",
+		image = "rbxassetid://137282012852812",
+		weight = 4e6,
+		damage = 4000,
+		range = 25,
+		firerate = 1,
+		height = 8.5,
+	},
 }
 
 local totalWeight = 0
