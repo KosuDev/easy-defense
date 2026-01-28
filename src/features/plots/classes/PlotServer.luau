@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local ConveyorServer = require(ServerScriptService.Features.Conveyor.ConveyorServer)
 local DefenseServer = require(ServerScriptService.Features.Defense.Classes.DefenseServer)
 local TowerServer = require(ServerScriptService.Features.Defense.Classes.TowerServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
@@ -16,278 +17,87 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local PlotModel = ReplicatedStorage.Assets.Misc.Plot
 local PlotDefenses = ReplicatedStorage.Assets.PlotDefenses
 
-local MAX_CRATES = 3
-local CRATE_SPAWN_CD = PlotServiceUtils.enums.crateSpawnCooldown
 local CHAR_SPAWN_OFFSET = CFrame.new(0, 20, 0) * CFrame.Angles(0, math.pi, 0)
+local NODE_OFFSET = CFrame.Angles(0, math.rad(90), 0)
 
 local PlotServer = {}
 PlotServer.__index = PlotServer
 
-type TowerData = DataTemplate.TowerData
-type CrateNode = DataTemplate.CrateNode
+type OccupiedNodes = DataTemplate.OccupiedNodes
+type OccupiedNode = DataTemplate.OccupiedNode
 type PlotSpawn = PlotTypes.PlotSpawn
-type PlotNode = DataTemplate.PlotNode
-type NodeData = DataTemplate.NodeData
 type Node = PlotTypes.Node
+type NodeData = DataTemplate.NodeData
+type ItemData = DataTemplate.ItemData
+type CrateNode = DataTemplate.CrateNode
 
-export type Plot = typeof(setmetatable(
+export type PlotServer = typeof(setmetatable(
 	{} :: {
 		cf: CFrame,
 		index: number,
 		player: Player,
-		plotModel: Model,
-		defenseLevel: number,
-		defenseModel: Model,
-		networker: Networker.Server,
 		janitor: Janitor.Janitor,
-		crates: { string? },
-		timeOfLastCrateSpawn: number,
-		nodes: { { Node } },
+		conveyor: ConveyorServer.ConveyorServer,
 		defense: DefenseServer.DefenseServer,
-		serviceNetworker: Networker.Server,
+		networker: Networker.Server,
+		plotModel: Model & any,
+		defenseModel: (Model & any) | nil,
+		nodes: { { Node } },
 	},
 	PlotServer
 ))
 
-function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
+local function newPlotModel(cf: CFrame): Model & any
+	local plotModel = PlotModel:Clone()
+	plotModel:PivotTo(cf)
+	plotModel.Parent = workspace
+	return plotModel
+end
+
+local function newDefenseModel(cf: CFrame, rebirths: number): Model & any
+	local defenseModel = PlotDefenses[tostring(rebirths + 1)]:Clone()
+	defenseModel:PivotTo(cf)
+	return defenseModel
+end
+
+function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 	local self = setmetatable({
-		player = player,
 		cf = plotSpawn.part.CFrame,
 		index = plotSpawn.index,
-		crates = {},
-		nodes = {},
+		player = player,
 		janitor = Janitor.new(),
-		timeOfLastCrateSpawn = 0,
-		defenseLevel = DataService:get(player, "rebirths") + 1,
+		nodes = {},
 		defense = DefenseServer.new(plotSpawn.index, player),
-		spawnCrate = PlotServer.spawnCrate,
-		buyCrate = PlotServer.buyCrate,
-		requestBuild = PlotServer.requestBuild,
-		requestOpenCrate = PlotServer.requestOpenCrate,
-		requestRemove = PlotServer.requestRemove,
-		serviceNetworker = InventoryServiceServer.networker,
+		plotModel = newPlotModel(plotSpawn.part.CFrame),
 	}, PlotServer)
 
-	local networker = Networker.server.new("Plot" .. self.index, self, {
-		self.spawnCrate,
-		self.buyCrate,
+	self.networker = Networker.server.new("Plot" .. plotSpawn.index, self, {
 		self.requestBuild,
-		self.requestOpenCrate,
 		self.requestRemove,
+		self.requestOpenCrate,
 	})
-
-	self.networker = networker
-
-	local plotModel: Model & any = PlotModel:Clone()
-
-	plotModel:PivotTo(self.cf)
-	plotModel.Parent = workspace
-	self.plotModel = plotModel
-
-	self:loadDefense()
+	self.conveyor = ConveyorServer.new(plotSpawn, player, self.networker)
 	self:charInit()
-
-	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function(rebirths: number)
-		self.defenseLevel = rebirths + 1
+	self:loadDefense()
+	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function()
 		self:loadDefense()
 	end))
 
 	return self
 end
 
-function PlotServer.loadDefense(self: Plot)
-	if self.defenseModel then
-		self.defenseModel:Destroy()
-	end
-
-	local plotModel = self.plotModel
-	local defense: Model & any = PlotDefenses[tostring(self.defenseLevel)]:Clone()
-	defense:PivotTo(plotModel.DefenseSpawn.CFrame)
-	defense.Parent = plotModel
-
-	local nodes = {}
-	for _, node in defense:QueryDescendants(".TowerPlacement") do
-		local index = node:GetAttribute("Index") :: number
-		local floor = node:GetAttribute("Floor") :: number
-		local cf = node.CFrame
-
-		if not nodes[floor] then
-			nodes[floor] = {}
-		end
-
-		nodes[floor][index] = {
-			root = node,
-			cf = cf * CFrame.Angles(0, math.rad(90), 0),
-			data = nil,
-		}
-	end
-
-	self.defenseModel = defense
-	self.nodes = nodes
-	self.defense:removeAll()
-	self.defense:updatePaths(self.defenseModel)
-	self.networker:fireAll("loadDefense", self.nodes)
-
-	local userNodes: DataTemplate.PlotNodes = DataService:get(self.player, "plotNodes")
-	for i, nodeData in userNodes do
-		local index = tonumber(i)
-		self:build(index, nodeData, true)
-	end
-end
-
-function PlotServer.isValidNode(self: Plot, node: number)
-	return self.nodes[node] ~= nil
-end
-
-function PlotServer.isOccupied(self: Plot, node: number)
-	local nodeData = self.nodes[node]
-	return nodeData and nodeData.data ~= nil
-end
-
-function PlotServer.isOwner(self: Plot, player: Player): boolean
-	return self.player == player
-end
-
-function PlotServer.remove(self: Plot, uniqueId: string): ()
-	local node: number? = nil
-	for nodeString, uId in DataService:get(self.player, "plotNodes") do
-		if uId == uniqueId then
-			node = tonumber(nodeString)
-			break
-		end
-	end
-
-	if not node then
-		return
-	end
-
-	self.defense:removeTower(uniqueId)
-	self.nodes[node].data = nil
-	self.networker:fireAll("nodeUpdated", node, self.nodes[node])
-	DataService:set(self.player, { "plotNodes", tostring(node) }, nil)
-end
-
-function PlotServer.build(self: Plot, node: number, plotNode: PlotNode, fromLoad: boolean?)
-	local nodeData = self.nodes[node]
-	if not nodeData then
-		warn("Invalid node: " .. node)
-		return
-	end
-
-	if plotNode.crateId then
-		nodeData.data = plotNode
-	elseif typeof(plotNode) == "string" then
-		local towerData: TowerData? = DataService:get(self.player, { "inventory", plotNode })
-		assert(towerData, "Tower data does not exist for uniqueId " .. plotNode)
-		nodeData.data = towerData
-		if not fromLoad then
-			self:remove(plotNode)
-		end
-
-		local tower = TowerServer.new(node, nodeData.cf, towerData :: TowerData)
-		self.defense:addTower(plotNode, tower)
-		DataService:set(self.player, { "plotNodes", tostring(node) }, plotNode)
-	else
-		warn(plotNode)
-		error("Invalid plotNode data")
-	end
-
-	self.networker:fireAll("nodeUpdated", node, nodeData)
-end
-
-function PlotServer.requestOpenCrate(self: Plot, player: Player, node: number)
-	assert(self.player == player, "Player is not the owner of this plot")
-	assert(self:isValidNode(node), "Invalid node" .. node)
-	local nodeData = self.nodes[node]
-	assert(nodeData, "Node data does not exist for node " .. node)
-	local crateData: CrateNode? = nodeData.data
-	assert(crateData, "No data at node " .. node)
-	local crateId, timeBuilt = crateData.crateId, crateData.timeBuilt
-	assert(crateId and timeBuilt, "No crate to open at node " .. node)
-	local openTime = Crates.getCrateInfo(crateId).openTime
-	local timeRemaining = openTime - (workspace:GetServerTimeNow() - timeBuilt)
-	assert(timeRemaining <= 0, "Crate is not ready to be opened")
-
-	DataService:set(self.player, { "plotNodes", tostring(node) }, nil)
-	self.nodes[node].data = nil
-
-	local towerId = Towers.rollTowerId(1)
-	local towerData: TowerData = { itemId = towerId, level = 1 }
-	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
-	nodeData.data = towerData
-
-	local tower = TowerServer.new(node, nodeData.cf, towerData)
-	self.defense:addTower(uniqueId, tower, true)
-	DataService:set(self.player, { "plotNodes", tostring(node) }, uniqueId)
-	self.networker:fireAll("crateOpened", node, towerData, nodeData.cf)
-	self.networker:fireAll("nodeUpdated", node, nodeData)
-end
-
-function PlotServer.requestRemove(self: Plot, player: Player, node: number)
-	assert(player == self.player, "Player is not the owner of this plot")
-	local nodeData = self.nodes[node]
-	if not nodeData or not nodeData.data or nodeData.data.crateId then
-		return
-	end
-
-	local uniqueId = DataService:get(self.player, { "plotNodes", tostring(node) })
-	if not uniqueId then
-		return
-	end
-
-	self.defense:removeTower(uniqueId)
-	self.nodes[node].data = nil
-	self.networker:fireAll("nodeUpdated", node, nodeData)
-	DataService:set(self.player, { "plotNodes", tostring(node) }, nil)
-	self.serviceNetworker:fire(self.player, "addToHotbar", uniqueId)
-end
-
-function PlotServer.requestBuild(self: Plot, player: Player, node: number, uniqueId: string)
-	assert(player == self.player, "Player is not the owner of this plot")
-	assert(self:isValidNode(node), "Invalid node" .. node)
-	assert(not self:isOccupied(node), "Node is already occupied")
-
-	local itemData: DataTemplate.ItemData = DataService:get(self.player, { "inventory", uniqueId })
-	assert(itemData, "Item data does not exist for uniqueId " .. uniqueId)
-
-	if itemData.itemId then
-		self:build(node, uniqueId)
-		return
-	end
-
-	if not itemData.crateId then
-		error("Invalid item data for uniqueId " .. uniqueId)
-	end
-
-	if itemData.amt <= 0 then
-		return
-	end
-
-	DataService:update(self.player, { "inventory", uniqueId, "amt" }, function(value)
-		return value - 1
-	end)
-
-	local crateData: CrateNode = {
-		crateId = itemData.crateId,
-		timeBuilt = workspace:GetServerTimeNow(),
-	}
-
-	self:build(node, crateData)
-	DataService:set(self.player, { "plotNodes", tostring(node) }, crateData)
-end
-
-function PlotServer.get(self: Plot): PlotTypes.PlotData
+function PlotServer.get(self: PlotServer): PlotTypes.PlotData
 	return {
+		cf = self.cf,
 		index = self.index,
 		player = self.player,
-		cf = self.cf,
 		plotModel = self.plotModel,
 		nodes = self.nodes,
-		defensePath = self.defense.path,
+		paths = self.defense.paths,
 	}
 end
 
-function PlotServer.charInit(self: Plot)
+function PlotServer.charInit(self: PlotServer)
 	local startingChar = self.player.Character or self.player.CharacterAdded:Wait()
 	startingChar:PivotTo(self.plotModel:GetPivot() * CHAR_SPAWN_OFFSET)
 
@@ -296,64 +106,207 @@ function PlotServer.charInit(self: Plot)
 	end))
 end
 
-function PlotServer.spawnCrate(self: Plot, player: Player): boolean
-	if not self:isOwner(player) then
-		return false
+function PlotServer.loadDefense(self: PlotServer): ()
+	if self.defenseModel then
+		self.defenseModel:Destroy()
 	end
 
-	if os.clock() - self.timeOfLastCrateSpawn < CRATE_SPAWN_CD then
-		return false
+	local rebirths: number = DataService:get(self.player, "rebirths")
+	local defenseModel = newDefenseModel(self.plotModel.DefenseSpawn.CFrame, rebirths)
+	defenseModel.Parent = self.plotModel
+	self.defenseModel = defenseModel
+
+	local nodes = {}
+	for _, nodePart: any in defenseModel:QueryDescendants(".TowerPlacement") do
+		local index = nodePart:GetAttribute("Index") :: number
+		local floor = nodePart:GetAttribute("Floor") :: number
+		local cf: CFrame = nodePart.CFrame
+
+		if not nodes[floor] then
+			nodes[floor] = {}
+		end
+
+		nodes[floor][index] = {
+			root = nodePart,
+			cf = cf * NODE_OFFSET,
+			data = nil,
+		}
 	end
 
-	local crateRolls = 3
-	for i = 1, MAX_CRATES do
-		if i <= crateRolls then
-			self.crates[i] = Crates.rollCrateId(1)
-		else
-			self.crates[i] = nil
+	self.nodes = nodes
+	self.defense:removeAll()
+	self.defense:updatePaths(defenseModel)
+	self.networker:fireAll("loadDefense", self.nodes)
+
+	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "plotNodes")
+	for floorNodeStr, occupiedNode in occupiedNodes do
+		local floor, node = PlotServiceUtils.stringToFloorNode(floorNodeStr)
+		self:build(floor, node, occupiedNode, true)
+	end
+end
+
+function PlotServer.build(
+	self: PlotServer,
+	floor: number,
+	node: number,
+	occupiedNode: OccupiedNode | any,
+	fromLoad: boolean?,
+	dontReplicate: boolean?
+): ()
+	local isTower = type(occupiedNode) == "string"
+	local nodeData: NodeData = if isTower
+		then DataService:get(self.player, { "inventory", occupiedNode })
+		else occupiedNode
+
+	if not self.nodes[floor] then
+		warn("Invalid floor: " .. floor)
+		return
+	elseif not self.nodes[floor][node] then
+		warn("Invalid node: " .. node)
+		return
+	elseif not nodeData then
+		warn("nodeData not found: ")
+		print(occupiedNode)
+		return
+	end
+
+	local nodeInfo = self.nodes[floor][node]
+	nodeInfo.data = nodeData
+
+	if isTower then
+		local uniqueId: string = occupiedNode
+		if not fromLoad then
+			self:remove(uniqueId) -- Remove existing tower if present
+		end
+
+		local tower = TowerServer.new(floor, node, nodeInfo.cf, nodeData)
+		self.defense:addTower(uniqueId, tower, dontReplicate)
+	end
+
+	if not fromLoad then
+		local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
+		DataService:set(self.player, { "plotNodes", floorNodeStr }, occupiedNode)
+	end
+
+	self.networker:fireAll("setNode", floor, node, nodeInfo)
+end
+
+function PlotServer.remove(self: PlotServer, uniqueId: string)
+	local floor: number, node: number
+	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "plotNodes")
+	for floorNodeStr, occupiedNode in occupiedNodes do
+		if type(occupiedNode) == "string" and occupiedNode == uniqueId then
+			floor, node = PlotServiceUtils.stringToFloorNode(floorNodeStr)
+			break
 		end
 	end
 
-	self.timeOfLastCrateSpawn = os.clock()
-	self.networker:fireAll("cratesChanged", self.crates)
+	if not floor or not node then
+		return
+	end
 
+	self.defense:removeTower(uniqueId)
+	self.nodes[floor][node].data = nil
+	DataService:set(self.player, { "plotNodes", PlotServiceUtils.floorNodeToString(floor, node) }, nil)
+	self.networker:fireAll("setNode", floor, node, self.nodes[floor][node])
+end
+
+function PlotServer.isValidNode(self: PlotServer, floor: number, node: number): boolean
+	if not self.nodes[floor] then
+		return false
+	elseif not self.nodes[floor][node] then
+		return false
+	end
 	return true
 end
 
-function PlotServer.buyCrate(self: Plot, player: Player, crateIndex: number): boolean
-	if not self:isOwner(player) then
+function PlotServer.isOccupied(self: PlotServer, floor: number, node: number): boolean
+	if not self:isValidNode(floor, node) then
 		return false
 	end
+	return self.nodes[floor][node].data ~= nil
+end
 
-	local crateId = self.crates[crateIndex]
-	if not crateId then
-		return false
+function PlotServer.isOwner(self: PlotServer, player: Player): boolean
+	return self.player == player
+end
+
+function PlotServer.requestBuild(self: PlotServer, player: Player, floor: number, node: number, uniqueId: string): ()
+	assert(self:isOwner(player), "Player is not the owner of this plot")
+	assert(self:isValidNode(floor, node), "Invalid floor or node")
+	assert(not self:isOccupied(floor, node), "Node is already occupied")
+
+	local itemData: ItemData = DataService:get(player, { "inventory", uniqueId })
+	assert(itemData, "Item data not found")
+
+	if itemData.itemId then
+		self:build(floor, node, uniqueId)
+		return
 	end
 
-	local crateInfo = Crates.getCrateInfo(crateId)
-	local cost = crateInfo.cost
-	if DataService:get(player, "currency") < cost then
-		return false
+	if not itemData.crateId then
+		return
 	end
 
-	DataService:update(player, "currency", function(value)
-		return value - cost
+	if itemData.amt <= 0 then
+		return
+	end
+
+	DataService:update(player, { "inventory", uniqueId, "amt" }, function(amt: number)
+		return amt - 1
 	end)
 
-	self.crates[crateIndex] = nil
-	self.networker:fireAll("crateBought", crateIndex)
+	local crateData: CrateNode = {
+		crateId = itemData.crateId,
+		timeBuilt = workspace:GetServerTimeNow(),
+	}
 
-	InventoryServiceServer:addCrate(player, crateId)
-	self.serviceNetworker:fire(player, "addToHotbar", crateId)
-
-	return true
+	self:build(floor, node, crateData)
 end
 
-function PlotServer.destroy(self: Plot)
-	self.plotModel:Destroy()
-	self.defenseModel:Destroy()
+function PlotServer.requestRemove(self: PlotServer, player: Player, floor: number, node: number): ()
+	assert(self:isOwner(player), "Player is not the owner of this plot")
+	assert(self:isValidNode(floor, node), "Invalid floor or node")
+	assert(self:isOccupied(floor, node), "Node is not occupied")
+	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
+	local uniqueId = DataService:get(self.player, { "plotNodes", floorNodeStr })
+	if type(uniqueId) == "string" then
+		self:remove(uniqueId)
+		InventoryServiceServer:addToHotBar(self.player, uniqueId)
+	end
+end
+
+function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: number, node: number): ()
+	assert(self:isOwner(player), "Player is not the owner of this plot")
+	assert(self:isValidNode(floor, node), "Invalid floor or node")
+	local nodeInfo = self.nodes[floor][node]
+	assert(nodeInfo.data and nodeInfo.data.crateId, "No crate to open at this node")
+	local crateData: CrateNode = nodeInfo.data
+	local crateId, timeBuilt = crateData.crateId, crateData.timeBuilt
+	assert(crateId and timeBuilt, "No crate to open at node " .. node)
+	local openTime = Crates.getCrateInfo(crateId).openTime
+	local timeRemaining = openTime - (workspace:GetServerTimeNow() - timeBuilt)
+	assert(timeRemaining <= 0, "Crate is not ready to be opened")
+
+	nodeInfo.data = nil
+	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
+	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
+
+	local towerId = Towers.rollTowerId(1)
+	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1 }
+	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
+	self.networker:fireAll("crateOpened", floor, node, towerData, nodeInfo.cf)
+	self:build(floor, node, uniqueId, nil, true)
+end
+
+function PlotServer.destroy(self: PlotServer): ()
 	self.janitor:Destroy()
+	self.plotModel:Destroy()
+	self.defense:destroy()
 	self.networker:destroy()
+	if self.defenseModel then
+		self.defenseModel:Destroy()
+	end
 end
 
 return PlotServer

@@ -10,7 +10,7 @@ local ServicePlayerData = require(ReplicatedStorage.Packages.ServicePlayerData)
 local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 
-type Plot = PlotServer.Plot
+type Plot = PlotServer.PlotServer
 type PlotSpawn = PlotTypes.PlotSpawn
 
 local PlotServiceServer = {}

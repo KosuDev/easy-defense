@@ -252,8 +252,8 @@
               "PlotClient": {
                 "$path": "src/features/plots/classes/PlotClient.luau"
               },
-              "PlotClientNEW": {
-                "$path": "src/features/plots/classes/PlotClientNEW.luau"
+              "PlotClientOLD": {
+                "$path": "src/features/plots/classes/PlotClientOLD.luau"
               }
             },
             "Modules": {
@@ -453,8 +453,8 @@
             "PlotServer": {
               "$path": "src/features/plots/classes/PlotServer.luau"
             },
-            "PlotServerNEW": {
-              "$path": "src/features/plots/classes/PlotServerNEW.luau"
+            "PlotServerOLD": {
+              "$path": "src/features/plots/classes/PlotServerOLD.luau"
             }
           },
           "PlotServiceServer": {

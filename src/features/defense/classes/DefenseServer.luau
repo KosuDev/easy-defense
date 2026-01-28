@@ -53,7 +53,12 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 end
 
 function DefenseServer.spawnEnemy(self: DefenseServer, floor: number)
-	local enemyStats = Enemies.getEnemyForStrength(self.strength[floor])
+	local strength = self.strength[floor] or 0
+	if strength <= 0 then
+		return
+	end
+
+	local enemyStats = Enemies.getEnemyForStrength(strength)
 	local enemy = EnemyServer.new(floor, enemyStats)
 	self:addEnemy(enemy)
 end
@@ -119,7 +124,6 @@ function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
 	end
 
 	if not floor then
-		warn("Tower not found on any floor: " .. uniqueId)
 		return
 	end
 
@@ -134,6 +138,13 @@ function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
 end
 
 function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: TowerServer, dontReplicate: boolean?)
+	if not self.enemies[tower.floor] then
+		self.enemies[tower.floor] = {}
+	end
+	if not self.towers[tower.floor] then
+		self.towers[tower.floor] = {}
+	end
+
 	tower.enemies = self.enemies[tower.floor]
 	tower.networker = self.networker
 	self.towers[tower.floor][uniqueId] = tower
@@ -144,6 +155,10 @@ function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: To
 end
 
 function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)
+	if not self.enemies[enemy.floor] then
+		self.enemies[enemy.floor] = {}
+	end
+
 	enemy.path = self.paths[enemy.floor]
 	table.insert(self.enemies[enemy.floor], enemy)
 	self.networker:fireAll("enemyAdded", enemy.floor, enemy.uniqueId, enemy.baseStats)
