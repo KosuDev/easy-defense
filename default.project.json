@@ -74,6 +74,12 @@
               }
             }
           },
+          "Conveyor": {
+            "$className": "Folder",
+            "ConveyorClient": {
+              "$path": "src/features/conveyor/ConveyorClient.luau"
+            }
+          },
           "Crates": {
             "$className": "Folder",
             "Classes": {
@@ -245,6 +251,9 @@
               "$className": "Folder",
               "PlotClient": {
                 "$path": "src/features/plots/classes/PlotClient.luau"
+              },
+              "PlotClientNEW": {
+                "$path": "src/features/plots/classes/PlotClientNEW.luau"
               }
             },
             "Modules": {

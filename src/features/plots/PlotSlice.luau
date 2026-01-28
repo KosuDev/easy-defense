@@ -19,6 +19,10 @@ local actions = {
 	end,
 
 	removeCrate = function(root: BasePart)
+		if crates()[root] == nil then
+			return
+		end
+
 		crates(function(prev)
 			return Sift.Dictionary.removeKey(prev, root)
 		end)

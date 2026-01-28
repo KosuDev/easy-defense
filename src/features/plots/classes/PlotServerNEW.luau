@@ -67,12 +67,12 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 		player = player,
 		janitor = Janitor.new(),
 		nodes = {},
-		conveyor = ConveyorServer.new(plotSpawn, player),
 		defense = DefenseServer.new(plotSpawn.index, player),
 		plotModel = newPlotModel(plotSpawn.part.CFrame),
 	}, PlotServer)
 
 	self.networker = Networker.server.new("Plot" .. plotSpawn.index, self, {})
+	self.conveyor = ConveyorServer.new(plotSpawn, player, self.networker)
 	self:charInit()
 	self:loadDefense()
 	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function()
