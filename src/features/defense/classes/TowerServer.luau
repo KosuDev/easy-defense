@@ -16,6 +16,7 @@ type EnemyServer = EnemyServer.EnemyServer
 
 export type TowerServer = typeof(setmetatable(
 	{} :: {
+		floor: number,
 		node: number,
 		data: TowerData,
 		cf: CFrame,
@@ -29,8 +30,9 @@ export type TowerServer = typeof(setmetatable(
 	TowerServer
 ))
 
-function TowerServer.new(node: number, cf: CFrame, data: TowerData): TowerServer
+function TowerServer.new(floor: number, node: number, cf: CFrame, data: TowerData): TowerServer
 	local self = setmetatable({
+		floor = floor,
 		node = node,
 		data = data,
 		cf = cf,

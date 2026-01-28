@@ -9,6 +9,7 @@ type EnemyStats = Enemies.EnemyStats
 
 export type EnemyServer = typeof(setmetatable(
 	{} :: {
+		floor: number,
 		dist: number,
 		pos: Vector3,
 		health: number,
@@ -29,8 +30,9 @@ local function getUniqueId(): number
 	return uniqueIdCounter
 end
 
-function EnemyServer.new(enemyStats: EnemyStats): EnemyServer
+function EnemyServer.new(floor: number, enemyStats: EnemyStats): EnemyServer
 	local self = setmetatable({
+		floor = floor,
 		baseStats = enemyStats,
 		uniqueId = getUniqueId(),
 		dist = 0,

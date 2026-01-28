@@ -29,6 +29,9 @@ export type NodeData = CrateNode & TowerData
 export type PlotNode = CrateNode & string
 export type PlotNodes = { [string]: PlotNode }
 
+export type OccupiedNode = CrateNode & string
+export type OccupiedNodes = { [string]: OccupiedNode }
+
 return {
 	currency = 10000,
 	rebirths = 0,

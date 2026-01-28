@@ -1,4 +1,4 @@
----!strict
+--!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
@@ -42,7 +42,7 @@ export type Plot = typeof(setmetatable(
 		janitor: Janitor.Janitor,
 		crates: { string? },
 		timeOfLastCrateSpawn: number,
-		nodes: { Node },
+		nodes: { { Node } },
 		defense: DefenseServer.DefenseServer,
 		serviceNetworker: Networker.Server,
 	},
@@ -87,7 +87,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): Plot
 	self:loadDefense()
 	self:charInit()
 
-	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function(rebirths)
+	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function(rebirths: number)
 		self.defenseLevel = rebirths + 1
 		self:loadDefense()
 	end))
@@ -108,8 +108,14 @@ function PlotServer.loadDefense(self: Plot)
 	local nodes = {}
 	for _, node in defense:QueryDescendants(".TowerPlacement") do
 		local index = node:GetAttribute("Index") :: number
+		local floor = node:GetAttribute("Floor") :: number
 		local cf = node.CFrame
-		nodes[index] = {
+
+		if not nodes[floor] then
+			nodes[floor] = {}
+		end
+
+		nodes[floor][index] = {
 			root = node,
 			cf = cf * CFrame.Angles(0, math.rad(90), 0),
 			data = nil,
@@ -119,7 +125,7 @@ function PlotServer.loadDefense(self: Plot)
 	self.defenseModel = defense
 	self.nodes = nodes
 	self.defense:removeAll()
-	self.defense:updatePath(self.defenseModel)
+	self.defense:updatePaths(self.defenseModel)
 	self.networker:fireAll("loadDefense", self.nodes)
 
 	local userNodes: DataTemplate.PlotNodes = DataService:get(self.player, "plotNodes")

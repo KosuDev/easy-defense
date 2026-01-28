@@ -7,12 +7,12 @@ local PathUtils = {}
 
 local EPS = 1e-8
 
-function PathUtils.calcpath(defenseModel: Model & any): Path
+function PathUtils.calcpath(pathFolder: Model & any): Path
 	local nonLerpedNodes = {}
 	local iNode = 1
 
 	while true do
-		local nodePart = defenseModel.Path:FindFirstChild(tostring(iNode))
+		local nodePart = pathFolder:FindFirstChild(tostring(iNode))
 		if not nodePart then
 			break
 		end
@@ -108,6 +108,18 @@ function PathUtils.calcpath(defenseModel: Model & any): Path
 	}
 end
 
+function PathUtils.calcPaths(defenseModel: Model & any): { Path }
+	local paths = {}
+
+	for _, floorFolder in defenseModel.Floors:GetChildren() do
+		local pathFolder = floorFolder.Path
+		local path = PathUtils.calcpath(pathFolder)
+		paths[tonumber(floorFolder.Name)] = path
+	end
+
+	return paths
+end
+
 function PathUtils.getCFrameFromDist(path: Path, dist: number): CFrame
 	-- Clamp to [0, path.length] to avoid out-of-range
 	if dist <= 0 then
@@ -128,7 +140,6 @@ function PathUtils.getCFrameFromDist(path: Path, dist: number): CFrame
 	return currentCf:Lerp(nextCf, alpha)
 end
 
--- Optional convenience wrapper if you still want position-only access
 function PathUtils.getPosFromDist(path: Path, dist: number): Vector3
 	return PathUtils.getCFrameFromDist(path, dist).Position
 end

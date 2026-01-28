@@ -410,6 +410,12 @@
     "ServerScriptService": {
       "Features": {
         "$className": "Folder",
+        "Conveyor": {
+          "$className": "Folder",
+          "ConveyorServer": {
+            "$path": "src/features/conveyor/ConveyorServer.luau"
+          }
+        },
         "Defense": {
           "$className": "Folder",
           "Classes": {
@@ -437,6 +443,9 @@
             "$className": "Folder",
             "PlotServer": {
               "$path": "src/features/plots/classes/PlotServer.luau"
+            },
+            "PlotServerNEW": {
+              "$path": "src/features/plots/classes/PlotServerNEW.luau"
             }
           },
           "PlotServiceServer": {

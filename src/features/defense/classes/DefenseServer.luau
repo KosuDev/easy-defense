@@ -1,3 +1,4 @@
+--!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
@@ -19,15 +20,15 @@ DefenseServer.__index = DefenseServer
 
 export type DefenseServer = typeof(setmetatable(
 	{} :: {
-		path: Path,
-		towers: { [string]: TowerServer },
-		enemies: { EnemyServer },
+		paths: { Path },
+		towers: { { [string]: TowerServer } },
+		enemies: { { EnemyServer } },
 		index: number,
 		player: Player,
 		networker: Networker.Server,
 		updateConn: RBXScriptConnection?,
 		sortCooldown: number,
-		strength: number,
+		strength: { number },
 		spawnCd: number,
 	},
 	DefenseServer
@@ -40,7 +41,8 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 		index = index,
 		player = player,
 		sortCooldown = SORT_COOLDOWN,
-		strength = 0,
+		strength = {},
+		paths = {},
 		spawnCd = SPAWN_COOLDOWN,
 	}, DefenseServer)
 
@@ -50,29 +52,36 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 	return self
 end
 
-function DefenseServer.spawnEnemy(self: DefenseServer)
-	local enemyStats = Enemies.getEnemyForStrength(self.strength)
-	local enemy = EnemyServer.new(enemyStats)
+function DefenseServer.spawnEnemy(self: DefenseServer, floor: number)
+	local enemyStats = Enemies.getEnemyForStrength(self.strength[floor])
+	local enemy = EnemyServer.new(floor, enemyStats)
 	self:addEnemy(enemy)
 end
 
 function DefenseServer.strengthChanged(self: DefenseServer)
-	local strength = 0
-	for _, tower in self.towers do
-		strength += tower.dps
+	local numFloors = #self.paths
+	local strength: { number } = table.create(numFloors, 0)
+
+	for floor, towers in self.towers do
+		for _, tower in towers do
+			strength[floor] += tower.dps
+		end
 	end
+
 	self.strength = strength
 end
 
-function DefenseServer.updatePath(self: DefenseServer, defenseModel: Model & any)
-	local path = PathUtils.calcpath(defenseModel)
-	self.path = path
+function DefenseServer.updatePaths(self: DefenseServer, defenseModel: Model & any)
+	local paths = PathUtils.calcPaths(defenseModel)
+	self.paths = paths
 
-	for _, enemy in self.enemies do
-		enemy.path = path
+	for floor, enemies in self.enemies do
+		for _, enemy in enemies do
+			enemy.path = paths[floor]
+		end
 	end
 
-	self.networker:fireAll("pathUpdated", path)
+	self.networker:fireAll("pathsUpdated", paths)
 end
 
 function DefenseServer.start(self: DefenseServer)
@@ -93,80 +102,94 @@ function DefenseServer.stop(self: DefenseServer)
 end
 
 function DefenseServer.removeAll(self: DefenseServer)
-	for uniqueId, _ in self.towers do
-		self:removeTower(uniqueId)
+	for _, towers in self.towers do
+		for uniqueId, _ in towers do
+			self:removeTower(uniqueId)
+		end
 	end
 end
 
 function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
-	local tower = self.towers[uniqueId]
+	local floor: number
+	for f, towers in self.towers do
+		if towers[uniqueId] then
+			floor = f
+			break
+		end
+	end
+
+	if not floor then
+		warn("Tower not found on any floor: " .. uniqueId)
+		return
+	end
+
+	local tower = self.towers[floor][uniqueId]
 	if not tower then
 		warn("Attempted to remove non-existent tower: " .. uniqueId)
 		return
 	end
-	self.towers[uniqueId] = nil
-	self.networker:fireAll("towerRemoved", tower.node)
+	self.towers[floor][uniqueId] = nil
+	self.networker:fireAll("towerRemoved", floor, tower.node)
 	self:strengthChanged()
 end
 
-function DefenseServer.getUniqueIdByNode(self: DefenseServer, node: number): string?
-	for uniqueId, tower in self.towers do
-		if tower.node == node then
-			return uniqueId
-		end
-	end
-	return nil
-end
-
 function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: TowerServer, dontReplicate: boolean?)
-	tower.enemies = self.enemies
+	tower.enemies = self.enemies[tower.floor]
 	tower.networker = self.networker
-	self.towers[uniqueId] = tower
+	self.towers[tower.floor][uniqueId] = tower
 	if not dontReplicate then
-		self.networker:fireAll("towerAdded", tower.node, tower.cf, tower.data)
+		self.networker:fireAll("towerAdded", tower.floor, tower.node, tower.cf, tower.data)
 	end
 	self:strengthChanged()
 end
 
 function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)
-	enemy.path = self.path
-	table.insert(self.enemies, enemy)
-	self.networker:fireAll("enemyAdded", enemy.uniqueId, enemy.baseStats)
+	enemy.path = self.paths[enemy.floor]
+	table.insert(self.enemies[enemy.floor], enemy)
+	self.networker:fireAll("enemyAdded", enemy.floor, enemy.uniqueId, enemy.baseStats)
 end
 
 function DefenseServer.update(self: DefenseServer, dt: number): ()
 	self.spawnCd -= dt
 	if self.spawnCd <= 0 then
-		self:spawnEnemy()
+		for floor, _ in self.paths do
+			self:spawnEnemy(floor)
+		end
 		self.spawnCd = SPAWN_COOLDOWN
 	end
 
-	for i = #self.enemies, 1, -1 do
-		local enemy = self.enemies[i]
-		enemy:update(dt)
+	for _, enemies in self.enemies do
+		for i = #enemies, 1, -1 do
+			local enemy = enemies[i]
+			enemy:update(dt)
 
-		if enemy.dead then
-			table.remove(self.enemies, i)
-			if enemy.killed then
-				DataService:update(self.player, "currency", function(amt: number)
-					return amt + enemy.maxHealth
-				end)
+			if enemy.dead then
+				table.remove(enemies, i)
+				if enemy.killed then
+					DataService:update(self.player, "currency", function(amt: number)
+						return amt + enemy.maxHealth
+					end)
+				end
+			elseif enemy.dist >= self.paths[enemy.floor].length then
+				enemy.dead = true
+				table.remove(enemies, i)
 			end
-		elseif enemy.dist >= self.path.length then
-			enemy.dead = true
-			table.remove(self.enemies, i)
 		end
 	end
 
-	for _, tower in self.towers do
-		tower:update(dt)
+	for _, towers in self.towers do
+		for _, tower in towers do
+			tower:update(dt)
+		end
 	end
 
 	self.sortCooldown -= dt
 	if self.sortCooldown <= 0 then
-		table.sort(self.enemies, function(a: EnemyServer, b: EnemyServer): boolean
-			return a.dist > b.dist
-		end)
+		for _, enemies in self.enemies do
+			table.sort(enemies, function(a: EnemyServer, b: EnemyServer): boolean
+				return a.dist > b.dist
+			end)
+		end
 		self.sortCooldown = SORT_COOLDOWN
 	end
 end

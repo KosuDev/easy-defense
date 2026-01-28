@@ -73,6 +73,10 @@ function InventoryServiceServer.setHotBarUniqueId(
 	DataService:set(player, { "hotbar", index }, uniqueId or "NULL")
 end
 
+function InventoryServiceServer.addToHotBar(self: InventoryServiceServer, player: Player, uniqueId: string): ()
+	self.networker:fire(player, "addToHotbar", uniqueId)
+end
+
 type InventoryServiceServer = typeof(InventoryServiceServer) & {
 	networker: Networker.Server,
 }

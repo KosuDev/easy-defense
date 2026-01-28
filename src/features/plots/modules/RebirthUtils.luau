@@ -7,6 +7,18 @@ local rebirthRewards = {
 		towerSlots = 1,
 		currencyMultiplier = 1.1,
 	},
+	[3] = {
+		towerSlots = 1,
+		currencyMultiplier = 1.1,
+	},
+	[4] = {
+		towerSlots = 1,
+		currencyMultiplier = 1.1,
+	},
+	[5] = {
+		towerSlots = 1,
+		currencyMultiplier = 1.1,
+	},
 }
 
 local RebirthUtils = {
