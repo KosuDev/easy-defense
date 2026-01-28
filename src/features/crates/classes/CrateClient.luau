@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local Networker = require(ReplicatedStorage.Packages.Networker)
 local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 
@@ -33,12 +34,14 @@ Crate.__index = Crate
 
 export type Crate = typeof(setmetatable(
 	{} :: {
+		networker: Networker.Client,
 		startCf: CFrame,
 		index: number,
 		crateId: string,
 		physicsEnabled: boolean,
 		active: boolean,
 		destroyed: boolean,
+		speed: number,
 		x: number,
 		goalX: number,
 		model: Model & any,
@@ -54,18 +57,22 @@ export type Crate = typeof(setmetatable(
 ))
 
 function Crate.new(
+	networker: Networker.Client,
 	startCf: CFrame,
 	index: number,
 	cratesInBunch: number,
 	crateId: string,
+	speed: number,
 	isLocalPlayer: boolean
 ): Crate
 	local self = setmetatable({
+		networker = networker,
 		startCf = startCf,
 		crateId = crateId,
 		index = index,
 		active = false,
 		destroyed = false,
+		speed = speed,
 		model = Crates.getCrateModel(crateId),
 		x = getStartPoint(index),
 		goalX = getGoal(index, cratesInBunch),
@@ -114,8 +121,10 @@ function Crate.new(
 	return self
 end
 
-function Crate.onBought(_self: Crate)
-	error("onBought not implemented")
+function Crate.onBought(self: Crate)
+	if self.isLocalPlayer then
+		self.networker:fire("buyCrate", self.index)
+	end
 end
 
 function Crate.despawn(self: Crate)
@@ -132,6 +141,7 @@ function Crate.update(self: Crate, dt: number)
 		return
 	end
 
+	dt *= self.speed
 	local moveDist = math.clamp(VELOCITY * dt, -maxDist, maxDist)
 	self.x += moveDist
 	self.model:PivotTo(self.startCf * CFrame.new(self.x, 0, 0))

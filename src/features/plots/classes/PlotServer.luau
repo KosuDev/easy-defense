@@ -76,7 +76,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 		self.requestRemove,
 		self.requestOpenCrate,
 	})
-	self.conveyor = ConveyorServer.new(plotSpawn, player, self.networker)
+	self.conveyor = ConveyorServer.new(self.index, self.plotModel, player)
 	self:charInit()
 	self:loadDefense()
 	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function()
@@ -94,6 +94,8 @@ function PlotServer.get(self: PlotServer): PlotTypes.PlotData
 		plotModel = self.plotModel,
 		nodes = self.nodes,
 		paths = self.defense.paths,
+		conveyorModel = self.conveyor.model,
+		conveyorLevel = self.conveyor.level,
 	}
 end
 
@@ -304,6 +306,7 @@ function PlotServer.destroy(self: PlotServer): ()
 	self.plotModel:Destroy()
 	self.defense:destroy()
 	self.networker:destroy()
+	self.conveyor:destroy()
 	if self.defenseModel then
 		self.defenseModel:Destroy()
 	end

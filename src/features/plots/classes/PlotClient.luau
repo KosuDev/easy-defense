@@ -16,6 +16,7 @@ local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.Inven
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
+
 local PlotClient = {}
 PlotClient.__index = PlotClient
 
@@ -35,6 +36,7 @@ export type PlotClient = typeof(setmetatable(
 		defenseJanitor: Janitor.Janitor,
 		networker: Networker.Client,
 		nodesUpdated: Signal.Signal<>,
+		conveyor: ConveyorClient.ConveyorClient,
 	},
 	PlotClient
 ))
@@ -48,13 +50,14 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 		nodes = plotData.nodes,
 		janitor = Janitor.new(),
 		defense = DefenseClient.new(plotData.index, plotData.player),
-		conveyor = ConveyorClient.new(),
 		defenseJanitor = Janitor.new(),
 		nodesUpdated = Signal.new(),
 	}, PlotClient) :: any
 
 	self.defense:pathsUpdated(plotData.paths)
 	self.networker = Networker.client.new("Plot" .. plotData.index, self :: any)
+	self.conveyor =
+		ConveyorClient.new(self.index, self.plotModel, plotData.conveyorModel, self.player, plotData.conveyorLevel)
 	self:loadDefense()
 
 	return self
@@ -185,6 +188,7 @@ function PlotClient.destroy(self: PlotClient)
 	self.plotModel:Destroy()
 	self.defense:stop()
 	self.defenseJanitor:Destroy()
+	self.conveyor:destroy()
 end
 
 return PlotClient

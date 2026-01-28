@@ -35,6 +35,7 @@ export type OccupiedNodes = { [string]: OccupiedNode }
 return {
 	currency = 10000,
 	rebirths = 0,
+	conveyorLevel = 1,
 	towerIndex = {
 		normal = {},
 		gold = {},

@@ -16,6 +16,8 @@ export type PlotData = {
 	plotModel: Model,
 	nodes: { { Node } },
 	paths: any,
+	conveyorModel: (Model & any)?,
+	conveyorLevel: number,
 }
 
 export type ClientNode = Node & {
