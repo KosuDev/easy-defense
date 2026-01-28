@@ -71,7 +71,11 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 		plotModel = newPlotModel(plotSpawn.part.CFrame),
 	}, PlotServer)
 
-	self.networker = Networker.server.new("Plot" .. plotSpawn.index, self, {})
+	self.networker = Networker.server.new("Plot" .. plotSpawn.index, self, {
+		self.requestBuild,
+		self.requestRemove,
+		self.requestOpenCrate,
+	})
 	self.conveyor = ConveyorServer.new(plotSpawn, player, self.networker)
 	self:charInit()
 	self:loadDefense()
@@ -80,6 +84,17 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 	end))
 
 	return self
+end
+
+function PlotServer.get(self: PlotServer): PlotTypes.PlotData
+	return {
+		cf = self.cf,
+		index = self.index,
+		player = self.player,
+		plotModel = self.plotModel,
+		nodes = self.nodes,
+		paths = self.defense.paths,
+	}
 end
 
 function PlotServer.charInit(self: PlotServer)
@@ -121,7 +136,7 @@ function PlotServer.loadDefense(self: PlotServer): ()
 	self.defense:removeAll()
 	self.defense:updatePaths(defenseModel)
 
-	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "occupiedNodes")
+	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "plotNodes")
 	for floorNodeStr, occupiedNode in occupiedNodes do
 		local floor, node = PlotServiceUtils.stringToFloorNode(floorNodeStr)
 		self:build(floor, node, occupiedNode, true)
@@ -158,7 +173,7 @@ function PlotServer.build(
 
 	if not fromLoad then
 		local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
-		DataService:set(self.player, { "occupiedNodes", floorNodeStr }, occupiedNode)
+		DataService:set(self.player, { "plotNodes", floorNodeStr }, occupiedNode)
 	end
 
 	if isTower then
@@ -174,7 +189,7 @@ end
 
 function PlotServer.remove(self: PlotServer, uniqueId: string)
 	local floor: number, node: number
-	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "occupiedNodes")
+	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "plotNodes")
 	for floorNodeStr, occupiedNode in occupiedNodes do
 		if type(occupiedNode) == "string" and occupiedNode == uniqueId then
 			floor, node = PlotServiceUtils.stringToFloorNode(floorNodeStr)
@@ -188,7 +203,7 @@ function PlotServer.remove(self: PlotServer, uniqueId: string)
 
 	self.defense:removeTower(uniqueId)
 	self.nodes[floor][node].data = nil
-	DataService:set(self.player, { "occupiedNodes", PlotServiceUtils.floorNodeToString(floor, node) }, nil)
+	DataService:set(self.player, { "plotNodes", PlotServiceUtils.floorNodeToString(floor, node) }, nil)
 end
 
 function PlotServer.isValidNode(self: PlotServer, floor: number, node: number): boolean
@@ -249,7 +264,7 @@ function PlotServer.requestRemove(self: PlotServer, player: Player, floor: numbe
 	assert(self:isValidNode(floor, node), "Invalid floor or node")
 	assert(self:isOccupied(floor, node), "Node is not occupied")
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
-	local uniqueId = DataService:get(self.player, { "occupiedNodes", floorNodeStr })
+	local uniqueId = DataService:get(self.player, { "plotNodes", floorNodeStr })
 	if type(uniqueId) == "string" then
 		self:remove(uniqueId)
 		InventoryServiceServer:addToHotBar(self.player, uniqueId)
@@ -270,7 +285,7 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 
 	nodeInfo.data = nil
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
-	DataService:set(self.player, { "occupiedNodes", floorNodeStr }, nil)
+	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
 	local towerId = Towers.rollTowerId(1)
 	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1 }

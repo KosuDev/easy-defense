@@ -30,12 +30,19 @@ export type EnemyClient = typeof(setmetatable(
 		destroyed: Signal.Signal<>,
 		baseStats: Enemies.EnemyStats,
 		track: AnimationTrack,
+		floor: number,
 	},
 	EnemyClient
 ))
 
-function EnemyClient.new(enemyStats: Enemies.EnemyStats, uniqueId: number, path: PathUtils.Path): EnemyClient
+function EnemyClient.new(
+	floor: number,
+	enemyStats: Enemies.EnemyStats,
+	uniqueId: number,
+	path: PathUtils.Path
+): EnemyClient
 	local self = setmetatable({
+		floor = floor,
 		dist = 0,
 		path = path,
 		baseStats = enemyStats,

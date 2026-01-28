@@ -52,7 +52,7 @@ function TowerServer.attack(self: TowerServer, enemy: EnemyServer): ()
 	local damage = self.towerInfo.damage
 	enemy:damage(damage)
 	self.cd = 1 / self.towerInfo.firerate
-	self.networker:fireAll("towerAttack", self.node, enemy.uniqueId, damage)
+	self.networker:fireAll("towerAttack", self.floor, self.node, enemy.uniqueId, damage)
 end
 
 function TowerServer.update(self: TowerServer, dt: number): ()

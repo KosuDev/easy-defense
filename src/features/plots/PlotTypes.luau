@@ -14,8 +14,8 @@ export type PlotData = {
 	index: number,
 	player: Player,
 	plotModel: Model,
-	nodes: { Node },
-	defensePath: any,
+	nodes: { { Node } },
+	paths: any,
 }
 
 export type ClientNode = Node & {

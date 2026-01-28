@@ -1,4 +1,5 @@
 --!strict
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).client
@@ -38,8 +39,8 @@ export type PlotClient = typeof(setmetatable(
 	PlotClient
 ))
 
-function PlotClient.new(plotData: PlotTypes.PlotData)
-	local self = setmetatable({
+function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
+	local self: PlotClient = setmetatable({
 		cf = plotData.cf,
 		index = plotData.index,
 		player = plotData.player,
@@ -50,9 +51,11 @@ function PlotClient.new(plotData: PlotTypes.PlotData)
 		conveyor = ConveyorClient.new(),
 		defenseJanitor = Janitor.new(),
 		nodesUpdated = Signal.new(),
-	}, PlotClient)
+	}, PlotClient) :: any
 
+	self.defense:pathsUpdated(plotData.paths)
 	self.networker = Networker.client.new("Plot" .. plotData.index, self :: any)
+	self:loadDefense()
 
 	return self
 end
@@ -76,6 +79,9 @@ function PlotClient.loadDefense(self: PlotClient, nodes: { { ClientNode } }?)
 	end
 
 	self.defenseJanitor:Cleanup()
+	if self.player ~= Players.LocalPlayer then
+		return
+	end
 
 	for floor, floorNodes in self.nodes do
 		for nodeIndex, node in floorNodes do

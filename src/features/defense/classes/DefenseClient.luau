@@ -1,3 +1,4 @@
+--!strict
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
@@ -15,12 +16,12 @@ DefenseClient.__index = DefenseClient
 
 export type DefenseClient = typeof(setmetatable(
 	{} :: {
-		towers: { [number]: any },
-		enemies: { any },
+		towers: { { TowerClient.TowerClient } },
+		enemies: { EnemyClient.EnemyClient },
 		index: number,
 		player: Player,
 		networker: Networker.Client,
-		path: PathUtils.Path,
+		paths: { PathUtils.Path },
 		updateConn: RBXScriptConnection?,
 	},
 	DefenseClient
@@ -32,9 +33,10 @@ function DefenseClient.new(index: number, player: Player): DefenseClient
 		enemies = {},
 		index = index,
 		player = player,
+		paths = {},
 	}, DefenseClient)
 
-	self.networker = Networker.client.new("Defense" .. index, self)
+	self.networker = Networker.client.new("Defense" .. index, self :: any)
 	self:start()
 
 	return self
@@ -57,28 +59,36 @@ function DefenseClient.stop(self: DefenseClient)
 	end
 end
 
-function DefenseClient.pathUpdated(self: DefenseClient, path: PathUtils.Path): ()
-	self.path = path
+function DefenseClient.pathsUpdated(self: DefenseClient, paths: { PathUtils.Path }): ()
+	self.paths = paths
 	for _, enemy in self.enemies do
-		enemy.path = path
+		enemy.path = self.paths[enemy.floor]
 	end
 end
 
-function DefenseClient.towerRemoved(self: DefenseClient, node: number): ()
-	local tower = self.towers[node]
+function DefenseClient.towerRemoved(self: DefenseClient, floor: number, node: number): ()
+	local tower = self.towers[floor][node]
 	if tower then
 		tower:destroy()
-		self.towers[node] = nil
+		self.towers[floor][node] = nil
 	end
 end
 
-function DefenseClient.towerAdded(self: DefenseClient, node: number, cf: CFrame, data: TowerData): ()
+function DefenseClient.towerAdded(self: DefenseClient, floor: number, node: number, cf: CFrame, data: TowerData): ()
 	local tower = TowerClient.new(node, cf, data)
-	self.towers[node] = tower
+	if not self.towers[floor] then
+		self.towers[floor] = {}
+	end
+	self.towers[floor][node] = tower
 end
 
-function DefenseClient.enemyAdded(self: DefenseClient, uniqueId: number, enemyStats: Enemies.EnemyStats): ()
-	local enemy = EnemyClient.new(enemyStats, uniqueId, self.path)
+function DefenseClient.enemyAdded(
+	self: DefenseClient,
+	floor: number,
+	uniqueId: number,
+	enemyStats: Enemies.EnemyStats
+): ()
+	local enemy = EnemyClient.new(floor, enemyStats, uniqueId, self.paths[floor])
 	self.enemies[uniqueId] = enemy
 end
 
@@ -90,9 +100,15 @@ function DefenseClient.removeEnemy(self: DefenseClient, uniqueId: number): ()
 	end
 end
 
-function DefenseClient.towerAttack(self: DefenseClient, node: number, enemyUniqueId: number, damage: number): ()
+function DefenseClient.towerAttack(
+	self: DefenseClient,
+	floor: number,
+	node: number,
+	enemyUniqueId: number,
+	damage: number
+): ()
 	local enemy = self.enemies[enemyUniqueId]
-	local tower = self.towers[node]
+	local tower = self.towers[floor][node]
 	tower:attack(enemy, damage)
 	if enemy.dead then
 		self:removeEnemy(enemyUniqueId)
@@ -114,8 +130,10 @@ function DefenseClient.destroy(self: DefenseClient): ()
 	for _, enemy in self.enemies do
 		enemy:destroy()
 	end
-	for _, tower in self.towers do
-		tower:destroy()
+	for _, floorTowers in self.towers do
+		for _, tower in floorTowers do
+			tower:destroy()
+		end
 	end
 end
 
