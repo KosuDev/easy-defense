@@ -9,6 +9,7 @@ local InventoryServiceServer = require(ServerScriptService.Features.Inventory.In
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 
 local Conveyors = ReplicatedStorage.Assets.Conveyors
 local CRATE_SPAWN_CD = PlotServiceUtils.enums.crateSpawnCooldown
@@ -47,9 +48,12 @@ function ConveyorServer.new(index: number, plotModel: Model, player: Player): Co
 	self.networker = Networker.server.new("Conveyor" .. index, self, {
 		self.spawnCrate,
 		self.buyCrate :: any,
+		self.requestUpgrade,
 	})
 	self.janitor:Add(DataService:getChangedSignal(player, "conveyorLevel"):Connect(function(newLevel: number)
 		self.level = newLevel
+		self.networker:fireAll("setLevel", newLevel)
+		self:update()
 	end))
 
 	self:update()
@@ -67,6 +71,29 @@ function ConveyorServer.update(self: ConveyorServer)
 	model:PivotTo(self.plotModel.ConveyorSpawn.CFrame)
 	model.Parent = self.plotModel
 	self.model = model
+	self.networker:fireAll("setModel", model)
+end
+
+function ConveyorServer.requestUpgrade(self: ConveyorServer, player: Player)
+	if self.player ~= player then
+		return
+	end
+
+	local nextLevel = self.level + 1
+	local conveyorInfo = ConveyorUpgrades[nextLevel]
+	if not conveyorInfo then
+		return
+	end
+
+	if DataService:get(player, "currency") < conveyorInfo.cost then
+		return
+	end
+
+	DataService:update(player, "currency", function(value: number)
+		return value - conveyorInfo.cost
+	end)
+
+	DataService:set(player, "conveyorLevel", nextLevel)
 end
 
 function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolean

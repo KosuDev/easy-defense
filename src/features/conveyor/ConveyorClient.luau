@@ -6,8 +6,11 @@ local Charm = require(ReplicatedStorage.Packages.Charm)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Ripple = require(ReplicatedStorage.Packages.Ripple)
+local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
+local TouchPad = require(ReplicatedStorage.Source.Features.Conveyor.Modules.TouchPad)
 local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.CrateClient)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
+local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 
 local DEFAULT_TEXTURE_SPEED = 3.6
 local TEXTURE_TIME = 1.1
@@ -20,7 +23,7 @@ type Crate = CrateClient.Crate
 
 export type ConveyorClient = typeof(setmetatable(
 	{} :: {
-		level: number,
+		level: Charm.Atom<number>,
 		player: Player,
 		crates: { Crate },
 		plotModel: Model & any,
@@ -46,7 +49,7 @@ function ConveyorClient.new(
 	level: number
 ): ConveyorClient
 	local self = setmetatable({
-		level = level,
+		level = Charm.atom(level),
 		player = player,
 		crateSpawnCf = plotModel.CrateStart.CFrame,
 		crates = {},
@@ -65,11 +68,16 @@ function ConveyorClient.new(
 		self:setModel(conveyorModel)
 	end
 
+	self:initPads()
 	if player == Players.LocalPlayer then
 		self:initSpawnButton()
 	end
 
 	return self
+end
+
+function ConveyorClient.setLevel(self: ConveyorClient, level: number)
+	self.level(level)
 end
 
 function ConveyorClient.crateBought(self: ConveyorClient, index: number)
@@ -126,6 +134,32 @@ function ConveyorClient.cratesChanged(self: ConveyorClient, crateIds: { string }
 		self.conveyorSpeed(0)
 		self.speedThread = nil
 	end)
+end
+
+function ConveyorClient.initPads(self: ConveyorClient)
+	local upgradePad = self.plotModel.Pads.ConveyorUpgradePad
+	local textLabel = upgradePad:FindFirstChild("Cost", true) :: TextLabel
+
+	local function updateText()
+		local level = self.level()
+		local upgradeInfo = ConveyorUpgrades[level + 1]
+		if not upgradeInfo then
+			textLabel.Text = "MAXED"
+		else
+			textLabel.Text = Abbreviate(upgradeInfo.cost)
+		end
+	end
+
+	updateText()
+	self.janitor:Add(Charm.subscribe(self.level, updateText))
+
+	if self.player ~= Players.LocalPlayer then
+		return
+	end
+
+	self.janitor:Add(TouchPad.new(upgradePad.Button, function()
+		self.networker:fire("requestUpgrade")
+	end))
 end
 
 function ConveyorClient.initSpawnButton(self: ConveyorClient)

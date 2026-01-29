@@ -78,6 +78,12 @@
             "$className": "Folder",
             "ConveyorClient": {
               "$path": "src/features/conveyor/ConveyorClient.luau"
+            },
+            "Modules": {
+              "$className": "Folder",
+              "TouchPad": {
+                "$path": "src/features/conveyor/modules/TouchPad.luau"
+              }
             }
           },
           "Crates": {
@@ -394,6 +400,9 @@
           },
           "Items": {
             "$className": "Folder",
+            "ConveyorUpgrades": {
+              "$path": "src/game/items/ConveyorUpgrades.luau"
+            },
             "DataTemplate": {
               "$path": "src/game/items/DataTemplate.luau"
             },
