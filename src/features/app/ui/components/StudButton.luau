@@ -9,7 +9,7 @@ local e = React.createElement
 
 type StudButtonProps = Button.ButtonProps & {
 	StudSize: number?,
-	Text: string,
+	Text: string?,
 	StrokeColor: Color3?,
 	StrokeThickness: number?,
 	StudGradient: ColorSequence?,
@@ -44,13 +44,15 @@ local StudButton = function(props: StudButtonProps)
 			Color = props.StrokeColor or Color3.new(0, 0, 0),
 		}),
 
-		Text = e(TextLabel, {
-			Text = props.Text,
-			Size = UDim2.fromScale(0.95, 0.7),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-			Stroke = {},
-		}),
+		Text = if props.Text
+			then e(TextLabel, {
+				Text = props.Text,
+				Size = UDim2.fromScale(0.95, 0.7),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				Stroke = {},
+			})
+			else nil,
 	}, props.children)
 end
 
@@ -85,6 +87,11 @@ local GOLD_GRADIENT = ColorSequence.new({
 	ColorSequenceKeypoint.new(0.21, Color3.fromRGB(255, 211, 108)),
 	ColorSequenceKeypoint.new(0.87, Color3.fromRGB(255, 215, 57)),
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(201, 107, 0)),
+})
+
+local BLACK_GRADIENT = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 100, 100)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0)),
 })
 
 local function Green(props: StudButtonProps)
@@ -132,6 +139,15 @@ local function Teal(props: StudButtonProps)
 	)
 end
 
+local function Black(props: StudButtonProps)
+	return e(
+		StudButton,
+		Sift.Dictionary.merge(props, {
+			StudGradient = BLACK_GRADIENT,
+		})
+	)
+end
+
 return {
 	Green = Green,
 	Component = StudButton,
@@ -139,4 +155,5 @@ return {
 	Blue = Blue,
 	Gold = Gold,
 	Teal = Teal,
+	Black = Black,
 }

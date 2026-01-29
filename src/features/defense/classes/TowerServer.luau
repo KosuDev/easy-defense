@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local EnemyServer = require(script.Parent.EnemyServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -43,13 +44,13 @@ function TowerServer.new(floor: number, node: number, cf: CFrame, data: TowerDat
 	}, TowerServer)
 
 	self.cd = 1 / self.towerInfo.firerate
-	self.dps = self.towerInfo.damage * self.towerInfo.firerate
+	self.dps = self.towerInfo.damage * self.towerInfo.firerate * PlotServiceUtils.getDamageMultiplier(self.data.level)
 
 	return self
 end
 
 function TowerServer.attack(self: TowerServer, enemy: EnemyServer): ()
-	local damage = self.towerInfo.damage
+	local damage = math.ceil(self.towerInfo.damage * PlotServiceUtils.getDamageMultiplier(self.data.level))
 	enemy:damage(damage)
 	self.cd = 1 / self.towerInfo.firerate
 	self.networker:fireAll("towerAttack", self.floor, self.node, enemy.uniqueId, damage)

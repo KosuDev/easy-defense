@@ -10,6 +10,7 @@ type Atom<T> = Charm.Atom<T>
 
 local crates: Atom<{ [BasePart]: CrateNode }> = atom({})
 local rebirthReward: Atom<any?> = atom(nil)
+local towerUpgrades: Atom<{ [BasePart]: DataTemplate.TowerData }> = atom({})
 
 local actions = {
 	addCrate = function(root: BasePart, crateData: CrateNode)
@@ -27,6 +28,20 @@ local actions = {
 			return Sift.Dictionary.removeKey(prev, root)
 		end)
 	end,
+
+	setTowerUpgrade = function(root: BasePart, itemData: any)
+		if itemData and itemData.crateId then
+			itemData = nil
+		end
+
+		if towerUpgrades()[root] == itemData then
+			return
+		end
+
+		towerUpgrades(function(prev)
+			return Sift.Dictionary.set(prev, root, itemData)
+		end)
+	end,
 }
 
 return {
@@ -34,5 +49,6 @@ return {
 	states = {
 		crates = crates,
 		rebirthReward = rebirthReward,
+		towerUpgrades = towerUpgrades,
 	},
 }

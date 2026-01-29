@@ -13,6 +13,7 @@ local DefenseClient = require(ReplicatedStorage.Source.Features.Defense.Classes.
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
+local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -35,7 +36,7 @@ export type PlotClient = typeof(setmetatable(
 		defense: DefenseClient.DefenseClient,
 		defenseJanitor: Janitor.Janitor,
 		networker: Networker.Client,
-		nodesUpdated: Signal.Signal<>,
+		nodesUpdated: Signal.Signal<number, number>,
 		conveyor: ConveyorClient.ConveyorClient,
 	},
 	PlotClient
@@ -122,17 +123,16 @@ function PlotClient.setNode(self: PlotClient, floor: number, node: number, nodeD
 	end
 
 	self.nodes[floor][node] = clientNode
-	self.nodesUpdated:Fire()
+	self.nodesUpdated:Fire(floor, node)
 end
 
 function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, towerData: TowerData, towerCf: CFrame)
-	print(floor, node, self.nodes)
 	local nodeData = self.nodes[floor][node]
 	local crateModel = nodeData.model
 	PlotSlice.actions.removeCrate(nodeData.root)
 	nodeData.data = nil
 	nodeData.model = nil :: any
-	self.nodesUpdated:Fire()
+	self.nodesUpdated:Fire(floor, node)
 
 	crateModel:Destroy()
 	CrateOpenVfx(nodeData.cf, towerData)
@@ -149,11 +149,35 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	prox.RequiresLineOfSight = false
 	prox.MaxActivationDistance = 10
 	prox.HoldDuration = 0.5
-	prox.ActionText = "Build"
 	prox.Parent = attach
 
-	local function update()
+	local upgradePart = Instance.new("Part")
+	upgradePart.Size = Vector3.new(6, 3, 0.001)
+	upgradePart.Transparency = 1
+	upgradePart.Anchored = true
+	upgradePart.CanCollide = false
+	upgradePart.Name = "UpgradePart"
+	upgradePart.CFrame = root.CFrame * CFrame.new(0, 1.33, -5.5) * CFrame.Angles(math.rad(25), 0, 0)
+	upgradePart.Parent = root.Parent
+
+	local function update(f: number?, n: number?)
 		local data = self.nodes[floor][nodeIndex].data
+		if f == floor and n == nodeIndex then
+			if data then
+				local upgradeData = table.clone(data) :: any
+				upgradeData.floor = floor
+				upgradeData.node = nodeIndex
+				PlotSlice.actions.setTowerUpgrade(upgradePart, upgradeData)
+			else
+				PlotSlice.actions.setTowerUpgrade(upgradePart, nil)
+			end
+
+			if data and data.itemId then
+				local scale = PlotServiceUtils.getScaleFromLevel(data.level) - 0.75
+				upgradePart.CFrame = root.CFrame * CFrame.new(0, 1.33, -5.5 - scale) * CFrame.Angles(math.rad(25), 0, 0)
+			end
+		end
+
 		prox.Enabled = true
 		if data and data.crateId then
 			prox.ActionText = "Open"
@@ -176,11 +200,15 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 		end
 	end)
 
-	update()
+	update(floor, nodeIndex)
 	self.defenseJanitor:Add(attach)
 	self.defenseJanitor:Add(prox)
 	self.defenseJanitor:Add(self.nodesUpdated:Connect(update))
 	self.defenseJanitor:Add(Charm.subscribe(InventorySlice.state.equippedItemUniqueId, update))
+	self.defenseJanitor:Add(function()
+		PlotSlice.actions.setTowerUpgrade(upgradePart, nil)
+		upgradePart:Destroy()
+	end)
 end
 
 function PlotClient.destroy(self: PlotClient)

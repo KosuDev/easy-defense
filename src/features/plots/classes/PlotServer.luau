@@ -30,6 +30,7 @@ type Node = PlotTypes.Node
 type NodeData = DataTemplate.NodeData
 type ItemData = DataTemplate.ItemData
 type CrateNode = DataTemplate.CrateNode
+type TowerData = DataTemplate.TowerData
 
 export type PlotServer = typeof(setmetatable(
 	{} :: {
@@ -75,6 +76,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 		self.requestBuild,
 		self.requestRemove,
 		self.requestOpenCrate,
+		self.requestUpgrade,
 	})
 	self.conveyor = ConveyorServer.new(self.index, self.plotModel, player)
 	self:charInit()
@@ -233,6 +235,16 @@ function PlotServer.isOwner(self: PlotServer, player: Player): boolean
 	return self.player == player
 end
 
+function PlotServer.getFloorNodeFromUniqueId(self: PlotServer, uniqueId: string): (number?, number?)
+	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "plotNodes")
+	for floorNodeStr, occupiedNode in occupiedNodes do
+		if type(occupiedNode) == "string" and occupiedNode == uniqueId then
+			return PlotServiceUtils.stringToFloorNode(floorNodeStr)
+		end
+	end
+	return nil
+end
+
 function PlotServer.requestBuild(self: PlotServer, player: Player, floor: number, node: number, uniqueId: string): ()
 	assert(self:isOwner(player), "Player is not the owner of this plot")
 	assert(self:isValidNode(floor, node), "Invalid floor or node")
@@ -276,6 +288,35 @@ function PlotServer.requestRemove(self: PlotServer, player: Player, floor: numbe
 		self:remove(uniqueId)
 		InventoryServiceServer:addToHotBar(self.player, uniqueId)
 	end
+end
+
+function PlotServer.requestUpgrade(self: PlotServer, player: Player, floor: number, node: number): ()
+	assert(self:isOwner(player), "Player is not the owner of this plot")
+	assert(self:isValidNode(floor, node), "Invalid floor or node")
+	local key = PlotServiceUtils.floorNodeToString(floor, node)
+	local uniqueId = DataService:get(self.player, { "plotNodes", key })
+	if type(uniqueId) ~= "string" then
+		warn("No tower to upgrade at floor " .. floor .. " node " .. node)
+		return
+	end
+
+	local towerData: TowerData = DataService:get(player, { "inventory", uniqueId })
+	assert(towerData, "Tower data not found")
+	local upgradeCost = PlotServiceUtils.getUpgradeCost(towerData)
+	if DataService:get(player, "currency") < upgradeCost then
+		return
+	end
+
+	DataService:update(player, "currency", function(currency: number)
+		return currency - upgradeCost
+	end)
+
+	DataService:update(player, { "inventory", uniqueId, "level" }, function(level: number)
+		return level + 1
+	end)
+
+	self.networker:fireAll("setNode", floor, node, self.nodes[floor][node])
+	self.defense.networker:fireAll("towerUpdated", floor, node, towerData)
 end
 
 function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: number, node: number): ()

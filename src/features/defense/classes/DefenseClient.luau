@@ -82,6 +82,13 @@ function DefenseClient.towerAdded(self: DefenseClient, floor: number, node: numb
 	self.towers[floor][node] = tower
 end
 
+function DefenseClient.towerUpdated(self: DefenseClient, floor: number, node: number, data: TowerData): ()
+	local tower = self.towers[floor][node]
+	if tower then
+		tower:setData(data)
+	end
+end
+
 function DefenseClient.enemyAdded(
 	self: DefenseClient,
 	floor: number,
@@ -111,7 +118,9 @@ function DefenseClient.towerAttack(
 	local tower = self.towers[floor][node]
 	tower:attack(enemy, damage)
 	if enemy.dead then
-		self:removeEnemy(enemyUniqueId)
+		task.defer(function()
+			self:removeEnemy(enemyUniqueId)
+		end)
 	end
 end
 

@@ -6,6 +6,7 @@ return {
 	checkmark = "rbxassetid://72251941548672",
 	extraSlot = "rbxassetid://107861726048601",
 	index = "rbxassetid://123793888985226",
+	upgrade = "rbxassetid://111429016203389",
 	mutations = {
 		diamond = "rbxassetid://108049478374755",
 		gold = "rbxassetid://111372280889175",

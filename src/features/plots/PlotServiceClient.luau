@@ -1,3 +1,4 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PlotSlice = require(script.Parent.PlotSlice)
@@ -24,6 +25,16 @@ function PlotServiceClient.getPlot(self: PlotServiceClient, index: number): Plot
 	return self.plots[index]
 end
 
+function PlotServiceClient.getLocalPlot(self: PlotServiceClient): PlotClient.PlotClient?
+	local player = Players.LocalPlayer
+	for _, plot in self.plots do
+		if plot.player == player then
+			return plot
+		end
+	end
+	return nil
+end
+
 function PlotServiceClient.removePlot(self: PlotServiceClient, index: number)
 	local plot = self.plots[index]
 	if plot then
@@ -42,6 +53,15 @@ function PlotServiceClient.rebirth(self: PlotServiceClient)
 	else
 		ErrorMessage.add(msg)
 	end
+end
+
+function PlotServiceClient.requestUpgrade(self: PlotServiceClient, floor: number, node: number)
+	local plot = self:getLocalPlot()
+	if not plot then
+		return
+	end
+
+	plot.networker:fire("requestUpgrade", floor, node)
 end
 
 type PlotServiceClient = typeof(PlotServiceClient) & {
