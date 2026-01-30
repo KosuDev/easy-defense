@@ -116,6 +116,16 @@ local towers = {
 		firerate = 1,
 		height = 8.5,
 	},
+
+	infrared = {
+		name = "Infrared",
+		image = "rbxassetid://137282012852812",
+		weight = 2.1e6,
+		damage = 5250,
+		range = 25,
+		firerate = 1.5,
+		height = 10,
+	},
 }
 
 local totalWeight = 0

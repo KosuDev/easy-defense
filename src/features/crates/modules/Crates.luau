@@ -89,9 +89,17 @@ local crates = {
 		name = "Diamond Crate",
 		image = "rbxassetid://96169247372637",
 		weight = 2e6,
-		cost = 500e3,
+		cost = 500e3, --4096 * 110
 		openTime = 40,
 		luck = 512,
+	},
+	diamond1 = {
+		name = "Ruby Crate",
+		image = "rbxassetid://96169247372637",
+		weight = 1e6,
+		cost = 1.1e6,
+		openTime = 40,
+		luck = 1024,
 	},
 }
 
