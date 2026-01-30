@@ -9,6 +9,7 @@ export type CrateInfo = {
 	name: string,
 	openTime: number,
 	layoutOrder: number,
+	luck: number,
 }
 
 local crates = {
@@ -18,27 +19,31 @@ local crates = {
 		weight = 1e9,
 		cost = 100,
 		openTime = 5,
+		luck = 1,
 	},
 	silver = {
 		name = "Silver Crate",
 		image = "rbxassetid://72492711846524",
 		weight = 5e8,
 		cost = 1e3,
-		openTime = 15,
+		openTime = 10,
+		luck = 2,
 	},
 	gold = {
 		name = "Gold Crate",
 		image = "rbxassetid://115551403938538",
 		weight = 1e8,
 		cost = 10e3,
-		openTime = 25,
+		openTime = 20,
+		luck = 4,
 	},
 	diamond = {
 		name = "Diamond Crate",
 		image = "rbxassetid://96169247372637",
 		weight = 1e7,
 		cost = 100e3,
-		openTime = 35,
+		openTime = 40,
+		luck = 8,
 	},
 }
 
@@ -61,7 +66,10 @@ for i, crate in sortedCrates do
 	crates[crate.id].layoutOrder = i
 end
 
-local Crates = {}
+local Crates = {
+	crates = crates,
+	sortedCrates = sortedCrates,
+}
 
 function Crates.rollCrateId(luck: number): string
 	local roll = math.random()

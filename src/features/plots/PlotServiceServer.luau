@@ -91,7 +91,7 @@ end
 
 function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (boolean | any, string?)
 	local rebirths: number = DataService:get(player, "rebirths")
-	--[[local reqs = RebirthUtils.getRequirements(rebirths)
+	local reqs = RebirthUtils.getRequirements(rebirths)
 	if DataService:get(player, "currency") < reqs.currency then
 		return false, "Not enough money"
 	end
@@ -100,7 +100,6 @@ function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (b
 	if not hasUnlockedTower then
 		return false, "Required tower not unlocked"
 	end
-	]]
 
 	DataService:set(player, "currency", 0)
 	DataService:update(player, "rebirths", function(oldRebirths: number)

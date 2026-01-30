@@ -21,7 +21,7 @@ return function(parent)
 	})
 
 	local menuCleanup = Menu.init()
-	Menu.setOpenedMenu("IndexMenu")
+	Menu.setOpenedMenu("OddsMenu")
 
 	return function()
 		menuCleanup()

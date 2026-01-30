@@ -1,18 +1,18 @@
 return {
 	{
 		cost = 0,
-		luck = 0,
+		luck = 1,
 	},
 	{
 		cost = 1e3,
-		luck = 0.1,
+		luck = 2,
 	},
 	{
 		cost = 1e3,
-		luck = 0.1,
+		luck = 4,
 	},
 	{
 		cost = 1e3,
-		luck = 0.1,
+		luck = 8,
 	},
 }

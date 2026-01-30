@@ -33,7 +33,7 @@ export type OccupiedNode = CrateNode & string
 export type OccupiedNodes = { [string]: OccupiedNode }
 
 return {
-	currency = 10000,
+	currency = 500,
 	rebirths = 0,
 	conveyorLevel = 1,
 	towerIndex = {
@@ -42,30 +42,13 @@ return {
 		diamond = {},
 	},
 	plotNodes = {},
-	inventory = {
-		wooden = {
-			crateId = "wooden",
-			amt = 1,
-		},
-		silver = {
-			crateId = "silver",
-			amt = 1,
-		},
-		gold = {
-			crateId = "gold",
-			amt = 1,
-		},
-		diamond = {
-			crateId = "diamond",
-			amt = 1,
-		},
-	},
+	inventory = {},
 	hotbar = {
-		"wooden",
 		NULL,
 		NULL,
 		NULL,
-		"silver",
+		NULL,
+		NULL,
 		NULL,
 		NULL,
 		NULL,

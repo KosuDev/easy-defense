@@ -50,6 +50,9 @@
                 "MenuRoot": {
                   "$path": "src/features/app/ui/menus/MenuRoot.luau"
                 },
+                "OddsMenu": {
+                  "$path": "src/features/app/ui/menus/OddsMenu.luau"
+                },
                 "RebirthMenu": {
                   "$path": "src/features/app/ui/menus/RebirthMenu.luau"
                 }

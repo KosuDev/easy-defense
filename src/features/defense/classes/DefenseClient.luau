@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 local EnemyClient = require(script.Parent.EnemyClient)
 local TowerClient = require(script.Parent.TowerClient)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local VfxUtils = require(ReplicatedStorage.Source.Core.Platform.VfxUtils)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -86,6 +87,7 @@ function DefenseClient.towerUpdated(self: DefenseClient, floor: number, node: nu
 	local tower = self.towers[floor][node]
 	if tower then
 		tower:setData(data)
+		VfxUtils.emitAllAtPosition("TowerUpgrade", tower.model:GetPivot().Position + Vector3.new(0, 3, 0), true)
 	end
 end
 

@@ -17,6 +17,11 @@ return {
 			Volume = 0.8,
 			PlaybackRegion = NumberRange.new(0.07, 999),
 		},
+
+		click = {
+			SoundId = "rbxassetid://71294801358152",
+			Volume = 1,
+		},
 	},
 
 	misc = {

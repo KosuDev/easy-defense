@@ -138,6 +138,7 @@ end
 
 local Towers = {
 	towers = towers,
+	sortedTowers = sortedTowers,
 }
 
 function Towers.rollTowerId(luck: number): string

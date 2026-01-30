@@ -65,7 +65,6 @@ end
 
 return function()
 	local towersData = ReactCharm.useAtom(PlotSlice.states.towerUpgrades)
-	print(towersData)
 	local upgrades = {}
 	for root, towerData in towersData do
 		upgrades[root] = e(TowerUpgradeGui, {

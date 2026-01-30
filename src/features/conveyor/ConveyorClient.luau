@@ -6,10 +6,12 @@ local Charm = require(ReplicatedStorage.Packages.Charm)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Ripple = require(ReplicatedStorage.Packages.Ripple)
+local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundController)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TouchPad = require(ReplicatedStorage.Source.Features.Conveyor.Modules.TouchPad)
 local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.CrateClient)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
+local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 
 local DEFAULT_TEXTURE_SPEED = 3.6
@@ -93,6 +95,7 @@ function ConveyorClient.attemptCrateSpawn(self: ConveyorClient)
 		return
 	end
 
+	SoundController:Play(Sounds.ui.click)
 	self.timeOfLastCrateSpawn = os.clock()
 	self.networker:fire("spawnCrate")
 	self.buttonSpring:setGoal(0.5)

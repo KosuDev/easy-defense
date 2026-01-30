@@ -105,7 +105,7 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		return false
 	end
 
-	local crateRolls = 3
+	local crateRolls = 1 -- TODO: Make this depend on some level
 	for i = 1, MAX_CRATES do
 		if i <= crateRolls then
 			self.crates[i] = Crates.rollCrateId(1)

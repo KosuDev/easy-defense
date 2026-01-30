@@ -7,10 +7,7 @@ local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotService
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 function DataService:onPlayerInit(_player, data)
-	data.currency = 10e9
-	data.inventory.wooden.amt = 100
-	--data.rebirths = 0
-	data.conveyorLevel = 1
+	print(data)
 end
 
 DataService:addPlayerRemovingCallback(function(_player, _data)
@@ -21,7 +18,7 @@ DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "PRE",
 	useMock = false,
-	resetData = false,
+	resetData = true,
 	dontSave = false,
 })
 
