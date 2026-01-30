@@ -11,7 +11,7 @@ function InventoryServiceUtils.getModel(itemData: ItemData): Model
 	if itemData.crateId then
 		return Crates.getCrateModel(itemData.crateId)
 	elseif itemData.itemId then
-		return Towers.getTowerModel(itemData.itemId)
+		return Towers.getTowerModel(itemData.itemId, itemData.mutations)
 	end
 	print(itemData)
 	error("No model found for itemData")

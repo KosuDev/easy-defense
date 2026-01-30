@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local ColorTweaker = require(ReplicatedStorage.Source.Core.Platform.ColorTweaker)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 export type TowerInfo = {
 	name: string,
 	image: string,
@@ -156,9 +158,30 @@ function Towers.rollTowerId(luck: number): string
 	return sortedTowers[1].id
 end
 
-function Towers.getTowerModel(towerId: string): Model
+local DIAMOND_TWEAK: ColorTweaker.Tweak = {
+	primaryColor = ColorTweaker.enums.primaryColors.master,
+	valueBoost = 1.5,
+	saturationBoost = 4,
+	forcedhue = 0.55,
+}
+
+local GOLDEN_TWEAK: ColorTweaker.Tweak = {
+	primaryColor = ColorTweaker.enums.primaryColors.master,
+	valueBoost = 1.2,
+	saturationBoost = 4,
+	forcedhue = 0.133,
+}
+
+function Towers.getTowerModel(towerId: string, mutations: DataTemplate.Mutations?): Model
 	assert(towers[towerId], "Invalid tower ID" .. towerId)
 	local model = ReplicatedStorage.Assets.Towers[towerId]:Clone()
+
+	if mutations and mutations.diamond then
+		ColorTweaker.fromContainer(model, DIAMOND_TWEAK)
+	elseif mutations and mutations.gold then
+		ColorTweaker.fromContainer(model, GOLDEN_TWEAK)
+	end
+
 	return model
 end
 

@@ -1,7 +1,9 @@
 export type Tweak = {
 	primaryColor: number,
 	hue: number?,
+	forcedhue: number?,
 	saturation: number?,
+	saturationBoost: number?,
 	value: number?,
 	range: number?,
 	valueBoost: number?,
@@ -26,7 +28,7 @@ local ColorTweaker = {
 	},
 }
 
-local function pseudoRandomHue(_h: number): number
+local function _pseudoRandomHue(_h: number): number
 	return math.random()
 	--local pseudoRandom = (math.sin(h * 2 * math.pi) * 43758.5453) % 1
 	--return pseudoRandom
@@ -47,18 +49,9 @@ local function tweakColor(color: Color3, tweak: Tweak): Color3
 		return color
 	end
 
-	h = (h + (tweak.hue or 0)) % 1
-	s = math.clamp(s + (tweak.saturation or 0), 0, 1)
-	v = math.clamp(v + (tweak.value or 0), 0, 1)
-
-	if tweak.valueBoost then
-		local boosted = (v + 0.5) ^ tweak.valueBoost - 0.5
-		v = math.clamp(boosted, 0, 1)
-	end
-
-	if tweak.pseudoRandom then
-		h = pseudoRandomHue(h)
-	end
+	h = if tweak.forcedhue then tweak.forcedhue else (h + (tweak.hue or 0)) % 1
+	s = math.clamp((tweak.saturationBoost or 1) * (s + (tweak.saturation or 0)), 0, 1)
+	v = math.clamp((tweak.valueBoost or 1) * (v + (tweak.value or 0)), 0, 1)
 
 	return Color3.fromHSV(h, s, v)
 end

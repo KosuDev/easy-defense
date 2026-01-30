@@ -33,7 +33,7 @@ return function(luck: number, cf: CFrame, towerData: DataTemplate.TowerData): ()
 		end
 
 		prevId = towerId
-		local model = Towers.getTowerModel(towerId)
+
 		local rolledTowerData = if isFinal
 			then towerData
 			else {
@@ -41,6 +41,7 @@ return function(luck: number, cf: CFrame, towerData: DataTemplate.TowerData): ()
 				level = 2,
 				mutations = MutationsServiceClient:rollMutations(),
 			}
+		local model = Towers.getTowerModel(towerId, rolledTowerData.mutations)
 		local gui = TowerBillboardGui.new(rolledTowerData)
 		gui.Parent = model.PrimaryPart
 		model:PivotTo(cf)

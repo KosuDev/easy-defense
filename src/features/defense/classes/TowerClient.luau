@@ -33,7 +33,7 @@ function TowerClient.new(node: number, cf: CFrame, data: TowerData)
 		janitor = Janitor.new(),
 	}, TowerClient)
 
-	local model = Towers.getTowerModel(data.itemId)
+	local model = Towers.getTowerModel(data.itemId, data.mutations)
 	model.Parent = workspace
 	model:PivotTo(cf * CFrame.new(0, 0.5, 0))
 	self.model = model
