@@ -6,9 +6,10 @@ local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundCont
 local VfxUtils = require(ReplicatedStorage.Source.Core.Platform.VfxUtils)
 local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local TowerBillboardGui = require(ReplicatedStorage.Source.Features.Defense.UI.Screens.TowerBillboardGui)
+local MutationsServiceClient = require(ReplicatedStorage.Source.Features.Mutations.MutationsServiceClient)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
-local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 
 local function xToScale(x: number, i: number): number
 	return math.clamp(1.2 * (-(2 * i * x - 1) ^ 2 + 1), 0.001, 1.2)
@@ -33,14 +34,14 @@ return function(luck: number, cf: CFrame, towerData: DataTemplate.TowerData): ()
 
 		prevId = towerId
 		local model = Towers.getTowerModel(towerId)
-		local gui = ReplicatedStorage.Assets.VFX.TowerBillboard:Clone()
-		local towerInfo = Towers.getTowerInfo(towerId)
-		local tier = Tiers.getTierForOdds(towerInfo.odds)
-		gui.StudsOffsetWorldSpace = Vector3.new(0, towerInfo.height, 0)
-		gui.TowerName.TextLabel.Text = towerInfo.name
-		gui.Rarity.TextLabel.Text = tier.name
-		gui.Rarity.TextLabel.Gradient.Color = tier.gradient
-		gui.Dps.Visible = false
+		local rolledTowerData = if isFinal
+			then towerData
+			else {
+				itemId = towerId,
+				level = 2,
+				mutations = MutationsServiceClient:rollMutations(),
+			}
+		local gui = TowerBillboardGui.new(rolledTowerData)
 		gui.Parent = model.PrimaryPart
 		model:PivotTo(cf)
 		model.Parent = workspace

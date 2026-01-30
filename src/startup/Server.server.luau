@@ -3,6 +3,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
+local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -24,3 +25,4 @@ DataService:init({
 
 PlotServiceServer:init()
 InventoryServiceServer:init()
+MutationServiceServer:init()

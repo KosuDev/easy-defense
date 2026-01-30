@@ -1,36 +1,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
-local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local TowerBillboardGui = require(ReplicatedStorage.Source.Features.Defense.UI.Screens.TowerBillboardGui)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local EnemyClient = require(script.Parent.EnemyClient)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
-local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 local TowerClient = {}
 TowerClient.__index = TowerClient
 
 type TowerData = DataTemplate.TowerData
-type TowerGui = BillboardGui & {
-	Dps: Frame & {
-		TextLabel: TextLabel & {
-			Gradient: UIGradient,
-			Stroke: UIStroke,
-		},
-	},
-	Rarity: Frame & {
-		TextLabel: TextLabel & {
-			Gradient: UIGradient,
-			Stroke: UIStroke,
-		},
-	},
-	TowerName: Frame & {
-		TextLabel: TextLabel & {
-			Stroke: UIStroke,
-		},
-	},
-}
 
 export type TowerClient = typeof(setmetatable(
 	{} :: {
@@ -40,7 +20,7 @@ export type TowerClient = typeof(setmetatable(
 		model: Model & any,
 		attackAnim: any,
 		janitor: Janitor.Janitor,
-		gui: TowerGui,
+		gui: TowerBillboardGui.TowerGui,
 	},
 	TowerClient
 ))
@@ -58,10 +38,9 @@ function TowerClient.new(node: number, cf: CFrame, data: TowerData)
 	model:PivotTo(cf * CFrame.new(0, 0.5, 0))
 	self.model = model
 	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(data.level))
-	local gui = ReplicatedStorage.Assets.VFX.TowerBillboard:Clone()
+	local gui = TowerBillboardGui.new(data)
 	gui.Parent = model.PrimaryPart
 	self.gui = gui
-	self:updateGui()
 
 	local attackAnimModule = script.Parent.Parent.TowerAnimations:FindFirstChild(data.itemId)
 	if attackAnimModule then
@@ -74,18 +53,7 @@ end
 function TowerClient.setData(self: TowerClient, data: TowerData): ()
 	self.data = data
 	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(data.level))
-	self:updateGui()
-end
-
-function TowerClient.updateGui(self: TowerClient): ()
-	local info = Towers.getTowerInfo(self.data.itemId)
-	local rarityTier = Tiers.getTierForOdds(info.odds)
-	local scale = PlotServiceUtils.getScaleFromLevel(self.data.level)
-	self.gui.StudsOffsetWorldSpace = Vector3.new(0, info.height * scale, 0)
-	self.gui.TowerName.TextLabel.Text = info.name
-	self.gui.Rarity.TextLabel.Text = rarityTier.name
-	self.gui.Rarity.TextLabel.Gradient.Color = rarityTier.gradient
-	self.gui.Dps.TextLabel.Text = `💪 {Abbreviate(PlotServiceUtils.getDps(self.data))}`
+	TowerBillboardGui.update(self.gui, data)
 end
 
 function TowerClient.attack(self: TowerClient, enemy: EnemyClient.EnemyClient, damage: number): ()

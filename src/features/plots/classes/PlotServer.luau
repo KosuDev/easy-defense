@@ -7,6 +7,7 @@ local ConveyorServer = require(ServerScriptService.Features.Conveyor.ConveyorSer
 local DefenseServer = require(ServerScriptService.Features.Defense.Classes.DefenseServer)
 local TowerServer = require(ServerScriptService.Features.Defense.Classes.TowerServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
+local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
@@ -337,7 +338,8 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 
 	local crateLuck = Crates.getCrateInfo(crateId).luck
 	local towerId = Towers.rollTowerId(crateLuck)
-	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1 }
+	local mutations = MutationServiceServer:rollMutations()
+	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1, mutations = mutations }
 	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
 	self.networker:fireAll("crateOpened", floor, node, crateLuck, towerData, nodeInfo.cf)
 	self:build(floor, node, uniqueId, nil, true)

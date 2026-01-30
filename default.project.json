@@ -197,6 +197,9 @@
               },
               "Screens": {
                 "$className": "Folder",
+                "TowerBillboardGui": {
+                  "$path": "src/features/defense/ui/screens/TowerBillboardGui.luau"
+                },
                 "TowerBillboards": {
                   "$path": "src/features/defense/ui/screens/TowerBillboards.luau"
                 }
@@ -252,6 +255,24 @@
                   "$path": "src/features/inventory/ui/screens/InventoryHud.luau"
                 }
               }
+            }
+          },
+          "Mutations": {
+            "$className": "Folder",
+            "Modules": {
+              "$className": "Folder",
+              "MutationEvents": {
+                "$path": "src/features/mutations/modules/MutationEvents.luau"
+              },
+              "Mutations": {
+                "$path": "src/features/mutations/modules/Mutations.luau"
+              }
+            },
+            "MutationServiceUtils": {
+              "$path": "src/features/mutations/MutationServiceUtils.luau"
+            },
+            "MutationsServiceClient": {
+              "$path": "src/features/mutations/MutationsServiceClient.luau"
             }
           },
           "Plots": {
@@ -456,6 +477,12 @@
           "$className": "Folder",
           "InventoryServiceServer": {
             "$path": "src/features/inventory/InventoryServiceServer.luau"
+          }
+        },
+        "Mutations": {
+          "$className": "Folder",
+          "MutationServiceServer": {
+            "$path": "src/features/mutations/MutationServiceServer.luau"
           }
         },
         "Plots": {
