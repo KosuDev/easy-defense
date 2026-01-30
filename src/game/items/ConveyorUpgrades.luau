@@ -8,11 +8,11 @@ return {
 		luck = 2,
 	},
 	{
-		cost = 1e3,
+		cost = 25e3,
 		luck = 4,
 	},
 	{
-		cost = 1e3,
+		cost = 1e6,
 		luck = 8,
 	},
 }

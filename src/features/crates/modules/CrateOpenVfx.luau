@@ -14,7 +14,7 @@ local function xToScale(x: number, i: number): number
 	return math.clamp(1.2 * (-(2 * i * x - 1) ^ 2 + 1), 0.001, 1.2)
 end
 
-return function(cf: CFrame, towerData: DataTemplate.TowerData): ()
+return function(luck: number, cf: CFrame, towerData: DataTemplate.TowerData): ()
 	cf *= CFrame.new(0, 0.5, 0)
 	VfxUtils.emitAllAtPosition("CrateOpen", cf.Position)
 	SoundController:Play(Sounds.misc.woosh)
@@ -26,9 +26,9 @@ return function(cf: CFrame, towerData: DataTemplate.TowerData): ()
 	newTower = function(i: number)
 		local isFinal = i == 1
 		local isBeforeFinal = i == 2
-		local towerId = if isFinal then towerData.itemId else Towers.rollTowerId(1)
+		local towerId = if isFinal then towerData.itemId else Towers.rollTowerId(luck)
 		while (towerId == prevId and not isFinal) or (isBeforeFinal and towerId == towerData.itemId) do
-			towerId = Towers.rollTowerId(1)
+			towerId = Towers.rollTowerId(luck)
 		end
 
 		prevId = towerId

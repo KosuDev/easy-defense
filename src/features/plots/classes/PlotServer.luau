@@ -335,10 +335,11 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
-	local towerId = Towers.rollTowerId(1)
+	local crateLuck = Crates.getCrateInfo(crateId).luck
+	local towerId = Towers.rollTowerId(crateLuck)
 	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1 }
 	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
-	self.networker:fireAll("crateOpened", floor, node, towerData, nodeInfo.cf)
+	self.networker:fireAll("crateOpened", floor, node, crateLuck, towerData, nodeInfo.cf)
 	self:build(floor, node, uniqueId, nil, true)
 end
 

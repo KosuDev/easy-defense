@@ -106,9 +106,10 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 	end
 
 	local crateRolls = 1 -- TODO: Make this depend on some level
+	local conveyorLuck = ConveyorUpgrades[self.level].luck
 	for i = 1, MAX_CRATES do
 		if i <= crateRolls then
-			self.crates[i] = Crates.rollCrateId(1)
+			self.crates[i] = Crates.rollCrateId(conveyorLuck)
 		else
 			self.crates[i] = nil
 		end

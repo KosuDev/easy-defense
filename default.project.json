@@ -260,9 +260,6 @@
               "$className": "Folder",
               "PlotClient": {
                 "$path": "src/features/plots/classes/PlotClient.luau"
-              },
-              "PlotClientOLD": {
-                "$path": "src/features/plots/classes/PlotClientOLD.luau"
               }
             },
             "Modules": {
@@ -467,9 +464,6 @@
             "$className": "Folder",
             "PlotServer": {
               "$path": "src/features/plots/classes/PlotServer.luau"
-            },
-            "PlotServerOLD": {
-              "$path": "src/features/plots/classes/PlotServerOLD.luau"
             }
           },
           "PlotServiceServer": {

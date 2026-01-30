@@ -96,7 +96,7 @@ function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (b
 		return false, "Not enough money"
 	end
 
-	local hasUnlockedTower = DataService:get(player, { "towerIndex", reqs.towerId }) ~= nil
+	local hasUnlockedTower = DataService:get(player, { "towerIndex", "normal", reqs.towerId }) ~= nil
 	if not hasUnlockedTower then
 		return false, "Required tower not unlocked"
 	end

@@ -4,7 +4,7 @@ local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local PlotServiceUtils = {
 	enums = {
-		crateSpawnCooldown = 0.8,
+		crateSpawnCooldown = 0.45,
 	},
 }
 
