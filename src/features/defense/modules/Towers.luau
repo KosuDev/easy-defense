@@ -146,6 +146,16 @@ local towers = {
 		firerate = 4.2,
 		height = 10,
 	},
+
+	darkTerra = {
+		name = "Dark Terra",
+		image = "rbxassetid://137282012852812",
+		weight = 250e3,
+		damage = 10.5e3,
+		range = 25,
+		firerate = 6,
+		height = 10,
+	},
 }
 
 local totalWeight = 0

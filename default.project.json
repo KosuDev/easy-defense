@@ -165,6 +165,9 @@
               "crossbow": {
                 "$path": "src/features/defense/towerAnimations/crossbow.luau"
               },
+              "darkTerra": {
+                "$path": "src/features/defense/towerAnimations/darkTerra.luau"
+              },
               "flamethrower": {
                 "$path": "src/features/defense/towerAnimations/flamethrower.luau"
               },
