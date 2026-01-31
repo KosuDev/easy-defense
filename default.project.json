@@ -191,6 +191,9 @@
               },
               "turret": {
                 "$path": "src/features/defense/towerAnimations/turret.luau"
+              },
+              "volcano": {
+                "$path": "src/features/defense/towerAnimations/volcano.luau"
               }
             },
             "UI": {

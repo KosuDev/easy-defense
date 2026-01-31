@@ -101,6 +101,14 @@ local crates = {
 		openTime = 40,
 		luck = 1024,
 	},
+	diamond2 = {
+		name = "Molten Crate",
+		image = "rbxassetid://96169247372637",
+		weight = 500e3,
+		cost = 2.5e6,
+		openTime = 40,
+		luck = 2 ^ 11,
+	},
 }
 
 local totalWeight = 0

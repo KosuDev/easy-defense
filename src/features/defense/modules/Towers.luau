@@ -124,6 +124,16 @@ local towers = {
 		damage = 5250,
 		range = 25,
 		firerate = 1.5,
+		height = 14,
+	},
+
+	volcano = {
+		name = "Volcano",
+		image = "rbxassetid://137282012852812",
+		weight = 1e6,
+		damage = 3.9e3,
+		range = 25,
+		firerate = 4.2,
 		height = 10,
 	},
 }

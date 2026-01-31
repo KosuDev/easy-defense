@@ -164,6 +164,14 @@ function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)
 	self.networker:fireAll("enemyAdded", enemy.floor, enemy.uniqueId, enemy.baseStats)
 end
 
+function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
+	local rebirths: number = DataService:get(self.player, "rebirths")
+	local multiplier = 1 + rebirths * 0.1
+	DataService:update(self.player, "currency", function(amt: number)
+		return amt + math.ceil(enemy.maxHealth * multiplier)
+	end)
+end
+
 function DefenseServer.update(self: DefenseServer, dt: number): ()
 	self.spawnCd -= dt
 	if self.spawnCd <= 0 then
@@ -181,9 +189,7 @@ function DefenseServer.update(self: DefenseServer, dt: number): ()
 			if enemy.dead then
 				table.remove(enemies, i)
 				if enemy.killed then
-					DataService:update(self.player, "currency", function(amt: number)
-						return amt + enemy.maxHealth
-					end)
+					self:rewardEnemy(enemy)
 				end
 			elseif enemy.dist >= self.paths[enemy.floor].length then
 				enemy.dead = true
