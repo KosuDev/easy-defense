@@ -168,6 +168,9 @@
               "flamethrower": {
                 "$path": "src/features/defense/towerAnimations/flamethrower.luau"
               },
+              "harpoon": {
+                "$path": "src/features/defense/towerAnimations/harpoon.luau"
+              },
               "infrared": {
                 "$path": "src/features/defense/towerAnimations/infrared.luau"
               },

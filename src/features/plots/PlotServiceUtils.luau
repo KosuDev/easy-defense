@@ -40,7 +40,7 @@ function PlotServiceUtils.getDamageMultiplier(level: number): number
 end
 
 function PlotServiceUtils.getScaleFromLevel(level: number): number
-	return 2 - (10 / (10 + (level - 2)))
+	return 1.6 - (10 / (10 + (level + 4)))
 end
 
 function PlotServiceUtils.getDps(towerData: DataTemplate.TowerData): number

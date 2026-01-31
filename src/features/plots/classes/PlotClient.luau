@@ -180,7 +180,7 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 			end
 
 			if data and data.itemId then
-				local scale = PlotServiceUtils.getScaleFromLevel(data.level) - 0.75
+				local scale = 1.25 * (PlotServiceUtils.getScaleFromLevel(data.level) - 0.75)
 				upgradePart.CFrame = root.CFrame * CFrame.new(0, 1.33, -5.5 - scale) * CFrame.Angles(math.rad(25), 0, 0)
 			end
 		end
