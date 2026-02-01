@@ -186,6 +186,9 @@
               "minigun": {
                 "$path": "src/features/defense/towerAnimations/minigun.luau"
               },
+              "obliterator": {
+                "$path": "src/features/defense/towerAnimations/obliterator.luau"
+              },
               "orbOfDarkness": {
                 "$path": "src/features/defense/towerAnimations/orbOfDarkness.luau"
               },

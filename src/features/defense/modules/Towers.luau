@@ -186,6 +186,16 @@ local towers = {
 		firerate = 2.5,
 		height = 17,
 	},
+
+	obliterator = {
+		name = "Obliterator",
+		image = "rbxassetid://123999583651842",
+		weight = 15e3,
+		damage = 261e3,
+		range = 25,
+		firerate = 4,
+		height = 9,
+	},
 }
 
 local totalWeight = 0
