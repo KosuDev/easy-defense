@@ -166,6 +166,16 @@ local towers = {
 		firerate = 1,
 		height = 10,
 	},
+
+	hydroBlaster = {
+		name = "Hydro Blaster",
+		image = "rbxassetid://123999583651842",
+		weight = 63e3,
+		damage = 61e3,
+		range = 25,
+		firerate = 4.2,
+		height = 10,
+	},
 }
 
 local totalWeight = 0
