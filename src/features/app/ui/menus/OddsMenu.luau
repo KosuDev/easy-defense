@@ -47,7 +47,7 @@ local function ConveyorCrate(props)
 
 	return e(InsetFrame, {
 		Size = UDim2.new(1, 0, 0, 80),
-		LayoutOrder = math.round(100 - chance * 100),
+		LayoutOrder = math.round(10000 - chance * 10000),
 	}, {
 		Icon = e("ImageLabel", {
 			Size = UDim2.fromOffset(64, 64),
@@ -169,7 +169,7 @@ local function CrateTower(props)
 
 	return e(InsetFrame, {
 		Size = UDim2.new(1, 0, 0, 80),
-		LayoutOrder = math.round(100 - chance * 100),
+		LayoutOrder = math.round(10000 - chance * 10000),
 	}, {
 		Icon = e("ImageLabel", {
 			Size = UDim2.fromOffset(64, 64),

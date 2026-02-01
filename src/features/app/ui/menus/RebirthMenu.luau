@@ -26,7 +26,7 @@ end
 
 local function RequirementsFrame()
 	local rebirths: number = useDataState("rebirths")
-	local reqs = RebirthUtils.getRequirements(rebirths + 1)
+	local reqs = RebirthUtils.getRequirements(rebirths)
 	local towerInfo = Towers.getTowerInfo(reqs.towerId)
 	local tier = Tiers.getTierForOdds(towerInfo.odds)
 	local currency = useDataState("currency")
@@ -145,6 +145,16 @@ local function RewardsFrame()
 	local rebirths: number = useDataState("rebirths")
 	local rewards = RebirthUtils.rebirthRewards[rebirths + 1]
 
+	if not rewards then
+		return e(TextLabel, {
+			Text = "MAXED",
+			Size = UDim2.new(1, 0, 0, 38),
+			Position = UDim2.fromScale(0.5, 0.5),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Stroke = { Thickness = 3 },
+		})
+	end
+
 	return e(InsetFrame, {
 		Size = UDim2.new(0.9, 0, 0, 160),
 		Position = UDim2.fromScale(0.5, 0.48),
@@ -196,6 +206,47 @@ local function RewardsFrame()
 				Image = ImageIds.extraSlot,
 			}),
 		}),
+
+		Floors = if rewards.floors
+			then e(TransparentFrame, {
+				Size = UDim2.fromScale(0.7, 0.7),
+				SizeConstraint = Enum.SizeConstraint.RelativeYY,
+				LayoutOrder = 3,
+			}, {
+				Currency = e(TextLabel, {
+					Text = "Extra Floor",
+					Size = UDim2.fromScale(1.1, 0.3),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0),
+					ZIndex = 2,
+					Stroke = {},
+					Gradient = {
+						Rotation = 90,
+						Color = ColorSequence.new({
+							ColorSequenceKeypoint.new(0, Color3.fromRGB(192, 255, 255)),
+							ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 110, 255)),
+						}),
+					},
+				}),
+
+				Text = e(TextLabel, {
+					Text = "+" .. rewards.floors,
+					Size = UDim2.fromScale(1, 0.3),
+					Position = UDim2.fromScale(0.5, 0.95),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Stroke = { Thickness = 3 },
+					ZIndex = 2,
+				}),
+
+				Icon = e("ImageLabel", {
+					Size = UDim2.fromScale(0.9, 0.9),
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundTransparency = 1,
+					Image = ImageIds.floorSlot,
+				}),
+			})
+			else nil,
 
 		CurrencyMult = e(TransparentFrame, {
 			Size = UDim2.fromScale(0.7, 0.7),

@@ -49,7 +49,7 @@ local towers = {
 
 	harpoon = {
 		name = "Harpoon",
-		image = "rbxassetid://120894736547855",
+		image = "rbxassetid://137268285026540",
 		weight = 600e6,
 		damage = 40,
 		range = 25,
@@ -109,7 +109,7 @@ local towers = {
 
 	flamethrower = {
 		name = "Flamethrower",
-		image = "rbxassetid://137282012852812",
+		image = "rbxassetid://88926794711093",
 		weight = 4e6,
 		damage = 912,
 		range = 25,
@@ -119,7 +119,7 @@ local towers = {
 
 	plasmaCannon = {
 		name = "Plasma Cannon",
-		image = "rbxassetid://137282012852812",
+		image = "rbxassetid://108066246307037",
 		weight = 2.1e6,
 		damage = 8e3,
 		range = 25,
@@ -129,7 +129,7 @@ local towers = {
 
 	infrared = {
 		name = "Infrared",
-		image = "rbxassetid://137282012852812",
+		image = "rbxassetid://129041646281210",
 		weight = 1e6,
 		damage = 10.5e3,
 		range = 25,
@@ -139,7 +139,7 @@ local towers = {
 
 	volcano = {
 		name = "Volcano",
-		image = "rbxassetid://137282012852812",
+		image = "rbxassetid://129284682759076",
 		weight = 500e3,
 		damage = 7.8e3,
 		range = 25,
@@ -149,7 +149,7 @@ local towers = {
 
 	darkTerra = {
 		name = "Dark Terra",
-		image = "rbxassetid://137282012852812",
+		image = "rbxassetid://123999583651842",
 		weight = 250e3,
 		damage = 10.5e3,
 		range = 25,

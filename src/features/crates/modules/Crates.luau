@@ -55,7 +55,7 @@ local crates = {
 	},
 	silver2 = {
 		name = "Reinforced Crate",
-		image = "rbxassetid://70665389038956",
+		image = "rbxassetid://119950507122000",
 		weight = 32e6,
 		cost = 15e3,
 		openTime = 10,
@@ -103,7 +103,7 @@ local crates = {
 	},
 	diamond1 = {
 		name = "Ruby Crate",
-		image = "rbxassetid://96169247372637",
+		image = "rbxassetid://133478531453014",
 		weight = 500e3,
 		cost = 2.5e6,
 		openTime = 40,
@@ -111,7 +111,7 @@ local crates = {
 	},
 	diamond2 = {
 		name = "Molten Crate",
-		image = "rbxassetid://96169247372637",
+		image = "rbxassetid://111356018956419",
 		weight = 250e3,
 		cost = 6e6,
 		openTime = 40,
@@ -119,7 +119,7 @@ local crates = {
 	},
 	diamond3 = {
 		name = "Obsidian Crate",
-		image = "rbxassetid://96169247372637",
+		image = "rbxassetid://87019068271372",
 		weight = 125e3,
 		cost = 15e6,
 		openTime = 40,
