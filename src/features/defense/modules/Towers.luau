@@ -156,6 +156,16 @@ local towers = {
 		firerate = 6,
 		height = 10,
 	},
+
+	orbOfDarkness = {
+		name = "Orb of Darkness",
+		image = "rbxassetid://123999583651842",
+		weight = 125e3,
+		damage = 125e3,
+		range = 25,
+		firerate = 1,
+		height = 10,
+	},
 }
 
 local totalWeight = 0

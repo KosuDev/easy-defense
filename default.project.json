@@ -183,6 +183,9 @@
               "minigun": {
                 "$path": "src/features/defense/towerAnimations/minigun.luau"
               },
+              "orbOfDarkness": {
+                "$path": "src/features/defense/towerAnimations/orbOfDarkness.luau"
+              },
               "orbOfLight": {
                 "$path": "src/features/defense/towerAnimations/orbOfLight.luau"
               },
