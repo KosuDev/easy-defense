@@ -197,11 +197,21 @@ local towers = {
 		height = 9,
 	},
 
+	phantom = {
+		name = "Phantom",
+		image = "rbxassetid://129284682759076",
+		weight = 8e3,
+		damage = 475e3,
+		range = 25,
+		firerate = 4.2,
+		height = 11,
+	},
+
 	protonSniper = {
 		name = "Proton Sniper",
 		image = "rbxassetid://123999583651842",
-		weight = 8e3,
-		damage = 2.1e6,
+		weight = 4e3,
+		damage = 4.3e6,
 		range = 25,
 		firerate = 1,
 		height = 9,

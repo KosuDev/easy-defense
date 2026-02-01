@@ -198,6 +198,9 @@
               "overseer": {
                 "$path": "src/features/defense/towerAnimations/overseer.luau"
               },
+              "phantom": {
+                "$path": "src/features/defense/towerAnimations/phantom.luau"
+              },
               "plasmaCannon": {
                 "$path": "src/features/defense/towerAnimations/plasmaCannon.luau"
               },
