@@ -201,6 +201,9 @@
               "plasmaCannon": {
                 "$path": "src/features/defense/towerAnimations/plasmaCannon.luau"
               },
+              "protonSniper": {
+                "$path": "src/features/defense/towerAnimations/protonSniper.luau"
+              },
               "tesla": {
                 "$path": "src/features/defense/towerAnimations/tesla.luau"
               },

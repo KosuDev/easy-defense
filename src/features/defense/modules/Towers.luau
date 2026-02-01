@@ -196,6 +196,16 @@ local towers = {
 		firerate = 4,
 		height = 9,
 	},
+
+	protonSniper = {
+		name = "Proton Sniper",
+		image = "rbxassetid://123999583651842",
+		weight = 8e3,
+		damage = 2.1e6,
+		range = 25,
+		firerate = 1,
+		height = 9,
+	},
 }
 
 local totalWeight = 0

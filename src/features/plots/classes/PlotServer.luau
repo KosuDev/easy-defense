@@ -337,7 +337,7 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
 	local crateLuck = Crates.getCrateInfo(crateId).luck
-	local towerId = "obliterator" --Towers.rollTowerId(crateLuck)
+	local towerId = Towers.rollTowerId(crateLuck)
 	local mutations = MutationServiceServer:rollMutations()
 	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1, mutations = mutations }
 	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
