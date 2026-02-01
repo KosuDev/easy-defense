@@ -164,7 +164,7 @@ local towers = {
 		damage = 125e3,
 		range = 25,
 		firerate = 1,
-		height = 10,
+		height = 14,
 	},
 
 	hydroBlaster = {
@@ -175,6 +175,16 @@ local towers = {
 		range = 25,
 		firerate = 4.2,
 		height = 10,
+	},
+
+	overseer = {
+		name = "Overseer",
+		image = "rbxassetid://123999583651842",
+		weight = 30e3,
+		damage = 205e3,
+		range = 25,
+		firerate = 2.5,
+		height = 17,
 	},
 }
 
