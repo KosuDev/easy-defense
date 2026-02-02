@@ -16,7 +16,7 @@ return function(parent)
 	root:render(app)
 
 	PlotSlice.actions.addCrate(workspace.TowerPlacement.TowerPlacement, {
-		crateId = "gold",
+		crateId = "orbOfLight",
 		timeBuilt = workspace:GetServerTimeNow() - 1,
 	})
 

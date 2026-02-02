@@ -6,6 +6,20 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local InventoryServiceServer = {}
 
+local function getMutationKey(mutations: DataTemplate.Mutations?): string
+	if mutations and mutations.diamond then
+		return "diamond"
+	end
+	if mutations and mutations.gold then
+		return "gold"
+	end
+	return "normal"
+end
+
+local function getCrateKey(crateData: DataTemplate.CrateData): string
+	return `crate:{crateData.crateId}:{getMutationKey(crateData.mutations)}`
+end
+
 function InventoryServiceServer.init(self: InventoryServiceServer)
 	self.networker = Networker.server.new("InventoryService", self, {
 		self.setHotBarUniqueId,
@@ -27,18 +41,39 @@ function InventoryServiceServer.equipItem(self: InventoryServiceServer, player: 
 	self.networker:fireAll("setPlayerItem", player, itemData)
 end
 
-function InventoryServiceServer.addCrate(_self: InventoryServiceServer, player: Player, crateId: string, amt: number?)
-	local prevCrateData: DataTemplate.ItemData = DataService:get(player, { "inventory", crateId })
+function InventoryServiceServer.addCrate(
+	_self: InventoryServiceServer,
+	player: Player,
+	crateData: DataTemplate.CrateData,
+	amt: number?
+): string
+	local crateKey = getCrateKey(crateData)
+	local prevCrateData: DataTemplate.ItemData = DataService:get(player, { "inventory", crateKey })
 	if not prevCrateData then
-		DataService:set(player, { "inventory", crateId }, {
-			crateId = crateId,
-			amt = amt or 1,
+		local legacyCrateData: DataTemplate.ItemData = DataService:get(player, { "inventory", crateData.crateId })
+		if legacyCrateData then
+			DataService:set(player, { "inventory", crateKey }, {
+				crateId = legacyCrateData.crateId,
+				mutations = legacyCrateData.mutations,
+				amt = legacyCrateData.amt or 0,
+			})
+			DataService:set(player, { "inventory", crateData.crateId }, nil)
+			prevCrateData = DataService:get(player, { "inventory", crateKey })
+		end
+	end
+	if not prevCrateData then
+		DataService:set(player, { "inventory", crateKey }, {
+			crateId = crateData.crateId,
+			mutations = crateData.mutations,
+			amt = amt or crateData.amt or 1,
 		})
 	else
-		DataService:update(player, { "inventory", crateId, "amt" }, function(prev: number?)
-			return (prev or 0) + (amt or 1)
+		DataService:update(player, { "inventory", crateKey, "amt" }, function(prev: number?)
+			return (prev or 0) + (amt or crateData.amt or 1)
 		end)
 	end
+
+	return crateKey
 end
 
 function InventoryServiceServer.addTower(

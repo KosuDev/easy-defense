@@ -6,7 +6,9 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 export type TowerInfo = {
 	name: string,
 	image: string,
-	crateImage: string,
+	crateImage: string?,
+	crateCost: number,
+	crateOpenTime: number,
 	weight: number,
 	damage: number,
 	range: number,
@@ -17,11 +19,23 @@ export type TowerInfo = {
 	layoutOrder: number,
 }
 
+export type CrateInfo = {
+	id: string,
+	name: string,
+	image: string,
+	odds: number,
+	layoutOrder: number,
+	cost: number,
+	openTime: number,
+}
+
 local towers = {
 	crossbow = {
 		name = "Crossbow",
 		image = "rbxassetid://137282012852812",
 		crateImage = "rbxassetid://92040501256272",
+		crateCost = 100,
+		crateOpenTime = 5,
 		weight = 10e9,
 		damage = 4,
 		range = 25,
@@ -33,6 +47,8 @@ local towers = {
 		name = "Catapult",
 		image = "rbxassetid://83891927108386",
 		crateImage = "rbxassetid://106355486794326",
+		crateCost = 250,
+		crateOpenTime = 5,
 		weight = 4e9,
 		damage = 15,
 		range = 25,
@@ -44,6 +60,8 @@ local towers = {
 		name = "Cannon",
 		image = "rbxassetid://71141124599337",
 		crateImage = "rbxassetid://135070263716258",
+		crateCost = 1e3,
+		crateOpenTime = 5,
 		weight = 1.5e9,
 		damage = 40,
 		range = 25,
@@ -55,6 +73,8 @@ local towers = {
 		name = "Harpoon",
 		image = "rbxassetid://137268285026540",
 		crateImage = "rbxassetid://72492711846524",
+		crateCost = 2.5e3,
+		crateOpenTime = 10,
 		weight = 600e6,
 		damage = 40,
 		range = 25,
@@ -66,6 +86,8 @@ local towers = {
 		name = "Turret",
 		image = "rbxassetid://120894736547855",
 		crateImage = "rbxassetid://70665389038956",
+		crateCost = 5e3,
+		crateOpenTime = 10,
 		weight = 187e6,
 		damage = 120,
 		range = 25,
@@ -77,6 +99,8 @@ local towers = {
 		name = "Minigun",
 		image = "rbxassetid://109830357002566",
 		crateImage = "rbxassetid://119950507122000",
+		crateCost = 15e3,
+		crateOpenTime = 10,
 		weight = 64e6,
 		damage = 66,
 		range = 25,
@@ -88,6 +112,8 @@ local towers = {
 		name = "Tesla",
 		image = "rbxassetid://103187875630362",
 		crateImage = "rbxassetid://136054785134449",
+		crateCost = 40e3,
+		crateOpenTime = 10,
 		weight = 28e6,
 		damage = 500,
 		range = 25,
@@ -99,6 +125,8 @@ local towers = {
 		name = "Orb of Light",
 		image = "rbxassetid://135703405395373",
 		crateImage = "rbxassetid://115551403938538",
+		crateCost = 95e3,
+		crateOpenTime = 20,
 		weight = 16e6,
 		damage = 1200,
 		range = 25,
@@ -110,6 +138,8 @@ local towers = {
 		name = "Laser Blaster",
 		image = "rbxassetid://88729081935706",
 		crateImage = "rbxassetid://88495801126575",
+		crateCost = 205e3,
+		crateOpenTime = 20,
 		weight = 7.5e6,
 		damage = 1600,
 		range = 25,
@@ -121,6 +151,8 @@ local towers = {
 		name = "Flamethrower",
 		image = "rbxassetid://88926794711093",
 		crateImage = "rbxassetid://90654635690164",
+		crateCost = 500e3,
+		crateOpenTime = 20,
 		weight = 4e6,
 		damage = 912,
 		range = 25,
@@ -132,6 +164,8 @@ local towers = {
 		name = "Plasma Cannon",
 		image = "rbxassetid://108066246307037",
 		crateImage = "rbxassetid://96169247372637",
+		crateCost = 1.1e6,
+		crateOpenTime = 40,
 		weight = 2.1e6,
 		damage = 8e3,
 		range = 25,
@@ -143,6 +177,8 @@ local towers = {
 		name = "Infrared",
 		image = "rbxassetid://129041646281210",
 		crateImage = "rbxassetid://133478531453014",
+		crateCost = 2.5e6,
+		crateOpenTime = 40,
 		weight = 1e6,
 		damage = 10.5e3,
 		range = 25,
@@ -154,6 +190,8 @@ local towers = {
 		name = "Volcano",
 		image = "rbxassetid://129284682759076",
 		crateImage = "rbxassetid://111356018956419",
+		crateCost = 6e6,
+		crateOpenTime = 40,
 		weight = 500e3,
 		damage = 7.8e3,
 		range = 25,
@@ -165,6 +203,8 @@ local towers = {
 		name = "Dark Terra",
 		image = "rbxassetid://123999583651842",
 		crateImage = "rbxassetid://87019068271372",
+		crateCost = 15e6,
+		crateOpenTime = 40,
 		weight = 250e3,
 		damage = 10.5e3,
 		range = 25,
@@ -175,6 +215,8 @@ local towers = {
 	orbOfDarkness = {
 		name = "Orb of Darkness",
 		image = "rbxassetid://80196609282103",
+		crateCost = 30e6,
+		crateOpenTime = 60,
 		weight = 125e3,
 		damage = 125e3,
 		range = 25,
@@ -185,6 +227,8 @@ local towers = {
 	hydroBlaster = {
 		name = "Hydro Blaster",
 		image = "rbxassetid://77458757609902",
+		crateCost = 60e6,
+		crateOpenTime = 60,
 		weight = 63e3,
 		damage = 61e3,
 		range = 25,
@@ -195,6 +239,8 @@ local towers = {
 	overseer = {
 		name = "Overseer",
 		image = "rbxassetid://85069178841415",
+		crateCost = 120e6,
+		crateOpenTime = 60,
 		weight = 30e3,
 		damage = 205e3,
 		range = 25,
@@ -205,6 +251,8 @@ local towers = {
 	obliterator = {
 		name = "Obliterator",
 		image = "rbxassetid://102897043398524",
+		crateCost = 240e6,
+		crateOpenTime = 60,
 		weight = 15e3,
 		damage = 261e3,
 		range = 25,
@@ -215,6 +263,8 @@ local towers = {
 	phantom = {
 		name = "Phantom",
 		image = "rbxassetid://112711416437129",
+		crateCost = 480e6,
+		crateOpenTime = 60,
 		weight = 8e3,
 		damage = 475e3,
 		range = 25,
@@ -225,6 +275,8 @@ local towers = {
 	protonSniper = {
 		name = "Proton Sniper",
 		image = "rbxassetid://71267814543164",
+		crateCost = 960e6,
+		crateOpenTime = 60,
 		weight = 4e3,
 		damage = 4.3e6,
 		range = 25,
@@ -303,6 +355,25 @@ end
 function Towers.getTowerInfo(towerId: string): TowerInfo
 	assert(towers[towerId], "Invalid towerId: " .. towerId)
 	return towers[towerId]
+end
+
+function Towers.getCrateInfo(towerId: string): CrateInfo
+	local towerInfo = Towers.getTowerInfo(towerId)
+	return {
+		id = towerId,
+		name = towerInfo.name .. " Crate",
+		image = towerInfo.crateImage or towerInfo.image,
+		odds = towerInfo.odds,
+		layoutOrder = towerInfo.layoutOrder,
+		cost = towerInfo.crateCost,
+		openTime = towerInfo.crateOpenTime,
+	}
+end
+
+function Towers.getCrateModel(towerId: string): Model
+	assert(towers[towerId], "Invalid tower ID" .. towerId)
+	local model = ReplicatedStorage.Assets.Crates[towerId]:Clone()
+	return model
 end
 
 local function _listOdds()

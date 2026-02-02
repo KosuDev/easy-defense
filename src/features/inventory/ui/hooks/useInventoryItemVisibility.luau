@@ -3,7 +3,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local React = require(ReplicatedStorage.Packages.React)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -14,7 +13,7 @@ return function(uniqueId: string, isHotbar: boolean?)
 		local current = false
 		local itemData: DataTemplate.ItemData = DataService:get({ "inventory", uniqueId })
 		local isCrate = itemData.crateId ~= nil
-		local itemInfo = if isCrate then Crates.getCrateInfo(itemData.crateId) else Towers.getTowerInfo(itemData.itemId)
+		local itemInfo = if isCrate then Towers.getCrateInfo(itemData.crateId) else Towers.getTowerInfo(itemData.itemId)
 		local function calc()
 			if isCrate and itemData.amt <= 0 then
 				return false

@@ -10,7 +10,6 @@ local InventoryServiceServer = require(ServerScriptService.Features.Inventory.In
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
@@ -273,6 +272,7 @@ function PlotServer.requestBuild(self: PlotServer, player: Player, floor: number
 
 	local crateData: CrateNode = {
 		crateId = itemData.crateId,
+		mutations = itemData.mutations,
 		timeBuilt = workspace:GetServerTimeNow(),
 	}
 
@@ -328,7 +328,7 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	local crateData: CrateNode = nodeInfo.data
 	local crateId, timeBuilt = crateData.crateId, crateData.timeBuilt
 	assert(crateId and timeBuilt, "No crate to open at node " .. node)
-	local openTime = Crates.getCrateInfo(crateId).openTime
+	local openTime = Towers.getCrateInfo(crateId).openTime
 	local timeRemaining = openTime - (workspace:GetServerTimeNow() - timeBuilt)
 	assert(timeRemaining <= 0, "Crate is not ready to be opened")
 
@@ -336,12 +336,13 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
-	local crateLuck = Crates.getCrateInfo(crateId).luck
-	local towerId = Towers.rollTowerId(crateLuck)
-	local mutations = MutationServiceServer:rollMutations()
-	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1, mutations = mutations }
+	local towerData: DataTemplate.TowerData = {
+		itemId = crateId,
+		level = 1,
+		mutations = crateData.mutations or MutationServiceServer:rollMutations(),
+	}
 	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
-	self.networker:fireAll("crateOpened", floor, node, crateLuck, towerData, nodeInfo.cf)
+	self.networker:fireAll("crateOpened", floor, node, towerData, nodeInfo.cf)
 	self:build(floor, node, uniqueId, nil, true)
 end
 

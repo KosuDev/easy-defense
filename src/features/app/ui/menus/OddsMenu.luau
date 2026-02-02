@@ -8,13 +8,12 @@ local Sift = require(ReplicatedStorage.Packages.Sift)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local InsetFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.InsetFrame)
 local StudButton = require(ReplicatedStorage.Source.Features.App.UI.Components.StudButton)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local e = React.createElement
 
 local selectedConveyor = Charm.atom(1)
-local selectedCrate = Charm.atom("wooden")
+local selectedCrate = Charm.atom("crossbow")
 
 local function ConveyorButton(props)
 	local selectedIndex = ReactCharm.useAtom(selectedConveyor)
@@ -30,15 +29,16 @@ local function ConveyorButton(props)
 end
 
 local function ConveyorCrate(props)
-	local info = Crates.getCrateInfo(props.index)
+	local info = Towers.getCrateInfo(props.index)
 	local selectedIndex = ReactCharm.useAtom(selectedConveyor)
 	local conveyorLuck = ConveyorUpgrades[selectedIndex].luck
 
 	local chance = 0
 	local usedUpChance = 0
-	for i = #Crates.sortedCrates, 1, -1 do
-		local crate = Crates.sortedCrates[i]
-		local crateChance = math.clamp(1 - (1 - Crates.getCrateInfo(crate.id).odds) ^ conveyorLuck, 0, 1 - usedUpChance)
+	for i = #Towers.sortedTowers, 1, -1 do
+		local tower = Towers.sortedTowers[i]
+		local crateChance =
+			math.clamp(1 - (1 - Towers.getCrateInfo(tower.id).odds) ^ conveyorLuck, 0, 1 - usedUpChance)
 		if i == info.layoutOrder then
 			chance = crateChance
 		end
@@ -143,7 +143,7 @@ local function ConveyorsFrame()
 					PaddingRight = UDim.new(0, 1),
 				}),
 			},
-			Sift.Dictionary.map(Crates.crates, function(data: any, index: number)
+			Sift.Dictionary.map(Towers.towers, function(data: any, index: number)
 				return e(ConveyorCrate, { data = data, index = index }), index
 			end)
 		),
@@ -153,23 +153,11 @@ end
 local function CrateTower(props)
 	local selectedIndex = ReactCharm.useAtom(selectedCrate)
 	local towerInfo = Towers.getTowerInfo(props.index)
-	local crateInfo = Crates.getCrateInfo(selectedIndex)
-	local crateLuck = crateInfo.luck
-
-	local chance = 0
-	local usedUpChance = 0
-	for i = #Towers.sortedTowers, 1, -1 do
-		local tower = Towers.sortedTowers[i]
-		local towerChance = math.clamp(1 - (1 - tower.odds) ^ crateLuck, 0, 1 - usedUpChance)
-		if i == towerInfo.layoutOrder then
-			chance = towerChance
-		end
-		usedUpChance += towerChance
-	end
+	local chance = if selectedIndex == towerInfo.id then 1 else 0
 
 	return e(InsetFrame, {
 		Size = UDim2.new(1, 0, 0, 80),
-		LayoutOrder = math.round(10000 - chance * 10000),
+		LayoutOrder = towerInfo.layoutOrder,
 	}, {
 		Icon = e("ImageLabel", {
 			Size = UDim2.fromOffset(64, 64),
@@ -213,7 +201,7 @@ local function CrateButton(props)
 			Position = UDim2.fromScale(0.5, 0.5),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
-			Image = Crates.getCrateInfo(props.index).image,
+			Image = Towers.getCrateInfo(props.index).image,
 		}),
 	})
 end
@@ -260,7 +248,7 @@ local function CratesFrame()
 					PaddingRight = UDim.new(0, 10),
 				}),
 			},
-			Sift.Dictionary.map(Crates.crates, function(data: any, index: string)
+			Sift.Dictionary.map(Towers.towers, function(data: any, index: string)
 				return e(CrateButton, { data = data, index = index }), index
 			end)
 		),
@@ -307,7 +295,7 @@ return function()
 		From = UDim2.fromScale(0.5, 0.45),
 		Size = UDim2.fromOffset(700, 530),
 		Prefix = {
-			Image = Crates.getCrateInfo("wooden").image,
+			Image = Towers.getCrateInfo("crossbow").image,
 			HorizontalAlignment = Enum.HorizontalAlignment.Left,
 		},
 	}, {

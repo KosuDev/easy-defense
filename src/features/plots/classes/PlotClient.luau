@@ -130,7 +130,6 @@ function PlotClient.crateOpened(
 	self: PlotClient,
 	floor: number,
 	node: number,
-	crateLuck: number,
 	towerData: TowerData,
 	towerCf: CFrame
 )
@@ -142,7 +141,7 @@ function PlotClient.crateOpened(
 	self.nodesUpdated:Fire(floor, node)
 
 	crateModel:Destroy()
-	CrateOpenVfx(crateLuck, nodeData.cf, towerData)
+	CrateOpenVfx(nodeData.cf, towerData)
 
 	self.defense:towerAdded(floor, node, towerCf, towerData)
 end

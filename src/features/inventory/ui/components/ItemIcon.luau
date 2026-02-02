@@ -5,7 +5,6 @@ local MutationIcons = require(script.Parent.MutationIcons)
 local React = require(ReplicatedStorage.Packages.React)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local e = React.createElement
@@ -27,7 +26,7 @@ type ItemIconProps = {
 return function(props: ItemIconProps)
 	local isTower = not props.itemData.crateId
 	local info = if not isTower
-		then Crates.getCrateInfo(props.itemData.crateId)
+		then Towers.getCrateInfo(props.itemData.crateId)
 		else Towers.getTowerInfo(props.itemData.itemId)
 
 	local iconSize = if isTower then UDim2.fromScale(1, 1) else UDim2.fromScale(0.9, 0.9)
@@ -95,7 +94,7 @@ return function(props: ItemIconProps)
 			})
 			else nil,
 
-		Mutations = if isTower and props.itemData.mutations
+		Mutations = if props.itemData.mutations
 			then e(MutationIcons, {
 				mutations = props.itemData.mutations,
 				Size = UDim2.fromScale(0.8, 0.2),

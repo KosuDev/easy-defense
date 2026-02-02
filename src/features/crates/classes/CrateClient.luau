@@ -4,7 +4,7 @@ local RunService = game:GetService("RunService")
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 
 local MIDPOINT = 24.75
 local ENDPOINT = MIDPOINT * 2
@@ -73,7 +73,7 @@ function Crate.new(
 		active = false,
 		destroyed = false,
 		speed = speed,
-		model = Crates.getCrateModel(crateId),
+		model = Towers.getCrateModel(crateId),
 		x = getStartPoint(index),
 		goalX = getGoal(index, cratesInBunch),
 		physicsEnabled = false,

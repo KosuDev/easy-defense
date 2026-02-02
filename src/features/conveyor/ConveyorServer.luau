@@ -6,10 +6,12 @@ local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 local Conveyors = ReplicatedStorage.Assets.Conveyors
 local CRATE_SPAWN_CD = PlotServiceUtils.enums.crateSpawnCooldown
@@ -26,7 +28,7 @@ export type ConveyorServer = typeof(setmetatable(
 		level: number,
 		player: Player,
 		timeOfLastCrateSpawn: number,
-		crates: { string? },
+		crates: { DataTemplate.CrateData? },
 		janitor: Janitor.Janitor,
 		model: Model?,
 		networker: Networker.Server,
@@ -109,7 +111,11 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 	local conveyorLuck = ConveyorUpgrades[self.level].luck
 	for i = 1, MAX_CRATES do
 		if i <= crateRolls then
-			self.crates[i] = Crates.rollCrateId(conveyorLuck)
+			local towerId = Towers.rollTowerId(conveyorLuck)
+			self.crates[i] = {
+				crateId = towerId,
+				mutations = MutationServiceServer:rollMutations(),
+			}
 		else
 			self.crates[i] = nil
 		end
@@ -126,12 +132,12 @@ function ConveyorServer.buyCrate(self: ConveyorServer, player: Player, crateInde
 		return false
 	end
 
-	local crateId = self.crates[crateIndex]
-	if not crateId then
+	local crateData = self.crates[crateIndex]
+	if not crateData then
 		return false
 	end
 
-	local crateInfo = Crates.getCrateInfo(crateId)
+	local crateInfo = Towers.getCrateInfo(crateData.crateId)
 	local cost = crateInfo.cost
 	if DataService:get(player, "currency") < cost then
 		return false
@@ -144,8 +150,8 @@ function ConveyorServer.buyCrate(self: ConveyorServer, player: Player, crateInde
 	self.crates[crateIndex] = nil
 	self.networker:fireAll("crateBought", crateIndex)
 
-	InventoryServiceServer:addCrate(player, crateId)
-	InventoryServiceServer:addToHotBar(player, crateId)
+	local crateKey = InventoryServiceServer:addCrate(player, crateData)
+	InventoryServiceServer:addToHotBar(player, crateKey)
 
 	return true
 end

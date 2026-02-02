@@ -1,6 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 type ItemData = DataTemplate.ItemData
@@ -9,7 +8,7 @@ local InventoryServiceUtils = {}
 
 function InventoryServiceUtils.getModel(itemData: ItemData): Model
 	if itemData.crateId then
-		return Crates.getCrateModel(itemData.crateId)
+		return Towers.getCrateModel(itemData.crateId)
 	elseif itemData.itemId then
 		return Towers.getTowerModel(itemData.itemId, itemData.mutations)
 	end
