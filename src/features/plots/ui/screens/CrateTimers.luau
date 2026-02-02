@@ -5,7 +5,7 @@ local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local FormatTime = require(ReplicatedStorage.Source.Core.UI.FormatTime)
 local useServerTimeBinding = require(ReplicatedStorage.Source.Core.UI.Hooks.useServerTimeBinding)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
@@ -13,13 +13,13 @@ local e = React.createElement
 
 type CrateTimerProps = {
 	root: BasePart,
-	crateData: DataTemplate.CrateData,
+	crateData: DataTemplate.CrateNode,
 }
 
 local function CrateTimer(props: CrateTimerProps)
-	local crateInfo = Crates.getCrateInfo(props.crateData.crateId)
+	local crateInfo = Towers.getTowerInfo(props.crateData.crateId)
 	local tier = Tiers.getTierForOdds(crateInfo.odds)
-	local timeToOpen = crateInfo.openTime
+	local timeToOpen = crateInfo.crateOpenTime
 	local crateOpenTime = props.crateData.timeBuilt + timeToOpen
 	local serverTime = useServerTimeBinding()
 	local text = serverTime:map(function(t)
@@ -44,7 +44,7 @@ local function CrateTimer(props: CrateTimerProps)
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	}, {
 		CrateName = e(TextLabel, {
-			Text = crateInfo.name,
+			Text = crateInfo.name .. " Crate",
 			Size = UDim2.fromScale(1, 0.325),
 			AnchorPoint = Vector2.new(0.5, 1),
 			Position = UDim2.fromScale(0.5, 0.6),

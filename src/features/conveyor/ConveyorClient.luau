@@ -13,6 +13,7 @@ local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.Cra
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 local DEFAULT_TEXTURE_SPEED = 3.6
 local TEXTURE_TIME = 1.1
@@ -22,6 +23,7 @@ local ConveyorClient = {}
 ConveyorClient.__index = ConveyorClient
 
 type Crate = CrateClient.Crate
+type CrateData = DataTemplate.CrateData
 
 export type ConveyorClient = typeof(setmetatable(
 	{} :: {
@@ -106,7 +108,7 @@ function ConveyorClient.attemptCrateSpawn(self: ConveyorClient)
 	end)
 end
 
-function ConveyorClient.cratesChanged(self: ConveyorClient, crateIds: { string })
+function ConveyorClient.cratesChanged(self: ConveyorClient, crateDatas: { CrateData })
 	for _, prevCrate in self.crates do
 		prevCrate:despawn()
 	end
@@ -115,13 +117,13 @@ function ConveyorClient.cratesChanged(self: ConveyorClient, crateIds: { string }
 	self.crates = {}
 	self.conveyorSpeed(DEFAULT_TEXTURE_SPEED * self.speedMultiplier)
 
-	for i, crateId in crateIds do
+	for i, crateData in crateDatas do
 		local crate = CrateClient.new(
 			self.networker,
 			self.crateSpawnCf,
 			i,
-			#crateIds,
-			crateId,
+			#crateDatas,
+			crateData,
 			self.speedMultiplier,
 			isLocalPlayer
 		)

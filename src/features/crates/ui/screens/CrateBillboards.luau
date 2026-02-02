@@ -6,12 +6,12 @@ local Sift = require(ReplicatedStorage.Packages.Sift)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
 local e = React.createElement
 
 local function CrateBillboard(props: { instance: Instance, crateId: string })
-	local crateInfo = Crates.getCrateInfo(props.crateId)
+	local crateInfo = Towers.getTowerInfo(props.crateId)
 	local tierData = Tiers.getTierForOdds(crateInfo.odds)
 	return e("BillboardGui", {
 		Adornee = props.instance,
@@ -38,14 +38,14 @@ local function CrateBillboard(props: { instance: Instance, crateId: string })
 		}),
 
 		CrateName = e(TextLabel, {
-			Text = crateInfo.name,
+			Text = crateInfo.name .. " Crate",
 			Size = UDim2.fromScale(1, 0.28),
 			LayoutOrder = 2,
 			Stroke = {},
 		}),
 
 		Cost = e(TextLabel, {
-			Text = `${Abbreviate(crateInfo.cost)}`,
+			Text = `${Abbreviate(crateInfo.crateCost)}`,
 			Size = UDim2.fromScale(1, 0.36),
 			LayoutOrder = 3,
 			Stroke = {},

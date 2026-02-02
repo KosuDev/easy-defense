@@ -46,7 +46,7 @@ function TowerBillboardGui.update(gui: TowerGui, towerData: DataTemplate.TowerDa
 	gui.Rarity.TextLabel.Text = rarityTier.name
 	gui.Rarity.TextLabel.Gradient.Color = rarityTier.gradient
 	gui.Dps.TextLabel.Text = `💪 {Abbreviate(PlotServiceUtils.getDps(towerData))}`
-	for mutation, _ in Mutations do
+	for mutation, _ in Mutations.mutations do
 		local hasMutation = towerData.mutations and towerData.mutations[mutation]
 		local mutationImg = gui.Mutations:FindFirstChild(mutation)
 		if mutationImg and not hasMutation then

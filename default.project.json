@@ -116,6 +116,9 @@
               },
               "Screens": {
                 "$className": "Folder",
+                "CrateBillboardGui": {
+                  "$path": "src/features/crates/ui/screens/CrateBillboardGui.luau"
+                },
                 "CrateBillboards": {
                   "$path": "src/features/crates/ui/screens/CrateBillboards.luau"
                 }

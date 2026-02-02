@@ -15,7 +15,8 @@ local function xToScale(x: number, i: number): number
 	return math.clamp(1.2 * (-(2 * i * x - 1) ^ 2 + 1), 0.001, 1.2)
 end
 
-return function(luck: number, cf: CFrame, towerData: DataTemplate.TowerData): ()
+return function(cf: CFrame, towerData: DataTemplate.TowerData): ()
+	local luck = 1
 	cf *= CFrame.new(0, 0.5, 0)
 	VfxUtils.emitAllAtPosition("CrateOpen", cf.Position)
 	SoundController:Play(Sounds.misc.woosh)

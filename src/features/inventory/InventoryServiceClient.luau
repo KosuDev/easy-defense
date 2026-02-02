@@ -7,6 +7,7 @@ local InventoryServiceUtils = require(script.Parent.InventoryServiceUtils)
 local InventorySlice = require(script.Parent.InventorySlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local CrateBillboardGui = require(ReplicatedStorage.Source.Features.Crates.UI.Screens.CrateBillboardGui)
 local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -243,6 +244,9 @@ function InventoryServiceClient.update(self: InventoryServiceClient)
 		model.Parent = pChar
 		if equippedItem.itemData.itemId then
 			DefenseSlice.actions.addTower(model.PrimaryPart, equippedItem.itemData)
+		else
+			local crateGui = CrateBillboardGui.new(equippedItem.itemData, true)
+			crateGui.Parent = model.PrimaryPart
 		end
 	end
 end

@@ -10,7 +10,7 @@ local InventoryServiceServer = require(ServerScriptService.Features.Inventory.In
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local Sift = require(ReplicatedStorage.Packages.Sift)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
@@ -267,13 +267,18 @@ function PlotServer.requestBuild(self: PlotServer, player: Player, floor: number
 		return
 	end
 
-	DataService:update(player, { "inventory", uniqueId, "amt" }, function(amt: number)
+	local newAmt = DataService:update(player, { "inventory", uniqueId, "amt" }, function(amt: number)
 		return amt - 1
 	end)
+
+	if newAmt <= 0 then
+		DataService:set(player, { "inventory", uniqueId }, nil)
+	end
 
 	local crateData: CrateNode = {
 		crateId = itemData.crateId,
 		timeBuilt = workspace:GetServerTimeNow(),
+		mutations = itemData.mutations,
 	}
 
 	self:build(floor, node, crateData)
@@ -326,22 +331,25 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	local nodeInfo = self.nodes[floor][node]
 	assert(nodeInfo.data and nodeInfo.data.crateId, "No crate to open at this node")
 	local crateData: CrateNode = nodeInfo.data
-	local crateId, timeBuilt = crateData.crateId, crateData.timeBuilt
-	assert(crateId and timeBuilt, "No crate to open at node " .. node)
-	local openTime = Crates.getCrateInfo(crateId).openTime
-	local timeRemaining = openTime - (workspace:GetServerTimeNow() - timeBuilt)
+	assert(crateData.crateId and crateData.timeBuilt, "No crate to open at node " .. node)
+	local info = Towers.getTowerInfo(crateData.crateId)
+	local openTime = info.crateOpenTime
+	local timeRemaining = openTime - (workspace:GetServerTimeNow() - crateData.timeBuilt)
 	assert(timeRemaining <= 0, "Crate is not ready to be opened")
 
 	nodeInfo.data = nil
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
-	local crateLuck = Crates.getCrateInfo(crateId).luck
-	local towerId = Towers.rollTowerId(crateLuck)
 	local mutations = MutationServiceServer:rollMutations()
-	local towerData: DataTemplate.TowerData = { itemId = towerId, level = 1, mutations = mutations }
+	if mutations and crateData.mutations then
+		Sift.Dictionary.merge(mutations, crateData.mutations)
+	elseif not mutations then
+		mutations = crateData.mutations
+	end
+	local towerData: DataTemplate.TowerData = { itemId = info.id, level = 1, mutations = mutations }
 	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
-	self.networker:fireAll("crateOpened", floor, node, crateLuck, towerData, nodeInfo.cf)
+	self.networker:fireAll("crateOpened", floor, node, towerData, nodeInfo.cf)
 	self:build(floor, node, uniqueId, nil, true)
 end
 

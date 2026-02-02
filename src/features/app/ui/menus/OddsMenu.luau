@@ -8,7 +8,6 @@ local Sift = require(ReplicatedStorage.Packages.Sift)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local InsetFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.InsetFrame)
 local StudButton = require(ReplicatedStorage.Source.Features.App.UI.Components.StudButton)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local e = React.createElement
@@ -301,6 +300,10 @@ local function CratesFrame()
 end
 
 return function()
+	if true then
+		return nil
+	end
+
 	return e(Menu.Component, {
 		menuName = "OddsMenu",
 		Title = "Odds",

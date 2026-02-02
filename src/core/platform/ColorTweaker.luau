@@ -95,6 +95,9 @@ function ColorTweaker.fromInstance(instance: any, tweaks: Tweaks, useOriginalCol
 	local original = useOriginalColorAttribute and instance:GetAttribute(ORIGINAL_COLOR_ATTRIBUTE_NAME)
 	if instance:IsA("BasePart") or instance:IsA("Light") then
 		instance.Color = ColorTweaker.tweak(original or instance.Color, tweaks)
+		if instance:IsA("UnionOperation") then
+			instance.UsePartColor = true
+		end
 	elseif instance:IsA("Decal") then
 		instance.Color3 = ColorTweaker.tweak(original or instance.Color3, tweaks)
 	elseif instance:IsA("SpecialMesh") then

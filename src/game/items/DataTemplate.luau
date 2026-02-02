@@ -3,6 +3,7 @@ local NULL = "NULL"
 export type CrateData = {
 	crateId: string,
 	amt: number,
+	mutations: Mutations?,
 	fav: boolean?,
 }
 
@@ -23,6 +24,7 @@ export type ItemData = CrateData & TowerData
 export type CrateNode = {
 	crateId: string,
 	timeBuilt: number,
+	mutations: Mutations?,
 }
 
 export type NodeData = CrateNode & TowerData

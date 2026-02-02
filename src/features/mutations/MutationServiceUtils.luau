@@ -5,8 +5,8 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 type Mutations = DataTemplate.Mutations
 
 local MUTATION_EVENT_CHANCE = 0.04
-local GOLD_MUTATION_CHANCE = 1 / 25
-local DIAMOND_MUTATION_CHANCE = 1 / 250
+local GOLD_MUTATION_CHANCE = 1 / 2
+local DIAMOND_MUTATION_CHANCE = 1 / 25
 
 local MutationServiceUtils = {}
 

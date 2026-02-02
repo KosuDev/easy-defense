@@ -1,7 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
@@ -21,7 +20,7 @@ type ItemButtonStrokeProps = {
 
 return function(props: ItemButtonStrokeProps)
 	local info = if props.partData.crateId
-		then Crates.getCrateInfo(props.partData.crateId)
+		then Towers.getTowerInfo(props.partData.crateId)
 		else Towers.getTowerInfo(props.partData.itemId)
 	local tier = Tiers.getTierForOdds(info.odds)
 

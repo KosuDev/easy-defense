@@ -4,7 +4,11 @@ local RunService = game:GetService("RunService")
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
+local CrateBillboardGui = require(ReplicatedStorage.Source.Features.Crates.UI.Screens.CrateBillboardGui)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
+
+type CrateData = DataTemplate.CrateData
 
 local MIDPOINT = 24.75
 local ENDPOINT = MIDPOINT * 2
@@ -37,7 +41,7 @@ export type Crate = typeof(setmetatable(
 		networker: Networker.Client,
 		startCf: CFrame,
 		index: number,
-		crateId: string,
+		crateData: CrateData,
 		physicsEnabled: boolean,
 		active: boolean,
 		destroyed: boolean,
@@ -52,6 +56,7 @@ export type Crate = typeof(setmetatable(
 		angularVelocity: Vector3,
 		isLocalPlayer: boolean,
 		updateConn: RBXScriptConnection,
+		gui: BillboardGui,
 	},
 	Crate
 ))
@@ -61,19 +66,19 @@ function Crate.new(
 	startCf: CFrame,
 	index: number,
 	cratesInBunch: number,
-	crateId: string,
+	crateData: CrateData,
 	speed: number,
 	isLocalPlayer: boolean
 ): Crate
 	local self = setmetatable({
 		networker = networker,
 		startCf = startCf,
-		crateId = crateId,
+		crateData = crateData,
 		index = index,
 		active = false,
 		destroyed = false,
 		speed = speed,
-		model = Crates.getCrateModel(crateId),
+		model = Towers.getCrateModel(crateData.crateId),
 		x = getStartPoint(index),
 		goalX = getGoal(index, cratesInBunch),
 		physicsEnabled = false,
@@ -149,7 +154,8 @@ function Crate.update(self: Crate, dt: number)
 	if not self.active and self.x >= 0 then
 		self.active = true
 		self.model.Parent = workspace
-		CrateSlice.actions.addCrate(self.model.Root, self.crateId)
+		self.gui = CrateBillboardGui.new(self.crateData)
+		self.gui.Parent = self.model.PrimaryPart
 	end
 
 	if not self.physicsEnabled and self.x >= JUMP_POINT then
@@ -177,6 +183,9 @@ function Crate.destroy(self: Crate)
 	self.destroyed = true
 	self.updateConn:Disconnect()
 	self.janitor:Destroy()
+	if self.gui then
+		self.gui:Destroy()
+	end
 end
 
 return Crate

@@ -3,7 +3,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
+
+type CrateData = DataTemplate.CrateData
+type TowerData = DataTemplate.TowerData
+
 local InventoryServiceServer = {}
 
 function InventoryServiceServer.init(self: InventoryServiceServer)
@@ -27,18 +32,23 @@ function InventoryServiceServer.equipItem(self: InventoryServiceServer, player: 
 	self.networker:fireAll("setPlayerItem", player, itemData)
 end
 
-function InventoryServiceServer.addCrate(_self: InventoryServiceServer, player: Player, crateId: string, amt: number?)
-	local prevCrateData: DataTemplate.ItemData = DataService:get(player, { "inventory", crateId })
+function InventoryServiceServer.addCrate(_self: InventoryServiceServer, player: Player, crateData: CrateData): string
+	local crateKey = InventoryServiceUtils.getCrateKey(crateData)
+	local prevCrateData: DataTemplate.ItemData = DataService:get(player, { "inventory", crateKey })
+
 	if not prevCrateData then
-		DataService:set(player, { "inventory", crateId }, {
-			crateId = crateId,
-			amt = amt or 1,
+		DataService:set(player, { "inventory", crateKey }, {
+			crateId = crateData.crateId,
+			amt = crateData.amt or 1,
+			mutations = crateData.mutations,
 		})
 	else
-		DataService:update(player, { "inventory", crateId, "amt" }, function(prev: number?)
-			return (prev or 0) + (amt or 1)
+		DataService:update(player, { "inventory", crateKey, "amt" }, function(prev: number?)
+			return (prev or 0) + (crateData.amt or 1)
 		end)
 	end
+
+	return crateKey
 end
 
 function InventoryServiceServer.addTower(

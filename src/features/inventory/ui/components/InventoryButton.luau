@@ -5,7 +5,6 @@ local ItemIcon = require(script.Parent.ItemIcon)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
@@ -23,7 +22,7 @@ type InventoryButtonProps = {
 local function useItemDataLayout(itemData: DataTemplate.ItemData)
 	return React.useMemo(function()
 		if itemData.crateId then
-			return -Crates.getCrateInfo(itemData.crateId).layoutOrder
+			return -Towers.getTowerInfo(itemData.crateId).layoutOrder
 		else
 			return 1e3 - Towers.getTowerInfo(itemData.itemId).layoutOrder
 		end

@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Crates = require(ReplicatedStorage.Source.Features.Crates.Modules.Crates)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local Mutations = require(ReplicatedStorage.Source.Features.Mutations.Modules.Mutations)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 type ItemData = DataTemplate.ItemData
 
@@ -9,11 +9,10 @@ local InventoryServiceUtils = {}
 
 function InventoryServiceUtils.getModel(itemData: ItemData): Model
 	if itemData.crateId then
-		return Crates.getCrateModel(itemData.crateId)
+		return Towers.getCrateModel(itemData.crateId)
 	elseif itemData.itemId then
 		return Towers.getTowerModel(itemData.itemId, itemData.mutations)
 	end
-	print(itemData)
 	error("No model found for itemData")
 end
 
@@ -43,6 +42,20 @@ function InventoryServiceUtils.getToolModel(itemData: ItemData): (Model, WeldCon
 	rootWeld.Parent = root
 
 	return model, rootWeld
+end
+
+function InventoryServiceUtils.getCrateKey(crateData: DataTemplate.CrateData): string
+	local mutationKey = ""
+	if crateData.mutations then
+		for _, mutation in Mutations.sortedMutations do
+			if crateData.mutations[mutation] then
+				local sub = string.sub(mutation, 1, 4)
+				mutationKey ..= sub .. "_"
+			end
+		end
+	end
+
+	return crateData.crateId .. "_" .. mutationKey
 end
 
 return InventoryServiceUtils

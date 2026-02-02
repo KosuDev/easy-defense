@@ -126,14 +126,7 @@ function PlotClient.setNode(self: PlotClient, floor: number, node: number, nodeD
 	self.nodesUpdated:Fire(floor, node)
 end
 
-function PlotClient.crateOpened(
-	self: PlotClient,
-	floor: number,
-	node: number,
-	crateLuck: number,
-	towerData: TowerData,
-	towerCf: CFrame
-)
+function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, towerData: TowerData, towerCf: CFrame)
 	local nodeData = self.nodes[floor][node]
 	local crateModel = nodeData.model
 	PlotSlice.actions.removeCrate(nodeData.root)
@@ -142,7 +135,7 @@ function PlotClient.crateOpened(
 	self.nodesUpdated:Fire(floor, node)
 
 	crateModel:Destroy()
-	CrateOpenVfx(crateLuck, nodeData.cf, towerData)
+	CrateOpenVfx(nodeData.cf, towerData)
 
 	self.defense:towerAdded(floor, node, towerCf, towerData)
 end
