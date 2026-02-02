@@ -159,7 +159,7 @@ local towers = {
 
 	orbOfDarkness = {
 		name = "Orb of Darkness",
-		image = "rbxassetid://123999583651842",
+		image = "rbxassetid://80196609282103",
 		weight = 125e3,
 		damage = 125e3,
 		range = 25,
@@ -169,7 +169,7 @@ local towers = {
 
 	hydroBlaster = {
 		name = "Hydro Blaster",
-		image = "rbxassetid://123999583651842",
+		image = "rbxassetid://77458757609902",
 		weight = 63e3,
 		damage = 61e3,
 		range = 25,
@@ -179,7 +179,7 @@ local towers = {
 
 	overseer = {
 		name = "Overseer",
-		image = "rbxassetid://123999583651842",
+		image = "rbxassetid://85069178841415",
 		weight = 30e3,
 		damage = 205e3,
 		range = 25,
@@ -189,7 +189,7 @@ local towers = {
 
 	obliterator = {
 		name = "Obliterator",
-		image = "rbxassetid://123999583651842",
+		image = "rbxassetid://102897043398524",
 		weight = 15e3,
 		damage = 261e3,
 		range = 25,
@@ -199,7 +199,7 @@ local towers = {
 
 	phantom = {
 		name = "Phantom",
-		image = "rbxassetid://129284682759076",
+		image = "rbxassetid://112711416437129",
 		weight = 8e3,
 		damage = 475e3,
 		range = 25,
@@ -209,7 +209,7 @@ local towers = {
 
 	protonSniper = {
 		name = "Proton Sniper",
-		image = "rbxassetid://123999583651842",
+		image = "rbxassetid://71267814543164",
 		weight = 4e3,
 		damage = 4.3e6,
 		range = 25,
