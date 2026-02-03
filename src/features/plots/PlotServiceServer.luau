@@ -24,7 +24,7 @@ type PlayerData = {
 }
 
 function PlotServiceServer.init(self: PlotServiceServer)
-	self.networker = Networker.server.new("PlotService", self, { self.rebirth })
+	self.networker = Networker.server.new("PlotService", self, { self.rebirth, self.tpToBase })
 	self.playerData = ServicePlayerData.new(PLAYER_DATA_TEMPLATE :: PlayerData, self)
 	self.plotSpawns = {}
 
@@ -107,6 +107,20 @@ function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (b
 	end)
 
 	return RebirthUtils.rebirthRewards[rebirths + 1]
+end
+
+function PlotServiceServer.tpToBase(self: PlotServiceServer, player: Player)
+	local playerData = self.playerData:get(player)
+	if not playerData then
+		return
+	end
+
+	local plot = playerData.plot
+	if not plot then
+		return
+	end
+
+	plot:tpChar()
 end
 
 type PlotServiceServer = typeof(PlotServiceServer) & {

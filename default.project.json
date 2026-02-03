@@ -37,6 +37,9 @@
                 },
                 "LeftSideBar": {
                   "$path": "src/features/app/ui/hud/LeftSideBar.luau"
+                },
+                "TopBar": {
+                  "$path": "src/features/app/ui/hud/TopBar.luau"
                 }
               },
               "Menus": {

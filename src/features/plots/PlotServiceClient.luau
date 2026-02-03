@@ -64,6 +64,10 @@ function PlotServiceClient.requestUpgrade(self: PlotServiceClient, floor: number
 	plot.networker:fire("requestUpgrade", floor, node)
 end
 
+function PlotServiceClient.tpToBase(self: PlotServiceClient)
+	self.networker:fire("tpToBase")
+end
+
 type PlotServiceClient = typeof(PlotServiceClient) & {
 	networker: Networker.Client,
 	plots: { [number]: PlotClient.PlotClient },

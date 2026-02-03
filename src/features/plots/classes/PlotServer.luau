@@ -102,6 +102,13 @@ function PlotServer.get(self: PlotServer): PlotTypes.PlotData
 	}
 end
 
+function PlotServer.tpChar(self: PlotServer)
+	local char = self.player.Character
+	if char then
+		char:PivotTo(self.plotModel:GetPivot() * CHAR_SPAWN_OFFSET)
+	end
+end
+
 function PlotServer.charInit(self: PlotServer)
 	local startingChar = self.player.Character or self.player.CharacterAdded:Wait()
 	startingChar:PivotTo(self.plotModel:GetPivot() * CHAR_SPAWN_OFFSET)

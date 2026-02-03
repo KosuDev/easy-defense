@@ -5,7 +5,6 @@ local RootUI = require(script.Parent.RootUI)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
 local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
-local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local e = React.createElement
 
@@ -15,13 +14,7 @@ return function(parent)
 	local app = e(RootUI)
 	root:render(app)
 
-	PlotSlice.actions.addCrate(workspace.TowerPlacement.TowerPlacement, {
-		crateId = "gold",
-		timeBuilt = workspace:GetServerTimeNow() - 1,
-	})
-
 	local menuCleanup = Menu.init()
-	Menu.setOpenedMenu("OddsMenu")
 
 	return function()
 		menuCleanup()
