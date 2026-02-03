@@ -4,6 +4,7 @@ local React = require(ReplicatedStorage.Packages.React)
 local AutoScaledFrame = require(ReplicatedStorage.Source.Core.UI.Primitives.AutoScaledFrame)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
+local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
 local PlotServiceClient = require(ReplicatedStorage.Source.Features.Plots.PlotServiceClient)
 local e = React.createElement
 
@@ -59,6 +60,9 @@ local function Buttons()
 			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			LayoutOrder = 2,
+			Activated = function()
+				Menu.setOpenedMenu("SellMenu")
+			end,
 		}, {
 			Stroke = e("UIStroke", {
 				Thickness = 2.5,

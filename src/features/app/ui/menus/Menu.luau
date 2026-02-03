@@ -67,6 +67,8 @@ type MenuProps = {
 	Size: UDim2?,
 	From: UDim2?,
 	To: UDim2?,
+	OnOpen: (() -> ())?,
+	OnClose: (() -> ())?,
 }
 
 local function Menu(props: MenuProps)
@@ -74,6 +76,14 @@ local function Menu(props: MenuProps)
 	local isOpen = ReactCharm.useAtom(function()
 		return openedMenu() == props.menuName
 	end)
+
+	React.useEffect(function()
+		if isOpen and props.OnOpen then
+			props.OnOpen()
+		elseif not isOpen and props.OnClose then
+			props.OnClose()
+		end
+	end, { isOpen })
 
 	return e(SlideOutFrame, {
 		Shown = isOpen and openedScreen == nil,

@@ -6,6 +6,7 @@ local React = require(ReplicatedStorage.Packages.React)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local e = React.createElement
 
@@ -21,6 +22,7 @@ type ItemIconProps = {
 	BackgroundColor3: Color3?,
 	equipped: boolean?,
 	showStrength: boolean?,
+	hideStroke: boolean?,
 }
 
 return function(props: ItemIconProps)
@@ -77,7 +79,12 @@ return function(props: ItemIconProps)
 
 		Strength = if isTower and props.showStrength ~= false
 			then e(TextLabel, {
-				Text = "💪 " .. Abbreviate(math.round(info.damage * info.firerate)),
+				Text = "💪 "
+					.. Abbreviate(
+						math.round(
+							info.damage * info.firerate * PlotServiceUtils.getDamageMultiplier(props.itemData.level)
+						)
+					),
 				AnchorPoint = Vector2.new(1, 1),
 				TextXAlignment = Enum.TextXAlignment.Right,
 				Position = UDim2.fromScale(0.95, 0.95),
@@ -105,6 +112,8 @@ return function(props: ItemIconProps)
 			})
 			else nil,
 
-		Stroke = e(ItemButtonStroke, { equipped = props.equipped, partData = props.itemData }),
+		Stroke = if props.hideStroke
+			then nil
+			else e(ItemButtonStroke, { equipped = props.equipped, partData = props.itemData }),
 	}, props.children)
 end

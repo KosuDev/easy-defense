@@ -116,6 +116,15 @@ function InventoryServiceClient.init(self: InventoryServiceClient)
 	end)
 end
 
+function InventoryServiceClient.sell(self: InventoryServiceClient, uniqueIdsDict: { [string]: boolean })
+	local equippedUniqueId = InventorySlice.state.equippedItemUniqueId()
+	local uniqueIds = Sift.Dictionary.keys(uniqueIdsDict)
+	if uniqueIdsDict[equippedUniqueId] then
+		self:unequipItem()
+	end
+	self.networker:fire("sell", uniqueIds)
+end
+
 function InventoryServiceClient.addToHotbar(self: InventoryServiceClient, uniqueId: string)
 	for _, slotUniqueId in DataService:get("hotbar") do
 		if slotUniqueId == uniqueId then

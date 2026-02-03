@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Mutations = require(ReplicatedStorage.Source.Features.Mutations.Modules.Mutations)
+local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 type ItemData = DataTemplate.ItemData
 
@@ -56,6 +57,19 @@ function InventoryServiceUtils.getCrateKey(crateData: DataTemplate.CrateData): s
 	end
 
 	return crateData.crateId .. "_" .. mutationKey
+end
+
+function InventoryServiceUtils.getSellValue(itemData: ItemData): number
+	if itemData.crateId then
+		local crateInfo = Towers.getTowerInfo(itemData.crateId)
+		return crateInfo.crateCost * itemData.amt / 2
+	else
+		local towerInfo = Towers.getTowerInfo(itemData.itemId)
+		local baseValue = towerInfo.crateCost / 1.5
+		local levelCost = PlotServiceUtils.getTotalLevelCost(itemData.level)
+		local total = baseValue + levelCost / 2
+		return math.floor(total)
+	end
 end
 
 return InventoryServiceUtils

@@ -86,6 +86,14 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 		self:loadDefense()
 	end))
 
+	self.janitor:Add(InventoryServiceServer.itemSoldSignal:Connect(function(sellingPlayer: Player, uniqueId: string)
+		if sellingPlayer ~= self.player then
+			return
+		end
+
+		self:remove(uniqueId)
+	end))
+
 	return self
 end
 

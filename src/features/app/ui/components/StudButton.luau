@@ -94,6 +94,22 @@ local BLACK_GRADIENT = ColorSequence.new({
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 0, 0)),
 })
 
+local PURPLE_GRADIENT = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+	ColorSequenceKeypoint.new(0.21, Color3.fromRGB(178, 71, 255)),
+	ColorSequenceKeypoint.new(0.87, Color3.fromRGB(105, 10, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(57, 4, 117)),
+})
+
+local function Purple(props: StudButtonProps)
+	return e(
+		StudButton,
+		Sift.Dictionary.merge(props, {
+			StudGradient = PURPLE_GRADIENT,
+		})
+	)
+end
+
 local function Green(props: StudButtonProps)
 	return e(
 		StudButton,
@@ -155,5 +171,6 @@ return {
 	Blue = Blue,
 	Gold = Gold,
 	Teal = Teal,
+	Purple = Purple,
 	Black = Black,
 }

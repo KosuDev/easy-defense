@@ -58,6 +58,9 @@
                 },
                 "RebirthMenu": {
                   "$path": "src/features/app/ui/menus/RebirthMenu.luau"
+                },
+                "SellMenu": {
+                  "$path": "src/features/app/ui/menus/SellMenu.luau"
                 }
               },
               "root.story": {
@@ -274,6 +277,9 @@
                 "$className": "Folder",
                 "useInventoryItemVisibility": {
                   "$path": "src/features/inventory/ui/hooks/useInventoryItemVisibility.luau"
+                },
+                "useItemDataLayout": {
+                  "$path": "src/features/inventory/ui/hooks/useItemDataLayout.luau"
                 },
                 "useItemDragger": {
                   "$path": "src/features/inventory/ui/hooks/useItemDragger.luau"

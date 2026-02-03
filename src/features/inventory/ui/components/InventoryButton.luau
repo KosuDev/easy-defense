@@ -5,11 +5,11 @@ local ItemIcon = require(script.Parent.ItemIcon)
 local React = require(ReplicatedStorage.Packages.React)
 local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
-local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local useInventoryItemVisibility =
 	require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useInventoryItemVisibility)
+local useItemDataLayout = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDataLayout)
 local useItemDragger = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDragger)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local e = React.createElement
@@ -18,16 +18,6 @@ type InventoryButtonProps = {
 	itemData: DataTemplate.ItemData,
 	uniqueId: string,
 }
-
-local function useItemDataLayout(itemData: DataTemplate.ItemData)
-	return React.useMemo(function()
-		if itemData.crateId then
-			return -Towers.getTowerInfo(itemData.crateId).layoutOrder
-		else
-			return 1e3 - Towers.getTowerInfo(itemData.itemId).layoutOrder
-		end
-	end, { itemData })
-end
 
 return function(props: InventoryButtonProps)
 	local uniqueId = props.uniqueId

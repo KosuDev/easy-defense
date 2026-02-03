@@ -31,6 +31,14 @@ function PlotServiceUtils.stringToFloorNode(floorNodeStr: string): (number, numb
 	return floor, node
 end
 
+function PlotServiceUtils.getTotalLevelCost(level: number): number
+	local totalCost = 0
+	for lvl = 1, level - 1 do
+		totalCost += 100 * 1.5 ^ (lvl - 1)
+	end
+	return totalCost
+end
+
 function PlotServiceUtils.getUpgradeCost(towerData: DataTemplate.TowerData): number
 	return 100 * 1.5 ^ (towerData.level - 1)
 end

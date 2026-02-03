@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -12,11 +13,29 @@ type TowerData = DataTemplate.TowerData
 local InventoryServiceServer = {}
 
 function InventoryServiceServer.init(self: InventoryServiceServer)
+	self.itemSoldSignal = Signal.new()
 	self.networker = Networker.server.new("InventoryService", self, {
 		self.setHotBarUniqueId,
 		self.equipItem,
 		self.unequipItem,
+		self.sell,
 	})
+end
+
+function InventoryServiceServer.sell(self: InventoryServiceServer, player: Player, uniqueIds: { string })
+	for _, uniqueId in uniqueIds do
+		local itemData: DataTemplate.ItemData? = DataService:get(player, { "inventory", uniqueId })
+		if not itemData then
+			continue
+		end
+
+		local sellPrice = InventoryServiceUtils.getSellValue(itemData)
+		DataService:set(player, { "inventory", uniqueId }, nil)
+		DataService:update(player, { "currency" }, function(prev: number)
+			return prev + sellPrice
+		end)
+		self.itemSoldSignal:Fire(player, uniqueId)
+	end
 end
 
 function InventoryServiceServer.unequipItem(self: InventoryServiceServer, player: Player)
@@ -89,6 +108,7 @@ end
 
 type InventoryServiceServer = typeof(InventoryServiceServer) & {
 	networker: Networker.Server,
+	itemSoldSignal: Signal.Signal<Player, string>,
 }
 
 return InventoryServiceServer :: InventoryServiceServer
