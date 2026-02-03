@@ -321,6 +321,7 @@ function PlotServer.requestUpgrade(self: PlotServer, player: Player, floor: numb
 		return level + 1
 	end)
 
+	self.defense:strengthChanged()
 	self.networker:fireAll("setNode", floor, node, self.nodes[floor][node])
 	self.defense.networker:fireAll("towerUpdated", floor, node, towerData)
 end
@@ -335,7 +336,7 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	local info = Towers.getTowerInfo(crateData.crateId)
 	local openTime = info.crateOpenTime
 	local timeRemaining = openTime - (workspace:GetServerTimeNow() - crateData.timeBuilt)
-	assert(timeRemaining <= 0, "Crate is not ready to be opened")
+	--assert(timeRemaining <= 0, "Crate is not ready to be opened")
 
 	nodeInfo.data = nil
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)

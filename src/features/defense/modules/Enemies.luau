@@ -6,6 +6,7 @@ export type EnemyStats = {
 }
 
 local HP_SCALAR = 0.08
+local BASE_REWARD = 16
 
 local enemies = {
 	normal = {
@@ -66,6 +67,11 @@ function Enemies.getEnemyForStrength(strength: number): EnemyStats
 	local x = math.max(1, math.round(math.log(strength / 4, 2)))
 	local enemyType = rollEnemyType()
 	return getEnemyStats(x, enemyType)
+end
+
+function Enemies.getEnemyReward(maxHp: number, rebirths: number): number
+	local multiplier = 1 + rebirths * 0.1
+	return (maxHp + BASE_REWARD) * multiplier
 end
 
 return Enemies

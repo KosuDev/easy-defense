@@ -43,7 +43,7 @@ function TowerServer.new(floor: number, node: number, cf: CFrame, data: TowerDat
 		networker = nil :: any,
 	}, TowerServer)
 
-	self.cd = 1 / self.towerInfo.firerate
+	self.cd = 2 + 1 / self.towerInfo.firerate
 	self.dps = self.towerInfo.damage * self.towerInfo.firerate * PlotServiceUtils.getDamageMultiplier(self.data.level)
 
 	return self
@@ -65,7 +65,7 @@ function TowerServer.update(self: TowerServer, dt: number): ()
 	for _, enemy in self.enemies do
 		local dist = ((enemy.pos - self.pos) * XZ).Magnitude
 		local heightDiff = math.abs(enemy.pos.Y - self.pos.Y)
-		if dist > self.towerInfo.range or heightDiff > MAX_HEIGHT_DIFF then
+		if dist > self.towerInfo.range + enemy.radius or heightDiff > MAX_HEIGHT_DIFF then
 			continue
 		end
 

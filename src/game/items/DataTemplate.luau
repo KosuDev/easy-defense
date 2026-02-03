@@ -35,7 +35,7 @@ export type OccupiedNode = CrateNode & string
 export type OccupiedNodes = { [string]: OccupiedNode }
 
 return {
-	currency = 500,
+	currency = 100,
 	rebirths = 0,
 	conveyorLevel = 1,
 	towerIndex = {

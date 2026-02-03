@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local DataService = require(ReplicatedStorage.Packages.DataService)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local ColorTweaker = require(ReplicatedStorage.Source.Core.Platform.ColorTweaker)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
@@ -111,7 +112,8 @@ function EnemyClient.damage(self: EnemyClient, amt: number): ()
 	if self.health <= 0 then
 		self.dead = true
 		local color = self.model.Inner.Color
-		HitSplat(self:getPosition(), color, self.baseStats.health)
+		local reward = Enemies.getEnemyReward(self.maxHealth, DataService.client:get("rebirths"))
+		HitSplat(self:getPosition(), color, reward)
 	else
 		self:updateHpBar()
 	end

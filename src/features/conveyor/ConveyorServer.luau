@@ -31,6 +31,7 @@ export type ConveyorServer = typeof(setmetatable(
 		timeOfLastCrateSpawn: number,
 		crates: { CrateData? },
 		janitor: Janitor.Janitor,
+		luckyRollOdds: number,
 		model: Model?,
 		networker: Networker.Server,
 	},
@@ -43,6 +44,7 @@ function ConveyorServer.new(index: number, plotModel: Model, player: Player): Co
 		player = player,
 		level = DataService:get(player, "conveyorLevel"),
 		timeOfLastCrateSpawn = 0,
+		luckyRollOdds = 0,
 		crates = {},
 		model = nil,
 		janitor = Janitor.new(),
@@ -108,8 +110,20 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		return false
 	end
 
-	local crateRolls = 1 -- TODO: Make this depend on some level
+	local isLuckyRoll = math.random() < self.luckyRollOdds
+	if isLuckyRoll then
+		self.luckyRollOdds *= 0.1
+	else
+		self.luckyRollOdds += 0.01
+	end
+
+	local crateRolls = 1 -- TODO: Make this depend on some pass
 	local conveyorLuck = ConveyorUpgrades[self.level].luck
+	if isLuckyRoll then
+		conveyorLuck *= 500
+		print("Lucky roll")
+	end
+
 	for i = 1, MAX_CRATES do
 		if i <= crateRolls then
 			self.crates[i] = {

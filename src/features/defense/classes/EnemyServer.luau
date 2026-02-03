@@ -20,6 +20,7 @@ export type EnemyServer = typeof(setmetatable(
 		path: any,
 		uniqueId: number,
 		baseStats: EnemyStats,
+		radius: number,
 	},
 	EnemyServer
 ))
@@ -35,6 +36,7 @@ function EnemyServer.new(floor: number, enemyStats: EnemyStats): EnemyServer
 		floor = floor,
 		baseStats = enemyStats,
 		uniqueId = getUniqueId(),
+		radius = enemyStats.size * 3,
 		dist = 0,
 		pos = Vector3.new(),
 		dead = false,

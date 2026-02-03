@@ -15,28 +15,35 @@ local rebirthRewards = {
 	[5] = {
 		towerSlots = 2,
 	},
+	[6] = {
+		towerSlots = 2,
+	},
 }
 
 local rebirthRequirements = {
 	[1] = {
-		towerId = "turret",
-		currency = 25e3,
+		towerId = "harpoon",
+		currency = 10e3,
 	},
 	[2] = {
-		towerId = "orbOfLight",
-		currency = 500e3,
+		towerId = "tesla",
+		currency = 100e3,
 	},
 	[3] = {
-		towerId = "crossbow",
-		currency = 4e3,
+		towerId = "laserBlaster",
+		currency = 2e6,
 	},
 	[4] = {
-		towerId = "crossbow",
-		currency = 8e3,
+		towerId = "plasmaCannon",
+		currency = 30e6,
 	},
 	[5] = {
-		towerId = "crossbow",
-		currency = 16e3,
+		towerId = "volcano",
+		currency = 200e6,
+	},
+	[6] = {
+		towerId = "orbOfDarkness",
+		currency = 267e6,
 	},
 }
 

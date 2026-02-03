@@ -8,6 +8,7 @@ local TowerServer = require(script.Parent.TowerServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
+local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 
 type TowerServer = TowerServer.TowerServer
 type EnemyServer = EnemyServer.EnemyServer
@@ -53,11 +54,7 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 end
 
 function DefenseServer.spawnEnemy(self: DefenseServer, floor: number)
-	local strength = self.strength[floor] or 0
-	if strength <= 0 then
-		return
-	end
-
+	local strength = math.max(self.strength[floor] or 1, 1)
 	local enemyStats = Enemies.getEnemyForStrength(strength)
 	local enemy = EnemyServer.new(floor, enemyStats)
 	self:addEnemy(enemy)
@@ -69,7 +66,11 @@ function DefenseServer.strengthChanged(self: DefenseServer)
 
 	for floor, towers in self.towers do
 		for _, tower in towers do
-			strength[floor] += tower.dps
+			local dps = tower.towerInfo.damage
+				* tower.towerInfo.firerate
+				* PlotServiceUtils.getDamageMultiplier(tower.data.level)
+			tower.dps = dps
+			strength[floor] += dps
 		end
 	end
 
@@ -166,9 +167,9 @@ end
 
 function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
 	local rebirths: number = DataService:get(self.player, "rebirths")
-	local multiplier = 1 + rebirths * 0.1
+	local reward = Enemies.getEnemyReward(enemy.maxHealth, rebirths)
 	DataService:update(self.player, "currency", function(amt: number)
-		return amt + math.ceil(enemy.maxHealth * multiplier)
+		return amt + reward
 	end)
 end
 
