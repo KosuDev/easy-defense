@@ -1,11 +1,13 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local DataService = require(ReplicatedStorage.Packages.DataService).client
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
 local CrateBillboardGui = require(ReplicatedStorage.Source.Features.Crates.UI.Screens.CrateBillboardGui)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 type CrateData = DataTemplate.CrateData
@@ -118,6 +120,14 @@ function Crate.new(
 		prox.Triggered:Connect(function()
 			self:onBought()
 		end)
+
+		local rebirths: number = DataService:get("rebirths")
+		local reqId = RebirthUtils.getRebirthTowerRequirement(rebirths)
+		if crateData.crateId == reqId then
+			local rebirthBillboard = ReplicatedStorage.Assets.VFX.RebirthCrateBillboard:Clone()
+			rebirthBillboard.Parent = self.model.PrimaryPart
+			self.janitor:Add(rebirthBillboard)
+		end
 
 		self.janitor:Add(prox)
 		self.janitor:Add(highlight)
