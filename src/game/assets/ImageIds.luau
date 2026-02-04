@@ -11,5 +11,6 @@ return {
 	mutations = {
 		diamond = "rbxassetid://108049478374755",
 		gold = "rbxassetid://111372280889175",
+		windy = "rbxassetid://81394274674638",
 	},
 }

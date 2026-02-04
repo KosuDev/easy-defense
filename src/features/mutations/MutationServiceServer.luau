@@ -9,7 +9,7 @@ type Mutations = DataTemplate.Mutations
 
 local MutationServiceServer = {}
 
-local EVENT_DURATION = 5 * 60
+local EVENT_DURATION = 14 * 60
 local EVENT_COOLDOWN = 15 * 60
 local completedEvents: { [number]: boolean } = {}
 
@@ -61,7 +61,7 @@ function MutationServiceServer.startEvent(self: MutationServiceServer, eventId: 
 	mutationModule(completionTime)
 
 	self.activeEvents[eventId] = completionTime
-	self.networker:fireAll("eventStarted", eventId, completionTime)
+	self.networker:fireAll("activeEventsUpdated", self.activeEvents)
 end
 
 function MutationServiceServer.requestEventData(self: MutationServiceServer, _player: Player): { [string]: number }

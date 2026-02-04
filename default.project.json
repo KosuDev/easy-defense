@@ -319,6 +319,9 @@
             "MutationServiceUtils": {
               "$path": "src/features/mutations/MutationServiceUtils.luau"
             },
+            "MutationSlice": {
+              "$path": "src/features/mutations/MutationSlice.luau"
+            },
             "MutationsServiceClient": {
               "$path": "src/features/mutations/MutationsServiceClient.luau"
             }
@@ -389,6 +392,9 @@
               "$className": "Folder",
               "ErrorMessage": {
                 "$path": "src/core/ui/components/ErrorMessage.luau"
+              },
+              "NotificationMessage": {
+                "$path": "src/core/ui/components/NotificationMessage.luau"
               }
             },
             "DisplayNameWithIcons": {

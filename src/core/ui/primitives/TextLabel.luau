@@ -39,7 +39,7 @@ type TextImage = {
 	ImageTransparency: CanBeBinding<number>?,
 }
 
-type TextLabelProps = UITypes.GenericUIProps & {
+export type TextLabelProps = UITypes.GenericUIProps & {
 	Text: CanBeBinding<string>?,
 	TextColor3: CanBeBinding<Color3>?,
 	TextSize: CanBeBinding<number>?,

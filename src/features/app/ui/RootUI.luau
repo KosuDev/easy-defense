@@ -3,6 +3,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local React = require(ReplicatedStorage.Packages.React)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local ErrorMessage = require(ReplicatedStorage.Source.Core.UI.Components.ErrorMessage)
+local NotificationMessage = require(ReplicatedStorage.Source.Core.UI.Components.NotificationMessage)
 local e = React.createElement
 
 local capturedRoots = {}
@@ -21,6 +22,7 @@ local function RootUI()
 		end),
 		{
 			e(ErrorMessage.Component),
+			e(NotificationMessage.Component),
 		}
 	)
 end

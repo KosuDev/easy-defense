@@ -3,6 +3,7 @@ export type MutationEvent = {
 	description: string,
 	weight: number,
 	odds: number,
+	color: Color3,
 }
 
 local events = {
@@ -10,6 +11,7 @@ local events = {
 		name = "Windy",
 		description = "Increases attack speed",
 		weight = 1e3,
+		color = Color3.fromRGB(135, 206, 235),
 	},
 }
 
