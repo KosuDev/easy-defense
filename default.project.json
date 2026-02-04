@@ -310,6 +310,12 @@
                 "$path": "src/features/mutations/modules/Mutations.luau"
               }
             },
+            "MutationEvents": {
+              "$className": "Folder",
+              "windy": {
+                "$path": "src/features/mutations/mutationEvents/windy.luau"
+              }
+            },
             "MutationServiceUtils": {
               "$path": "src/features/mutations/MutationServiceUtils.luau"
             },
