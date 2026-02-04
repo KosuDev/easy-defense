@@ -18,7 +18,8 @@ function MutationServiceClient.init(self: MutationServiceClient)
 
 	Charm.subscribe(MutationSlice.states.activeEvents, function(new, old)
 		for eventId, completionTime in new do
-			if not (not old[eventId] and workspace:GetServerTimeNow() < completionTime) then
+			local changed = old[eventId] ~= completionTime
+			if not changed or workspace:GetServerTimeNow() > completionTime then
 				continue
 			end
 

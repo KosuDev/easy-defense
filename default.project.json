@@ -312,6 +312,9 @@
             },
             "MutationEvents": {
               "$className": "Folder",
+              "inferno": {
+                "$path": "src/features/mutations/mutationEvents/inferno.luau"
+              },
               "windy": {
                 "$path": "src/features/mutations/mutationEvents/windy.luau"
               }

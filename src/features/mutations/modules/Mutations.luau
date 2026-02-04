@@ -17,7 +17,14 @@ local mutations = {
 		name = "Windy",
 		description = "Increases attack speed",
 		value = 3,
-		odds = 1 / 25,
+		odds = 1 / 10,
+	},
+
+	inferno = {
+		name = "Inferno",
+		description = "Adds burn damage over time",
+		value = 4,
+		odds = 1 / 10,
 	},
 }
 
