@@ -1,3 +1,4 @@
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -14,6 +15,11 @@ local PlotServiceClient = {}
 function PlotServiceClient.init(self: PlotServiceClient)
 	self.networker = Networker.client.new("PlotService", self)
 	self.plots = {}
+
+	local sellProx = CollectionService:GetTagged("SellMenuProx")[1] :: ProximityPrompt
+	sellProx.Triggered:Connect(function()
+		Menu.setOpenedMenu("SellMenu")
+	end)
 end
 
 function PlotServiceClient.initPlot(self: PlotServiceClient, plotData: PlotTypes.PlotData)
@@ -62,6 +68,10 @@ function PlotServiceClient.requestUpgrade(self: PlotServiceClient, floor: number
 	end
 
 	plot.networker:fire("requestUpgrade", floor, node)
+end
+
+function PlotServiceClient.tpToSell(self: PlotServiceClient)
+	self.networker:fire("tpToSell")
 end
 
 function PlotServiceClient.tpToBase(self: PlotServiceClient)

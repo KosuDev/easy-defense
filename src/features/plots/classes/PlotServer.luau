@@ -11,6 +11,8 @@ local MutationServiceServer = require(ServerScriptService.Features.Mutations.Mut
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local DisplayNameWithIcons = require(ReplicatedStorage.Source.Core.UI.DisplayNameWithIcons)
+local GetPlayerPortraitImageId = require(ReplicatedStorage.Source.Core.UI.GetPlayerPortraitImageId)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
@@ -93,6 +95,10 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 
 		self:remove(uniqueId)
 	end))
+
+	local billboardScreenGui = self.plotModel.Billboard.Screen.SurfaceGui
+	billboardScreenGui.TextLabel.Text = DisplayNameWithIcons(player) .. "'s Base"
+	billboardScreenGui.ImageLabel.Image = GetPlayerPortraitImageId(player.UserId)
 
 	return self
 end

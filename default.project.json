@@ -385,11 +385,17 @@
                 "$path": "src/core/ui/components/ErrorMessage.luau"
               }
             },
+            "DisplayNameWithIcons": {
+              "$path": "src/core/ui/DisplayNameWithIcons.luau"
+            },
             "FormatCurrency": {
               "$path": "src/core/ui/FormatCurrency.luau"
             },
             "FormatTime": {
               "$path": "src/core/ui/FormatTime.luau"
+            },
+            "GetPlayerPortraitImageId": {
+              "$path": "src/core/ui/GetPlayerPortraitImageId.luau"
             },
             "Hooks": {
               "$className": "Folder",

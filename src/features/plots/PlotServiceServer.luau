@@ -24,7 +24,7 @@ type PlayerData = {
 }
 
 function PlotServiceServer.init(self: PlotServiceServer)
-	self.networker = Networker.server.new("PlotService", self, { self.rebirth, self.tpToBase })
+	self.networker = Networker.server.new("PlotService", self, { self.rebirth, self.tpToBase, self.tpToSell })
 	self.playerData = ServicePlayerData.new(PLAYER_DATA_TEMPLATE :: PlayerData, self)
 	self.plotSpawns = {}
 
@@ -121,6 +121,14 @@ function PlotServiceServer.tpToBase(self: PlotServiceServer, player: Player)
 	end
 
 	plot:tpChar()
+end
+
+function PlotServiceServer.tpToSell(_self: PlotServiceServer, player: Player)
+	local sellTpPart = CollectionService:GetTagged("SellTp")[1] :: BasePart
+	local char = player.Character
+	if char then
+		char:PivotTo(sellTpPart.CFrame)
+	end
 end
 
 type PlotServiceServer = typeof(PlotServiceServer) & {
