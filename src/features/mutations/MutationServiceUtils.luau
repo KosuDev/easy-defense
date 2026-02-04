@@ -1,28 +1,26 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Mutations = require(ReplicatedStorage.Source.Features.Mutations.Modules.Mutations)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 type Mutations = DataTemplate.Mutations
-
-local MUTATION_EVENT_CHANCE = 0.04
-local GOLD_MUTATION_CHANCE = 1 / 25
-local DIAMOND_MUTATION_CHANCE = 1 / 250
 
 local MutationServiceUtils = {}
 
 function MutationServiceUtils.rollMutations(activeEvents: { string }, luck: number): Mutations?
 	local mutations = {}
 
-	for _, eventName in activeEvents do
+	for _, eventId in activeEvents do
 		local roll = math.random()
-		local chance = 1 - (1 - MUTATION_EVENT_CHANCE) ^ luck
+		local eventRollChance = Mutations.mutations[eventId].odds
+		local chance = 1 - (1 - eventRollChance) ^ luck
 		if roll < chance then
-			mutations[eventName] = true
+			mutations[eventId] = true
 		end
 	end
 
-	local diamondChance = 1 - (1 - DIAMOND_MUTATION_CHANCE) ^ luck
-	local goldChance = 1 - (1 - GOLD_MUTATION_CHANCE) ^ luck
+	local diamondChance = 1 - (1 - Mutations.mutations.diamond.odds) ^ luck
+	local goldChance = 1 - (1 - Mutations.mutations.gold.odds) ^ luck
 	if math.random() < diamondChance then
 		mutations.diamond = true
 	elseif math.random() < goldChance then

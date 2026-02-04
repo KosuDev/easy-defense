@@ -3,12 +3,21 @@ local mutations = {
 		name = "Gold",
 		description = "Increases damage",
 		value = 1,
+		odds = 1 / 25,
 	},
 
 	diamond = {
 		name = "Diamond",
 		description = "Greatly increases damage",
 		value = 2,
+		odds = 1 / 250,
+	},
+
+	windy = {
+		name = "Windy",
+		description = "Increases attack speed",
+		value = 3,
+		odds = 1 / 25,
 	},
 }
 

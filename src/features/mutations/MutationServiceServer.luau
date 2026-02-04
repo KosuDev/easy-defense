@@ -9,7 +9,7 @@ type Mutations = DataTemplate.Mutations
 
 local MutationServiceServer = {}
 
-local EVENT_DURATION = 14 * 60
+local EVENT_DURATION = 5 * 60
 local EVENT_COOLDOWN = 15 * 60
 local completedEvents: { [number]: boolean } = {}
 
@@ -52,7 +52,6 @@ function MutationServiceServer.getActiveEvents(self: MutationServiceServer): { s
 end
 
 function MutationServiceServer.startEvent(self: MutationServiceServer, eventId: string, completionTime: number)
-	print(eventId, completionTime)
 	if completionTime <= os.time() then
 		return
 	end
