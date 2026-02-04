@@ -60,6 +60,7 @@ end
 
 local function newDefenseModel(cf: CFrame, rebirths: number): Model & any
 	local defenseModel = PlotDefenses[tostring(rebirths + 1)]:Clone()
+	defenseModel.Root.Transparency = 1
 	defenseModel:PivotTo(cf)
 	return defenseModel
 end

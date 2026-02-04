@@ -17,6 +17,7 @@ function PathUtils.calcpath(pathFolder: Model & any): Path
 			break
 		end
 
+		nodePart.Transparency = 1
 		table.insert(nonLerpedNodes, nodePart.Position)
 		iNode += 1
 	end

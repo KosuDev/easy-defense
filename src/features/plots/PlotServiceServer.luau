@@ -29,6 +29,7 @@ function PlotServiceServer.init(self: PlotServiceServer)
 	self.plotSpawns = {}
 
 	for _, plotSpawn: BasePart in CollectionService:GetTagged("PlotSpawn") do
+		plotSpawn.Transparency = 1
 		local index = plotSpawn:GetAttribute("Index") :: number
 		local fakePlot: Model & any = ReplicatedStorage.Assets.Misc.Plot:Clone()
 		local fakeDefense: Model = ReplicatedStorage.Assets.PlotDefenses["1"]:Clone()
