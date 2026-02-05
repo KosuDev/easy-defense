@@ -126,6 +126,33 @@ function DefenseClient.towerAttack(
 	end
 end
 
+function DefenseClient.bleed(self: DefenseClient, bleeds: { [string]: { number } }, bleedType: string)
+	for damageString, enemyIds in bleeds do
+		local damage = tonumber(damageString)
+		for _, uniqueId in enemyIds do
+			local enemy = self.enemies[uniqueId]
+			if not enemy then
+				continue
+			end
+
+			enemy[bleedType](enemy, damage)
+			if enemy.dead then
+				task.defer(function()
+					self:removeEnemy(uniqueId)
+				end)
+			end
+		end
+	end
+end
+
+function DefenseClient.burn(self: DefenseClient, burns: { [string]: { number } })
+	self:bleed(burns, "burn")
+end
+
+function DefenseClient.poison(self: DefenseClient, poisons: { [string]: { number } })
+	self:bleed(poisons, "poison")
+end
+
 function DefenseClient.update(self: DefenseClient, dt: number): ()
 	for _, enemy in self.enemies do
 		enemy:update(dt)

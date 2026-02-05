@@ -6,6 +6,8 @@ local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotSer
 local EnemyServer = require(script.Parent.EnemyServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
+local BURN_DAMAGE = 0.5
+local POISON_DAMAGE = 0.1
 local XZ = Vector3.new(1, 0, 1)
 local MAX_HEIGHT_DIFF = 6
 
@@ -57,6 +59,13 @@ function TowerServer.attack(self: TowerServer, enemy: EnemyServer): ()
 	enemy:damage(self.dmg)
 	self.cd = 1 / self.firerate
 	self.networker:fireAll("towerAttack", self.floor, self.node, enemy.uniqueId, self.dmg)
+
+	if self.data.mutations and self.data.mutations.inferno then
+		enemy:addBurn(self.dmg * BURN_DAMAGE)
+	end
+	if self.data.mutations and self.data.mutations.radioactive then
+		enemy:addPoison(self.dmg * POISON_DAMAGE)
+	end
 end
 
 function TowerServer.update(self: TowerServer, dt: number): ()

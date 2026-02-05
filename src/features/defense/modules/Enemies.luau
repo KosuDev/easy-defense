@@ -264,11 +264,16 @@ function Enemies.getEnemyModel(index: number, enemyType: string): Model
 		model.AnimSaves:Destroy()
 	end
 
+	for _, part in model:GetDescendants() do
+		if part:IsA("BasePart") then
+			part.CanCollide = false
+			part.CastShadow = false
+		end
+	end
+
 	local mesh = model.PrimaryPart :: MeshPart
-	mesh.CanCollide = false
-	mesh.CastShadow = false
 	local cf: CFrame = model:GetPivot()
-	local rootCf: CFrame = CFrame.new(cf.X, 0.5, cf.Z) * cf.Rotation
+	local rootCf: CFrame = CFrame.new(cf.X, 0.5, cf.Z)
 	local root = Instance.new("Part")
 	root.Name = "Root"
 	root.Size = Vector3.new(1, 1, 1)

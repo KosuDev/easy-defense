@@ -14,6 +14,8 @@ type TowerServer = TowerServer.TowerServer
 type EnemyServer = EnemyServer.EnemyServer
 type Path = PathUtils.Path
 
+local BURN_COOLDOWN = 0.2
+local POISON_COOLDOWN = 1
 local SPAWN_COOLDOWN = 3
 local SORT_COOLDOWN = 1
 local DefenseServer = {}
@@ -29,6 +31,8 @@ export type DefenseServer = typeof(setmetatable(
 		networker: Networker.Server,
 		updateConn: RBXScriptConnection?,
 		sortCooldown: number,
+		burnCooldown: number,
+		poisonCooldown: number,
 		strength: { number },
 		spawnCd: number,
 	},
@@ -39,11 +43,13 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 	local self = setmetatable({
 		towers = {},
 		enemies = {},
+		strength = {},
+		paths = {},
 		index = index,
 		player = player,
 		sortCooldown = SORT_COOLDOWN,
-		strength = {},
-		paths = {},
+		burnCooldown = BURN_COOLDOWN,
+		poisonCooldown = POISON_COOLDOWN,
 		spawnCd = SPAWN_COOLDOWN,
 	}, DefenseServer)
 
@@ -173,8 +179,54 @@ function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
 	end)
 end
 
+function DefenseServer.bleedEnemies(self: DefenseServer, bleedType: string): (boolean, { [string]: { number } })
+	local bleeds = {}
+	local didBleed = false
+
+	for _, enemies in self.enemies do
+		for i = #enemies, 1, -1 do
+			local enemy = enemies[i]
+			if enemy.dead then
+				continue
+			end
+
+			local damage = enemy[bleedType](enemy)
+			if not damage then
+				continue
+			end
+
+			didBleed = true
+			damage = tostring(damage)
+			if not bleeds[damage] then
+				bleeds[damage] = { enemy.uniqueId }
+			else
+				table.insert(bleeds[damage], enemy.uniqueId)
+			end
+		end
+	end
+
+	return didBleed, bleeds
+end
+
+function DefenseServer.burnEnemies(self: DefenseServer)
+	local didBleed, bleeds = self:bleedEnemies("burn")
+	if didBleed then
+		self.networker:fireAll("burn", bleeds)
+	end
+end
+
+function DefenseServer.poisonEnemies(self: DefenseServer)
+	local didBleed, bleeds = self:bleedEnemies("poison")
+	if didBleed then
+		self.networker:fireAll("poison", bleeds)
+	end
+end
+
 function DefenseServer.update(self: DefenseServer, dt: number): ()
 	self.spawnCd -= dt
+	self.burnCooldown -= dt
+	self.poisonCooldown -= dt
+
 	if self.spawnCd <= 0 then
 		for floor, _ in self.paths do
 			self:spawnEnemy(floor)
@@ -182,6 +234,15 @@ function DefenseServer.update(self: DefenseServer, dt: number): ()
 		self.spawnCd = SPAWN_COOLDOWN
 	end
 
+	if self.burnCooldown <= 0 then
+		self:burnEnemies()
+		self.burnCooldown = BURN_COOLDOWN
+	end
+
+	if self.poisonCooldown <= 0 then
+		self:poisonEnemies()
+		self.poisonCooldown = POISON_COOLDOWN
+	end
 	for _, enemies in self.enemies do
 		for i = #enemies, 1, -1 do
 			local enemy = enemies[i]

@@ -7,7 +7,7 @@ local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemie
 local HitSplat = require(ReplicatedStorage.Source.Features.Defense.Modules.HitSplat)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 
-local MODEL_OFFSET = CFrame.new(0, 0.125, 0)
+local MODEL_OFFSET = CFrame.new(0, 0.125, 0) * CFrame.Angles(0, math.rad(-90), 0)
 local ANIMATION_SPEED = 5.5
 
 local EnemyClient = {}
@@ -31,6 +31,8 @@ export type EnemyClient = typeof(setmetatable(
 		baseStats: Enemies.EnemyStats,
 		track: AnimationTrack,
 		floor: number,
+		burnVfx: ParticleEmitter?,
+		poisonVfx: ParticleEmitter?,
 	},
 	EnemyClient
 ))
@@ -131,6 +133,35 @@ end
 
 function EnemyClient.getPosition(self: EnemyClient): Vector3
 	return self.cf.Position
+end
+
+function EnemyClient.burn(self: EnemyClient, damage: number): ()
+	self:damage(damage)
+	if self.dead then
+		return
+	end
+
+	if not self.burnVfx then
+		local burnVfx = ReplicatedStorage.Assets.VFX.EnemyBurn:Clone()
+		burnVfx.Parent = self.model:FindFirstChild("RootAttachment", true)
+		self.burnVfx = burnVfx
+	end
+
+	(self.burnVfx :: any):Emit(1)
+end
+
+function EnemyClient.poison(self: EnemyClient, damage: number): ()
+	self:damage(damage)
+	if self.dead then
+		return
+	end
+
+	if not self.poisonVfx then
+		local poisonVfx = ReplicatedStorage.Assets.VFX.EnemyPoison:Clone()
+		poisonVfx.Parent = (self.model:FindFirstChild("RootAttachment", true) :: any).Parent
+		poisonVfx.Enabled = true
+		self.poisonVfx = poisonVfx
+	end
 end
 
 function EnemyClient.destroy(self: EnemyClient): ()
