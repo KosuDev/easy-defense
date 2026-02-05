@@ -2,15 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService)
 local Signal = require(ReplicatedStorage.Packages.Signal)
-local ColorTweaker = require(ReplicatedStorage.Source.Core.Platform.ColorTweaker)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local HitSplat = require(ReplicatedStorage.Source.Features.Defense.Modules.HitSplat)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
 
-local ANIMATION = ReplicatedStorage.Assets.Animations.EnemyMovement
 local MODEL_OFFSET = CFrame.new(0, 0.125, 0)
-local ANIMATION_SPEED = 6
+local ANIMATION_SPEED = 5.5
 
 local EnemyClient = {}
 EnemyClient.__index = EnemyClient
@@ -21,6 +19,7 @@ export type EnemyClient = typeof(setmetatable(
 		uniqueId: number,
 		cf: CFrame,
 		health: number,
+		info: Enemies.EnemyInfo,
 		maxHealth: number,
 		speed: number,
 		model: Model & any,
@@ -57,21 +56,19 @@ function EnemyClient.new(
 		destroyed = Signal.new(),
 	}, EnemyClient)
 
-	local model = ReplicatedStorage.Assets.Misc.Enemy:Clone()
-	model:ScaleTo(enemyStats.size)
+	local index = enemyStats.x
+	local info = Enemies.getEnemyInfo(index)
+	self.info = info
+	local model = Enemies.getEnemyModel(index, enemyStats.type)
 	model.Name = "Enemy_" .. uniqueId
 	model:PivotTo(self.cf * MODEL_OFFSET)
-	ColorTweaker.fromContainer(model, {
-		primaryColor = ColorTweaker.enums.primaryColors.master,
-		hue = enemyStats.x / 16,
-	})
 	model.Parent = workspace
-	local track: AnimationTrack = model.AnimationController.Animator:LoadAnimation(ANIMATION)
+	local track: AnimationTrack = model.AnimationController:LoadAnimation(info.animation)
 	self.track = track
 	track.Looped = true
 	track:Play(nil, nil, enemyStats.speed / ANIMATION_SPEED)
 	self.model = model
-	self.hpBar = model.Root.EnemyHealthBillboard
+	self.hpBar = model.EnemyHealthBillboard
 	self:updateHpBar()
 
 	return self
@@ -111,7 +108,7 @@ function EnemyClient.damage(self: EnemyClient, amt: number): ()
 	self.health -= amt
 	if self.health <= 0 then
 		self.dead = true
-		local color = self.model.Inner.Color
+		local color = self.info.color
 		local reward = Enemies.getEnemyReward(self.maxHealth, DataService.client:get("rebirths"))
 		HitSplat(self:getPosition(), color, reward)
 	else
