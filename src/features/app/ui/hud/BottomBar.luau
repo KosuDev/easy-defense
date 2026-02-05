@@ -3,8 +3,16 @@ local RunService = game:GetService("RunService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local React = require(ReplicatedStorage.Packages.React)
+local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
+local Sift = require(ReplicatedStorage.Packages.Sift)
 local FormatCurrency = require(ReplicatedStorage.Source.Core.UI.FormatCurrency)
+local FormatTime = require(ReplicatedStorage.Source.Core.UI.FormatTime)
+local useServerTimeBinding = require(ReplicatedStorage.Source.Core.UI.Hooks.useServerTimeBinding)
+local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
+local MutationEvents = require(ReplicatedStorage.Source.Features.Mutations.Modules.MutationEvents)
+local MutationSlice = require(ReplicatedStorage.Source.Features.Mutations.MutationSlice)
+local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local e = React.createElement
 
 local CURRENCY_GRADIENT = ColorSequence.new({
@@ -74,6 +82,101 @@ local function FriendBoostCounter()
 	})
 end
 
+type EventTimerProps = {
+	eventId: string,
+	completionTime: number,
+}
+
+local function EventTimer(props: EventTimerProps)
+	local serverTime = useServerTimeBinding()
+	local hovered, setHovered = React.useState(false)
+	local remainingTimeTxt = serverTime:map(function(currentTime)
+		return FormatTime(math.max(0, props.completionTime - currentTime))
+	end)
+
+	local visible = serverTime:map(function(currentTime)
+		return currentTime < props.completionTime
+	end)
+
+	return e(Button, {
+		Image = ImageIds.mutations[props.eventId],
+		BackgroundTransparency = 1,
+		Size = UDim2.fromScale(1, 1),
+		Visible = visible,
+		SizeConstraint = Enum.SizeConstraint.RelativeYY,
+		OnEnter = function()
+			setHovered(true)
+		end,
+		OnLeave = function()
+			setHovered(false)
+		end,
+	}, {
+		Timer = e(TextLabel, {
+			Text = remainingTimeTxt,
+			Size = UDim2.fromScale(1, 0.3),
+			Position = UDim2.fromScale(0.5, 0.9),
+			AnchorPoint = Vector2.new(0.5, 1),
+			TextXAlignment = Enum.TextXAlignment.Center,
+			Stroke = { Thickness = 3 },
+		}),
+
+		Info = if hovered
+			then e("Frame", {
+				Size = UDim2.fromOffset(200, 50),
+				Position = UDim2.fromScale(0.8, 0),
+				AnchorPoint = Vector2.new(1, 1),
+				BackgroundColor3 = Color3.fromRGB(235, 242, 245),
+			}, {
+				Corner = e("UICorner", {
+					CornerRadius = UDim.new(0, 8),
+				}),
+
+				Stroke = e("UIStroke", {
+					Thickness = 2,
+					Color = Color3.fromRGB(0, 0, 0),
+				}),
+
+				TextLabel = e(TextLabel, {
+					Text = MutationEvents.getEvent(props.eventId).description,
+					Size = UDim2.fromScale(0.8, 0.8),
+					Position = UDim2.fromScale(0.5, 0.5),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Stroke = { Thickness = 2 },
+				}),
+			})
+			else nil,
+	})
+end
+
+local function EventTimers()
+	local timers = ReactCharm.useAtom(MutationSlice.states.activeEvents)
+
+	return e(
+		"Frame",
+		{
+			Size = UDim2.fromOffset(300, 70),
+			Position = UDim2.fromScale(1, 1),
+			AnchorPoint = Vector2.new(1, 1),
+			BackgroundTransparency = 1,
+		},
+		{
+			Layout = e("UIListLayout", {
+				FillDirection = Enum.FillDirection.Horizontal,
+				HorizontalAlignment = Enum.HorizontalAlignment.Right,
+				VerticalAlignment = Enum.VerticalAlignment.Center,
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				Padding = UDim.new(0, 4),
+			}),
+		},
+		Sift.Dictionary.map(timers, function(completionTime: number, eventId: string)
+			return e(EventTimer, {
+				eventId = eventId,
+				completionTime = completionTime,
+			})
+		end)
+	)
+end
+
 return function()
 	return e("Frame", {
 		Size = UDim2.new(0.99, -6, 0, 90),
@@ -83,5 +186,6 @@ return function()
 	}, {
 		CurrencyCounter = e(CurrencyCounter),
 		FriendBoostCounter = e(FriendBoostCounter),
+		EventTimers = e(EventTimers),
 	})
 end
