@@ -26,6 +26,13 @@ local mutations = {
 		value = 4,
 		odds = 1 / 10,
 	},
+
+	radioactive = {
+		name = "Radioactive",
+		description = "Attacks poison enemies",
+		value = 5,
+		odds = 1 / 10,
+	},
 }
 
 local mutationValues = {}

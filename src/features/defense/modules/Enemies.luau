@@ -265,6 +265,7 @@ function Enemies.getEnemyModel(index: number, enemyType: string): Model
 	end
 
 	local mesh = model.PrimaryPart :: MeshPart
+	mesh.CanCollide = false
 	mesh.CastShadow = false
 	local cf: CFrame = model:GetPivot()
 	local rootCf: CFrame = CFrame.new(cf.X, 0.5, cf.Z) * cf.Rotation

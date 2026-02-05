@@ -9,8 +9,8 @@ type Mutations = DataTemplate.Mutations
 
 local MutationServiceServer = {}
 
-local EVENT_DURATION = 5 * 60
-local EVENT_COOLDOWN = 15 * 60
+local EVENT_DURATION = 10 -- * 60
+local EVENT_COOLDOWN = 15 -- * 60
 local completedEvents: { [number]: boolean } = {}
 
 local function getEventFromHash(eventHash: number): string

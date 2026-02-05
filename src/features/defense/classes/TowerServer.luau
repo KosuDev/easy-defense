@@ -27,6 +27,8 @@ export type TowerServer = typeof(setmetatable(
 		enemies: { EnemyServer },
 		networker: Networker.Server,
 		dps: number,
+		firerate: number,
+		dmg: number,
 	},
 	TowerServer
 ))
@@ -39,21 +41,22 @@ function TowerServer.new(floor: number, node: number, cf: CFrame, data: TowerDat
 		cf = cf,
 		pos = cf.Position,
 		towerInfo = Towers.getTowerInfo(data.itemId),
+		dmg = PlotServiceUtils.calcDamage(data),
+		firerate = PlotServiceUtils.calcFirerate(data),
 		enemies = nil :: any,
 		networker = nil :: any,
 	}, TowerServer)
 
-	self.cd = 2 + 1 / self.towerInfo.firerate
-	self.dps = self.towerInfo.damage * self.towerInfo.firerate * PlotServiceUtils.getDamageMultiplier(self.data.level)
+	self.cd = 3 + 1 / self.firerate
+	self.dps = self.dmg * self.firerate
 
 	return self
 end
 
 function TowerServer.attack(self: TowerServer, enemy: EnemyServer): ()
-	local damage = math.ceil(self.towerInfo.damage * PlotServiceUtils.getDamageMultiplier(self.data.level))
-	enemy:damage(damage)
-	self.cd = 1 / self.towerInfo.firerate
-	self.networker:fireAll("towerAttack", self.floor, self.node, enemy.uniqueId, damage)
+	enemy:damage(self.dmg)
+	self.cd = 1 / self.firerate
+	self.networker:fireAll("towerAttack", self.floor, self.node, enemy.uniqueId, self.dmg)
 end
 
 function TowerServer.update(self: TowerServer, dt: number): ()

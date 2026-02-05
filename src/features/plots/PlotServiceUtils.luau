@@ -52,8 +52,38 @@ function PlotServiceUtils.getScaleFromLevel(level: number): number
 end
 
 function PlotServiceUtils.getDps(towerData: DataTemplate.TowerData): number
+	local damage = PlotServiceUtils.calcDamage(towerData)
+	local firerate = PlotServiceUtils.calcFirerate(towerData)
+	return damage * firerate
+end
+
+function PlotServiceUtils.calcDamage(towerData: DataTemplate.TowerData): number
+	local mutations = towerData.mutations
 	local towerInfo = Towers.getTowerInfo(towerData.itemId)
-	return towerInfo.damage * towerInfo.firerate * PlotServiceUtils.getDamageMultiplier(towerData.level)
+	local levelMult = PlotServiceUtils.getDamageMultiplier(towerData.level)
+	local mult = 1
+	if mutations and mutations.gold then
+		mult += 0.5
+	end
+
+	if mutations and mutations.diamond then
+		mult += 1.0
+	end
+
+	return towerInfo.damage * levelMult * mult
+end
+
+function PlotServiceUtils.calcFirerate(towerData: DataTemplate.TowerData): number
+	local mutations = towerData.mutations
+	local towerInfo = Towers.getTowerInfo(towerData.itemId)
+	local firerate = towerInfo.firerate
+	local mult = 1
+
+	if mutations and mutations.windy then
+		mult += 0.33
+	end
+
+	return firerate * mult
 end
 
 return PlotServiceUtils

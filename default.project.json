@@ -315,6 +315,9 @@
               "inferno": {
                 "$path": "src/features/mutations/mutationEvents/inferno.luau"
               },
+              "radioactive": {
+                "$path": "src/features/mutations/mutationEvents/radioactive.luau"
+              },
               "windy": {
                 "$path": "src/features/mutations/mutationEvents/windy.luau"
               }

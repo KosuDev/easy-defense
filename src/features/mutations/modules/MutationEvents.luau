@@ -20,12 +20,18 @@ local events = {
 		color = Color3.fromRGB(255, 69, 0),
 		description = "Chance to roll inferno mutation, which causes attacks to burn.",
 	},
+
+	radioactive = {
+		name = "Radioactive",
+		weight = 800,
+		color = Color3.fromRGB(124, 252, 0),
+		description = "Chance to roll radioactive mutation, which causes attacks to poison.",
+	},
 }
 
 -- cloudy - range
 -- meteor - dmg
 -- lightning - dmg
--- toxic - poison
 
 local totalWeight = 0
 local sortedEvents = {}

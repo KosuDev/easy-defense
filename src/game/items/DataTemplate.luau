@@ -10,6 +10,8 @@ export type CrateData = {
 export type Mutations = {
 	gold: boolean?,
 	diamond: boolean?,
+	inferno: boolean?,
+	windy: boolean?,
 }
 
 export type TowerData = {

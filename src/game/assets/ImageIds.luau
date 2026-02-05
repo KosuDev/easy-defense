@@ -13,5 +13,6 @@ return {
 		gold = "rbxassetid://111372280889175",
 		windy = "rbxassetid://81394274674638",
 		inferno = "rbxassetid://137992829440879",
+		radioactive = "rbxassetid://109545446706289",
 	},
 }
