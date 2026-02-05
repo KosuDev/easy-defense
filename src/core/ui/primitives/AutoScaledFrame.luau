@@ -18,6 +18,7 @@ export type AutoScaledFrameProps = {
 	BackgroundColor3: Color3?,
 	LayoutOrder: number?,
 	ZIndex: number?,
+	Visible: boolean?,
 	children: React.ReactNode?,
 }
 
@@ -36,6 +37,7 @@ local AutoScaledFrame = React.forwardRef(function(props: AutoScaledFrameProps, r
 	end, { screenSize, minSize, scaleFactor })
 
 	return e("Frame", {
+		Visible = props.Visible,
 		Size = props.Size,
 		Position = props.Position,
 		AnchorPoint = props.AnchorPoint,

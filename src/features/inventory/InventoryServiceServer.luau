@@ -19,7 +19,25 @@ function InventoryServiceServer.init(self: InventoryServiceServer)
 		self.equipItem,
 		self.unequipItem,
 		self.sell,
+		self.setItemFav,
 	})
+end
+
+function InventoryServiceServer.setItemFav(
+	_self: InventoryServiceServer,
+	player: Player,
+	uniqueId: string,
+	fav: boolean
+)
+	if not DataService:get(player, { "inventory", uniqueId }) then
+		return
+	end
+
+	if fav ~= true then
+		fav = false
+	end
+
+	DataService:set(player, { "inventory", uniqueId, "fav" }, fav, true)
 end
 
 function InventoryServiceServer.sell(self: InventoryServiceServer, player: Player, uniqueIds: { string })

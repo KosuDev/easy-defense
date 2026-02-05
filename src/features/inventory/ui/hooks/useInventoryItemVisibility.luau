@@ -7,14 +7,20 @@ local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
+local SLOT_SIZE = 95
+local camera = workspace.CurrentCamera
+
 return function(uniqueId: string, isHotbar: boolean?)
 	local visible, setVisible = React.useState(false)
 	React.useEffect(function()
 		local current = false
-		local itemData: DataTemplate.ItemData = DataService:get({ "inventory", uniqueId })
-		local isCrate = itemData.crateId ~= nil
-		local itemInfo = if isCrate then Towers.getTowerInfo(itemData.crateId) else Towers.getTowerInfo(itemData.itemId)
 		local function calc()
+			local itemData: DataTemplate.ItemData = DataService:get({ "inventory", uniqueId })
+			local isCrate = itemData.crateId ~= nil
+			local itemInfo = if isCrate
+				then Towers.getTowerInfo(itemData.crateId)
+				else Towers.getTowerInfo(itemData.itemId)
+
 			if isCrate and itemData.amt <= 0 then
 				return false
 			end
@@ -53,7 +59,11 @@ return function(uniqueId: string, isHotbar: boolean?)
 			if not isHotbar then
 				local hotbarIndex = table.find(DataService:get("hotbar"), uniqueId)
 				if hotbarIndex then
-					return false
+					local screenSize = camera.ViewportSize
+					local slotsShown = (screenSize.X * 0.6) // SLOT_SIZE
+					if hotbarIndex <= slotsShown then
+						return false
+					end
 				end
 			end
 
@@ -81,6 +91,7 @@ return function(uniqueId: string, isHotbar: boolean?)
 		local draggingDiscon = Charm.subscribe(InventorySlice.state.draggingItemUniqueId, update)
 		local tabDiscon = Charm.subscribe(InventorySlice.state.tab, update)
 		local searchDiscon = Charm.subscribe(InventorySlice.state.searchQuery, update)
+		local vpConn = camera:GetPropertyChangedSignal("ViewportSize"):Connect(update)
 
 		return function()
 			itemDataConn:Destroy()
@@ -89,6 +100,7 @@ return function(uniqueId: string, isHotbar: boolean?)
 			draggingDiscon()
 			tabDiscon()
 			searchDiscon()
+			vpConn:Disconnect()
 		end
 	end, {})
 

@@ -21,6 +21,7 @@ type InventoryButtonProps = {
 
 return function(props: InventoryButtonProps)
 	local uniqueId = props.uniqueId
+	local holdingTimeStart, setHoldingTimeStart = React.useState(nil :: number?)
 	local setDragStart = useItemDragger(uniqueId)
 	local equippedUniqueId = ReactCharm.useAtom(InventorySlice.state.equippedItemUniqueId)
 	local visible = useInventoryItemVisibility(uniqueId, false)
@@ -41,8 +42,24 @@ return function(props: InventoryButtonProps)
 				InventoryServiceClient:equipItem(uniqueId)
 			end
 		end,
+		OnLeave = function()
+			setHoldingTimeStart(nil)
+		end,
+		OnUp = function()
+			setHoldingTimeStart(nil)
+			if not holdingTimeStart then
+				return
+			end
+
+			local heldTime = os.clock() - holdingTimeStart
+			if heldTime >= 1 and not InventorySlice.state.draggingItemUniqueId() then
+				InventoryServiceClient:faveItem(uniqueId)
+			end
+		end,
 		OnDown = function()
-			setDragStart(UserInputService:GetMouseLocation())
+			local loc = UserInputService:GetMouseLocation()
+			setDragStart(loc)
+			setHoldingTimeStart(os.clock())
 		end,
 	}, {
 		Icon = e(ItemIcon, {

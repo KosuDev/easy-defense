@@ -8,6 +8,7 @@ return {
 	index = "rbxassetid://123793888985226",
 	upgrade = "rbxassetid://111429016203389",
 	floorSlot = "rbxassetid://72309113898700",
+	heart = "rbxassetid://138475464531371",
 	mutations = {
 		diamond = "rbxassetid://108049478374755",
 		gold = "rbxassetid://111372280889175",

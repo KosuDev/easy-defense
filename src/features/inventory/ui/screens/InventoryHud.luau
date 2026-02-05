@@ -7,14 +7,17 @@ local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
 local useAbsSize = require(ReplicatedStorage.Source.Core.UI.Hooks.useAbsSize)
 local useDataState = require(ReplicatedStorage.Source.Core.UI.Hooks.useDataState)
 local useDeviceInput = require(ReplicatedStorage.Source.Core.UI.Hooks.useDeviceInput)
+local AutoScaledFrame = require(ReplicatedStorage.Source.Core.UI.Primitives.AutoScaledFrame)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
 local InventoryButton = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.InventoryButton)
 local ItemButtonStroke = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemButtonStroke)
 local ItemIcon = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemIcon)
 local useItemDragger = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDragger)
+local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local e = React.createElement
 
 local SLOT_SIZE = 95
@@ -197,12 +200,35 @@ local function Tab(props)
 			CornerRadius = UDim.new(0, 6),
 		}),
 
+		txt = if props.tab == "all"
+			then e(TextLabel, {
+				Text = "ALL",
+				Size = UDim2.fromScale(0.55, 0.55),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				TextColor3 = Color3.fromRGB(229, 232, 238),
+				BackgroundTransparency = 1,
+				DropShadow = { Color = Color3.fromRGB(17, 17, 17), Transparency = 0.8 },
+			})
+			else nil,
+
 		Image = e("ImageLabel", {
 			Image = props.icon,
 			Size = UDim2.fromScale(0.75, 0.75),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			BackgroundTransparency = 1,
+			ZIndex = 2,
+		}),
+
+		Bg = e("ImageLabel", {
+			Image = props.icon,
+			Size = UDim2.fromScale(0.75, 0.75),
+			AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.55),
+			BackgroundTransparency = 1,
+			ImageColor3 = Color3.fromRGB(17, 17, 17),
+			ImageTransparency = 0.8,
 		}),
 	})
 end
@@ -223,9 +249,9 @@ local function Tabs()
 		}),
 
 		AllTab = e(Tab, { tab = "all", layout = 1, icon = "" }),
-		TowersTab = e(Tab, { tab = "towers", layout = 2, icon = "" }),
-		CratesTab = e(Tab, { tab = "crates", layout = 3, icon = "" }),
-		FavTab = e(Tab, { tab = "favorites", layout = 4, icon = "" }),
+		TowersTab = e(Tab, { tab = "towers", layout = 2, icon = Towers.getTowerInfo("crossbow").image }),
+		CratesTab = e(Tab, { tab = "crates", layout = 3, icon = Towers.getTowerInfo("crossbow").crateImage }),
+		FavTab = e(Tab, { tab = "favorites", layout = 4, icon = ImageIds.heart }),
 	})
 end
 
@@ -278,18 +304,32 @@ local function SearchBox()
 end
 
 local function TitleText()
+	local tab = ReactCharm.useAtom(InventorySlice.state.tab)
 	return e(TextLabel, {
-		Text = "Backpack",
-		Size = UDim2.fromOffset(200, 36),
+		Text = if tab == "towers"
+			then "Towers"
+			elseif tab == "crates" then "Crates"
+			elseif tab == "favorites" then "Favorites"
+			else "Backpack",
+		Size = UDim2.fromOffset(250, 36),
 		Position = UDim2.new(0, 15, 0.02, 0),
 		TextColor3 = Color3.fromRGB(229, 232, 238),
 		Stroke = {},
 		TextXAlignment = Enum.TextXAlignment.Left,
+		Prefix = if tab ~= "all"
+			then {
+				Image = if tab == "towers"
+					then Towers.getTowerInfo("crossbow").image
+					elseif tab == "crates" then Towers.getTowerInfo("crossbow").crateImage
+					else ImageIds.heart,
+				HorizontalAlignment = Enum.HorizontalAlignment.Left,
+			}
+			else nil,
 	})
 end
 
 local function InventoryFrame(props)
-	return e("Frame", {
+	return e(AutoScaledFrame, {
 		Visible = props.open,
 		Size = UDim2.fromOffset(600, 300),
 		AnchorPoint = Vector2.new(0.5, 1),

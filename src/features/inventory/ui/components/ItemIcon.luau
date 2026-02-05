@@ -7,6 +7,7 @@ local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
+local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local e = React.createElement
 
@@ -108,6 +109,18 @@ return function(props: ItemIconProps)
 				Position = UDim2.fromScale(0.95, 0.05),
 				AnchorPoint = Vector2.new(1, 0),
 				HorizontalAlignment = Enum.HorizontalAlignment.Right,
+				ZIndex = 3,
+			})
+			else nil,
+
+		Fav = if props.itemData.fav
+			then e("ImageLabel", {
+				Image = ImageIds.heart,
+				Size = UDim2.fromScale(0.25, 0.25),
+				AnchorPoint = Vector2.new(0, 0),
+				Position = UDim2.fromScale(0.05, 0.2),
+				BackgroundTransparency = 1,
+				SizeConstraint = Enum.SizeConstraint.RelativeYY,
 				ZIndex = 3,
 			})
 			else nil,

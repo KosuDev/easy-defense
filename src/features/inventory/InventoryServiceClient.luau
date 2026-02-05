@@ -208,6 +208,18 @@ function InventoryServiceClient.dragItem(self: InventoryServiceClient, uniqueId:
 	InventorySlice.state.draggingItemUniqueId(uniqueId)
 end
 
+function InventoryServiceClient.faveItem(self: InventoryServiceClient, uniqueId: string)
+	if not DataService:get({ "inventory", uniqueId }) then
+		return
+	end
+
+	local itemData = DataService:update({ "inventory", uniqueId }, function(data: DataTemplate.ItemData)
+		return Sift.Dictionary.set(data, "fav", not data.fav)
+	end)
+
+	self.networker:fire("setItemFav", uniqueId, itemData.fav)
+end
+
 function InventoryServiceClient.moveItem(self: InventoryServiceClient, uniqueId: string, targetSlot: number?)
 	if not targetSlot then
 		return
