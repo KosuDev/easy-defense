@@ -302,6 +302,30 @@
               }
             }
           },
+          "Leaderboards": {
+            "$className": "Folder",
+            "LeaderboardServiceClient": {
+              "$path": "src/features/leaderboards/LeaderboardServiceClient.luau"
+            },
+            "LeaderboardServiceUtils": {
+              "$path": "src/features/leaderboards/LeaderboardServiceUtils.luau"
+            },
+            "LeaderboardSlice": {
+              "$path": "src/features/leaderboards/LeaderboardSlice.luau"
+            },
+            "UI": {
+              "$className": "Folder",
+              "Components": {
+                "$className": "Folder",
+                "LeaderboardSurfaceGui": {
+                  "$path": "src/features/leaderboards/ui/components/LeaderboardSurfaceGui.luau"
+                }
+              },
+              "LeaderboardsRoot": {
+                "$path": "src/features/leaderboards/ui/LeaderboardsRoot.luau"
+              }
+            }
+          },
           "Mutations": {
             "$className": "Folder",
             "Modules": {
@@ -478,6 +502,12 @@
             "UITypes": {
               "$path": "src/core/ui/UITypes.luau"
             }
+          },
+          "Util": {
+            "$className": "Folder",
+            "leaderboardPairs": {
+              "$path": "src/core/util/leaderboardPairs.luau"
+            }
           }
         },
         "Game": {
@@ -549,6 +579,12 @@
           "$className": "Folder",
           "InventoryServiceServer": {
             "$path": "src/features/inventory/InventoryServiceServer.luau"
+          }
+        },
+        "Leaderboards": {
+          "$className": "Folder",
+          "LeaderboardServiceServer": {
+            "$path": "src/features/leaderboards/LeaderboardServiceServer.luau"
           }
         },
         "Mutations": {

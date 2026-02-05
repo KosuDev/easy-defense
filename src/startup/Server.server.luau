@@ -3,16 +3,20 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
+local LeaderboardServiceServer = require(ServerScriptService.Features.Leaderboards.LeaderboardServiceServer)
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 function DataService:onPlayerInit(_player, data)
 	print(data)
+	data.sessionStart = os.time()
 end
 
-DataService:addPlayerRemovingCallback(function(_player, _data)
-	print(_data)
+DataService:addPlayerRemovingCallback(function(_player, data)
+	local playTime = os.time() - data.sessionStart
+	data.stats.timePlayed += playTime
+	print(data)
 end)
 
 DataService:init({
@@ -26,3 +30,4 @@ DataService:init({
 PlotServiceServer:init()
 InventoryServiceServer:init()
 MutationServiceServer:init()
+LeaderboardServiceServer:init()

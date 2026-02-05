@@ -110,6 +110,10 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		return false
 	end
 
+	DataService:update(player, { "stats", "crateRolls" }, function(amt: number)
+		return amt + 1
+	end, true)
+
 	local isLuckyRoll = math.random() < self.luckyRollOdds
 	if isLuckyRoll then
 		self.luckyRollOdds *= 0.1
@@ -121,7 +125,6 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 	local conveyorLuck = ConveyorUpgrades[self.level].luck
 	if isLuckyRoll then
 		conveyorLuck *= 500
-		print("Lucky roll")
 	end
 
 	for i = 1, MAX_CRATES do

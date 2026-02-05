@@ -49,15 +49,13 @@ return {
 	},
 	plotNodes = {},
 	inventory = {},
-	hotbar = {
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+	hotbar = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+	stats = {
+		crateRolls = 0,
+		cratesOpened = 0,
+		enemiesKilled = 0,
+		totalCurrency = 0,
+		timePlayed = 0,
+		robuxSpent = 0,
 	},
 }

@@ -177,6 +177,14 @@ function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
 	DataService:update(self.player, "currency", function(amt: number)
 		return amt + reward
 	end)
+
+	DataService:update(self.player, { "stats", "enemiesKilled" }, function(amt: number)
+		return amt + 1
+	end, true)
+
+	DataService:update(self.player, { "stats", "totalCurrency" }, function(amt: number)
+		return amt + reward
+	end, true)
 end
 
 function DefenseServer.bleedEnemies(self: DefenseServer, bleedType: string): (boolean, { [string]: { number } })
