@@ -136,9 +136,11 @@ local function HotbarSlot(props: HotbarSlotProps)
 				end
 			end,
 			OnLeave = function()
-				if isDragging and InventorySlice.state.hoveredSlot() == props.index then
-					InventorySlice.state.hoveredSlot(nil)
-				end
+				task.delay(0.1, function() -- weird roblox issue on mobile, idk
+					if isDragging and InventorySlice.state.hoveredSlot() == props.index then
+						InventorySlice.state.hoveredSlot(nil)
+					end
+				end)
 			end,
 		}),
 	})
@@ -330,6 +332,8 @@ local function TitleText()
 end
 
 local function InventoryFrame(props)
+	local scrollable = ReactCharm.useAtom(InventorySlice.state.inventoryScrollable)
+
 	return e(AutoScaledFrame, {
 		Visible = props.open,
 		Size = UDim2.fromOffset(700, 300),
@@ -356,6 +360,8 @@ local function InventoryFrame(props)
 			ScrollBarThickness = 0,
 			CanvasSize = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
+			Interactable = scrollable,
+			Active = scrollable,
 		}, {
 			Layout = e("UIGridLayout", {
 				CellSize = UDim2.fromOffset(80, 80),

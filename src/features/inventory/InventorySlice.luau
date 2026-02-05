@@ -12,6 +12,7 @@ local equippedItemUniqueId = atom(nil :: string?)
 local tab: Atom<string> = atom("all")
 local searchQuery: Atom<string?> = atom(nil)
 local numItemsVisible: Atom<number> = atom(0)
+local inventoryScrollable: Atom<boolean> = atom(true)
 
 local actions = {}
 
@@ -25,6 +26,7 @@ return {
 		equippedItemUniqueId = equippedItemUniqueId,
 		tab = tab,
 		searchQuery = searchQuery,
+		inventoryScrollable = inventoryScrollable,
 		numItemsVisible = numItemsVisible,
 	},
 }
