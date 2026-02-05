@@ -8,6 +8,7 @@ local Sift = require(ReplicatedStorage.Packages.Sift)
 local FormatCurrency = require(ReplicatedStorage.Source.Core.UI.FormatCurrency)
 local FormatTime = require(ReplicatedStorage.Source.Core.UI.FormatTime)
 local useServerTimeBinding = require(ReplicatedStorage.Source.Core.UI.Hooks.useServerTimeBinding)
+local AutoScaledFrame = require(ReplicatedStorage.Source.Core.UI.Primitives.AutoScaledFrame)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local MutationEvents = require(ReplicatedStorage.Source.Features.Mutations.Modules.MutationEvents)
@@ -178,8 +179,8 @@ local function EventTimers()
 end
 
 return function()
-	return e("Frame", {
-		Size = UDim2.new(0.99, -6, 0, 90),
+	return e(AutoScaledFrame, {
+		Size = UDim2.fromOffset(1494, 90),
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.new(0.5, 0, 1, -8),
 		BackgroundTransparency = 1,

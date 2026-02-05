@@ -17,11 +17,11 @@ local InventoryButton = require(ReplicatedStorage.Source.Features.Inventory.UI.C
 local ItemButtonStroke = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemButtonStroke)
 local ItemIcon = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemIcon)
 local useItemDragger = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useItemDragger)
+local useSlotSize = require(ReplicatedStorage.Source.Features.Inventory.UI.Hooks.useSlotSize)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local e = React.createElement
 
-local SLOT_SIZE = 95
-local UNUSED_SLOT_SIZE = 75
+local UNUSED_SLOT_SIZE = 75 / 95
 local MAX_SLOTS = 9
 local NULL = "NULL"
 
@@ -75,9 +75,8 @@ local function HotbarSlot(props: HotbarSlotProps)
 	end
 
 	return e("Frame", {
-		Size = if not itemData
-			then UDim2.fromOffset(UNUSED_SLOT_SIZE, UNUSED_SLOT_SIZE)
-			else UDim2.fromOffset(SLOT_SIZE, SLOT_SIZE),
+		Size = if not itemData then UDim2.fromScale(UNUSED_SLOT_SIZE, UNUSED_SLOT_SIZE) else UDim2.fromScale(1, 1),
+		SizeConstraint = Enum.SizeConstraint.RelativeYY,
 		LayoutOrder = props.index,
 		BackgroundTransparency = 0.2,
 		BackgroundColor3 = if hoveredSlot == props.index
@@ -147,8 +146,9 @@ end
 
 local function Hotbar()
 	local ref = React.useRef(nil :: Frame?)
+	local slotSize = useSlotSize()
 	local absSize = useAbsSize(ref)
-	local numSlots = math.min(MAX_SLOTS, absSize.X // SLOT_SIZE)
+	local numSlots = math.min(MAX_SLOTS, absSize.X // slotSize)
 	local slots = React.useMemo(function()
 		local result = {}
 		for i = 1, numSlots do
@@ -158,11 +158,12 @@ local function Hotbar()
 	end, { numSlots })
 
 	return e("Frame", {
-		Size = UDim2.new(1, 0, 0, 95),
+		Size = UDim2.new(1, 0, 0, slotSize),
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.fromScale(0.5, 1),
 		BackgroundTransparency = 1,
 		ref = ref,
+		LayoutOrder = 3,
 	}, {
 		Layout = e("UIListLayout", {
 			FillDirection = Enum.FillDirection.Horizontal,
@@ -331,11 +332,12 @@ end
 local function InventoryFrame(props)
 	return e(AutoScaledFrame, {
 		Visible = props.open,
-		Size = UDim2.fromOffset(600, 300),
+		Size = UDim2.fromOffset(700, 300),
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.fromScale(0.5, 0.5),
 		BackgroundColor3 = Color3.fromRGB(37, 38, 41),
 		BackgroundTransparency = 0.2,
+		LayoutOrder = 2,
 	}, {
 		Corner = e("UICorner", {
 			CornerRadius = UDim.new(0, 6),
@@ -351,11 +353,12 @@ local function InventoryFrame(props)
 			BorderSizePixel = 0,
 			AutomaticCanvasSize = Enum.AutomaticSize.Y,
 			ScrollingDirection = Enum.ScrollingDirection.Y,
+			ScrollBarThickness = 0,
 			CanvasSize = UDim2.new(0, 0, 0, 0),
 			BackgroundTransparency = 1,
 		}, {
 			Layout = e("UIGridLayout", {
-				CellSize = UDim2.fromOffset(85, 85),
+				CellSize = UDim2.fromOffset(80, 80),
 				CellPadding = UDim2.fromOffset(5, 5),
 				FillDirection = Enum.FillDirection.Horizontal,
 				HorizontalAlignment = Enum.HorizontalAlignment.Left,
@@ -404,35 +407,52 @@ return function()
 		Position = UDim2.new(0.5, 0, 1, -6),
 		BackgroundTransparency = 1,
 	}, {
+		Layout = e("UIListLayout", {
+			FillDirection = Enum.FillDirection.Vertical,
+			HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Bottom,
+			SortOrder = Enum.SortOrder.LayoutOrder,
+			Padding = UDim.new(0, 6),
+		}),
+
 		Hotbar = e(Hotbar),
 
 		Inventory = e(InventoryFrame, { open = open }),
 
-		OpenButton = e(Button, {
-			hoverScale = 1.1,
-			Visible = not open,
-			Size = UDim2.fromOffset(150, 40),
-			Position = UDim2.fromScale(0.5, 0.375),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundTransparency = 0.5,
-			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
-			Activated = function()
-				InventorySlice.state.backpackOpen(true)
-			end,
-		}, {
-			Stroke = e("UIStroke", {
-
-				Color = Color3.fromRGB(0, 0, 0),
-				Thickness = 2,
-			}),
-
-			Text = e(TextLabel, {
-				Text = "Open Backpack",
-				Size = UDim2.fromScale(0.9, 0.6),
+		OpenButton = e(
+			AutoScaledFrame,
+			{
+				Visible = not open,
+				Size = UDim2.fromOffset(150, 40),
+				Position = UDim2.fromScale(0.5, 0.375),
+				LayoutOrder = 1,
+				AnchorPoint = Vector2.new(0.5, 0.5),
+			},
+			e(Button, {
+				hoverScale = 1.1,
+				Size = UDim2.fromScale(1, 1),
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.fromScale(0.5, 0.5),
-				Stroke = {},
-			}),
-		}),
+				BackgroundTransparency = 0.5,
+				BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+				Activated = function()
+					InventorySlice.state.backpackOpen(true)
+				end,
+			}, {
+				Stroke = e("UIStroke", {
+
+					Color = Color3.fromRGB(0, 0, 0),
+					Thickness = 2,
+				}),
+
+				Text = e(TextLabel, {
+					Text = "Open Backpack",
+					Size = UDim2.fromScale(0.9, 0.6),
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0.5),
+					Stroke = {},
+				}),
+			})
+		),
 	})
 end

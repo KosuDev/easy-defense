@@ -283,6 +283,9 @@
                 },
                 "useItemDragger": {
                   "$path": "src/features/inventory/ui/hooks/useItemDragger.luau"
+                },
+                "useSlotSize": {
+                  "$path": "src/features/inventory/ui/hooks/useSlotSize.luau"
                 }
               },
               "InventoryRoot": {

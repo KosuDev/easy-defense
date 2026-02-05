@@ -1,4 +1,9 @@
+local Abbreviate = require(script.Parent.Abbreviate)
 return function(n: number): string
+	if n >= 10e6 then
+		return "$" .. Abbreviate(n, 5)
+	end
+
 	local str = tostring(math.round(n))
 
 	-- Handle sign

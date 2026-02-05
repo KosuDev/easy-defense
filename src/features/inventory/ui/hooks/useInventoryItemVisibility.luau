@@ -60,7 +60,8 @@ return function(uniqueId: string, isHotbar: boolean?)
 				local hotbarIndex = table.find(DataService:get("hotbar"), uniqueId)
 				if hotbarIndex then
 					local screenSize = camera.ViewportSize
-					local slotsShown = (screenSize.X * 0.6) // SLOT_SIZE
+					local scalar = math.sqrt(math.clamp(screenSize.X / 1500, 0, 1))
+					local slotsShown = (screenSize.X * 0.6) // (SLOT_SIZE * scalar)
 					if hotbarIndex <= slotsShown then
 						return false
 					end
