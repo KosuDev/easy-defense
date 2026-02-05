@@ -27,6 +27,13 @@ local events = {
 		color = Color3.fromRGB(124, 252, 0),
 		description = "Chance to roll radioactive mutation, which causes attacks to poison.",
 	},
+
+	volcano = {
+		name = "Volcano",
+		weight = 500,
+		color = Color3.fromRGB(252, 8, 0),
+		description = "Chance to roll volcano mutation, which makes attacks stronger.",
+	},
 }
 
 -- cloudy - range

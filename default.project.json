@@ -318,6 +318,9 @@
               "radioactive": {
                 "$path": "src/features/mutations/mutationEvents/radioactive.luau"
               },
+              "volcano": {
+                "$path": "src/features/mutations/mutationEvents/volcano.luau"
+              },
               "windy": {
                 "$path": "src/features/mutations/mutationEvents/windy.luau"
               }

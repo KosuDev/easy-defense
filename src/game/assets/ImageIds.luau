@@ -14,5 +14,6 @@ return {
 		windy = "rbxassetid://81394274674638",
 		inferno = "rbxassetid://137992829440879",
 		radioactive = "rbxassetid://109545446706289",
+		volcano = "rbxassetid://137089099240065",
 	},
 }

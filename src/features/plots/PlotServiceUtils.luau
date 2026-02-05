@@ -70,6 +70,10 @@ function PlotServiceUtils.calcDamage(towerData: DataTemplate.TowerData): number
 		mult += 1.0
 	end
 
+	if mutations and mutations.volcano then
+		mult += 0.75
+	end
+
 	return towerInfo.damage * levelMult * mult
 end
 

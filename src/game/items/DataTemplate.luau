@@ -13,6 +13,7 @@ export type Mutations = {
 	inferno: boolean?,
 	windy: boolean?,
 	radioactive: boolean?,
+	volcano: boolean?,
 }
 
 export type TowerData = {

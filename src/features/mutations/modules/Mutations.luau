@@ -33,6 +33,13 @@ local mutations = {
 		value = 5,
 		odds = 1 / 10,
 	},
+
+	volcano = {
+		name = "Volcano",
+		description = "Increases damage",
+		value = 6,
+		odds = 1 / 20,
+	},
 }
 
 local mutationValues = {}
