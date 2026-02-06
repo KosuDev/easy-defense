@@ -113,6 +113,9 @@
               },
               "Crates": {
                 "$path": "src/features/crates/modules/Crates.luau"
+              },
+              "LuckyBlockOpenVfx": {
+                "$path": "src/features/crates/modules/LuckyBlockOpenVfx.luau"
               }
             },
             "UI": {

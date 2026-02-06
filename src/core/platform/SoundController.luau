@@ -27,6 +27,14 @@ local function newSound(SoundInfo: SoundInfo, parent: Instance?): Sound
 	return sound
 end
 
+function SoundController:Load(SoundInfo: SoundInfo)
+	if cachedSounds[SoundInfo.SoundId] then
+		return
+	end
+
+	newSound(SoundInfo)
+end
+
 function SoundController:Play(SoundInfo: any)
 	if not RunService:IsRunning() then
 		return

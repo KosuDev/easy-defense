@@ -35,6 +35,18 @@ return {
 			Volume = 1,
 		},
 
+		crateCharge = {
+			SoundId = "rbxassetid://9117297289",
+			Volume = 1,
+			PlaybackRegion = NumberRange.new(0.4, 999),
+		},
+
+		crateUnlock = {
+			SoundId = "rbxassetid://9125963470",
+			Volume = 1.5,
+			PlaybackRegion = NumberRange.new(0.2, 999),
+		},
+
 		woosh = {
 			SoundId = "rbxassetid://9114374439",
 			Volume = 2,
