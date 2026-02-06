@@ -122,7 +122,8 @@ function Crate.new(
 		end)
 
 		local rebirths: number = DataService:get("rebirths")
-		local reqId = RebirthUtils.getRebirthTowerRequirement(rebirths)
+		local isMaxRebirths = RebirthUtils.isMaxedRebirths(rebirths)
+		local reqId = if isMaxRebirths then "" else RebirthUtils.getRebirthTowerRequirement(rebirths)
 		if crateData.crateId == reqId then
 			local rebirthBillboard = ReplicatedStorage.Assets.VFX.RebirthCrateBillboard:Clone()
 			rebirthBillboard.Parent = self.model.PrimaryPart

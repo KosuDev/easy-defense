@@ -9,6 +9,7 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local CrateBillboardGui = require(ReplicatedStorage.Source.Features.Crates.UI.Screens.CrateBillboardGui)
 local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
+local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 local RENDER_TOOL_DISTANCE = 100
@@ -236,6 +237,8 @@ function InventoryServiceClient.moveItem(self: InventoryServiceClient, uniqueId:
 	self.networker:fire("setHotBarUniqueId", targetSlot, uniqueId)
 end
 
+local FLOOR_HEIGHT = 22
+local CHAR_HEIGHT = 4
 function InventoryServiceClient.update(self: InventoryServiceClient)
 	local char = Players.LocalPlayer.Character
 	if not char then
@@ -243,6 +246,9 @@ function InventoryServiceClient.update(self: InventoryServiceClient)
 	end
 
 	local pos = char:GetPivot().Position
+	local floor = math.max(1, 1 + (pos.Y - CHAR_HEIGHT) // FLOOR_HEIGHT)
+	PlotSlice.states.characterFloor(floor)
+
 	for player, equippedItem in self.equippedItems do
 		if not equippedItem.itemData or equippedItem.model then
 			continue

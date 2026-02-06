@@ -76,7 +76,7 @@ function DefenseClient.towerRemoved(self: DefenseClient, floor: number, node: nu
 end
 
 function DefenseClient.towerAdded(self: DefenseClient, floor: number, node: number, cf: CFrame, data: TowerData): ()
-	local tower = TowerClient.new(node, cf, data)
+	local tower = TowerClient.new(floor, node, cf, data)
 	if not self.towers[floor] then
 		self.towers[floor] = {}
 	end
