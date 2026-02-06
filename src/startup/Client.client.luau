@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundController)
+local AutoRejoinServiceClient = require(ReplicatedStorage.Source.Features.AutoRejoin.AutoRejoinServiceClient)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local LeaderboardServiceClient = require(ReplicatedStorage.Source.Features.Leaderboards.LeaderboardServiceClient)
 local MutationsServiceClient = require(ReplicatedStorage.Source.Features.Mutations.MutationsServiceClient)
@@ -16,6 +17,7 @@ PlotServiceClient:init()
 InventoryServiceClient:init()
 MutationsServiceClient:init()
 LeaderboardServiceClient:init()
+AutoRejoinServiceClient:init()
 
 -- Preload sounds
 

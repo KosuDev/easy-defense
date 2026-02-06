@@ -83,6 +83,12 @@
               }
             }
           },
+          "AutoRejoin": {
+            "$className": "Folder",
+            "AutoRejoinServiceClient": {
+              "$path": "src/features/autoRejoin/AutoRejoinServiceClient.luau"
+            }
+          },
           "Conveyor": {
             "$className": "Folder",
             "ConveyorClient": {
@@ -415,6 +421,9 @@
             "ColorTweaker": {
               "$path": "src/core/platform/ColorTweaker.luau"
             },
+            "SafeTeleport": {
+              "$path": "src/core/platform/SafeTeleport.luau"
+            },
             "SoundController": {
               "$path": "src/core/platform/SoundController.luau"
             },
@@ -557,6 +566,12 @@
     "ServerScriptService": {
       "Features": {
         "$className": "Folder",
+        "AutoRejoin": {
+          "$className": "Folder",
+          "AutoRejoinServiceServer": {
+            "$path": "src/features/autoRejoin/AutoRejoinServiceServer.luau"
+          }
+        },
         "Conveyor": {
           "$className": "Folder",
           "ConveyorServer": {

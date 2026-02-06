@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local AutoRejoinServiceServer = require(ServerScriptService.Features.AutoRejoin.AutoRejoinServiceServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local LeaderboardServiceServer = require(ServerScriptService.Features.Leaderboards.LeaderboardServiceServer)
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
@@ -31,3 +32,4 @@ PlotServiceServer:init()
 InventoryServiceServer:init()
 MutationServiceServer:init()
 LeaderboardServiceServer:init()
+AutoRejoinServiceServer:init()
