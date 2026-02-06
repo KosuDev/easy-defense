@@ -59,6 +59,10 @@ function RebirthUtils.getRebirthTowerRequirement(rebirths: number)
 	return rebirthRequirements[rebirths + 1].towerId
 end
 
+function RebirthUtils.isMaxedRebirths(rebirths: number)
+	return rebirths >= #rebirthRequirements
+end
+
 function RebirthUtils.getRequirements(rebirths: number)
 	local currency = RebirthUtils.getRebirthCost(rebirths)
 	local towerIdReq = RebirthUtils.getRebirthTowerRequirement(rebirths)

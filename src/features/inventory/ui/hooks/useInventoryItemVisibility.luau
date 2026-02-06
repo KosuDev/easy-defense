@@ -16,6 +16,10 @@ return function(uniqueId: string, isHotbar: boolean?)
 		local current = false
 		local function calc()
 			local itemData: DataTemplate.ItemData = DataService:get({ "inventory", uniqueId })
+			if not itemData then
+				return false
+			end
+
 			local isCrate = itemData.crateId ~= nil
 			local itemInfo = if isCrate
 				then Towers.getTowerInfo(itemData.crateId)

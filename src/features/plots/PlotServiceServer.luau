@@ -92,6 +92,10 @@ end
 
 function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (boolean | any, string?)
 	local rebirths: number = DataService:get(player, "rebirths")
+	if RebirthUtils.isMaxedRebirths(rebirths) then
+		return false, "Max rebirths reached"
+	end
+
 	local reqs = RebirthUtils.getRequirements(rebirths)
 	if DataService:get(player, "currency") < reqs.currency then
 		return false, "Not enough money"

@@ -26,11 +26,28 @@ end
 
 local function RequirementsFrame()
 	local rebirths: number = useDataState("rebirths")
+	local currency = useDataState("currency")
+	local towerIndex = useDataState("towerIndex")
+
+	if RebirthUtils.isMaxedRebirths(rebirths) then
+		return e(InsetFrame, {
+			Size = UDim2.new(0.9, 0, 0, 160),
+			Position = UDim2.fromScale(0.5, 0.075),
+			AnchorPoint = Vector2.new(0.5, 0),
+		}, {
+			e(TextLabel, {
+				Text = "MAXED",
+				Size = UDim2.fromScale(1, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Stroke = { Thickness = 3 },
+			}),
+		})
+	end
+
 	local reqs = RebirthUtils.getRequirements(rebirths)
 	local towerInfo = Towers.getTowerInfo(reqs.towerId)
 	local tier = Tiers.getTierForOdds(towerInfo.odds)
-	local currency = useDataState("currency")
-	local towerIndex = useDataState("towerIndex")
 	local currencyReqMet = currency >= reqs.currency
 	local towerReqMet = towerIndex.normal[reqs.towerId] ~= nil
 
@@ -146,12 +163,18 @@ local function RewardsFrame()
 	local rewards = RebirthUtils.rebirthRewards[rebirths + 1]
 
 	if not rewards then
-		return e(TextLabel, {
-			Text = "MAXED",
-			Size = UDim2.new(1, 0, 0, 38),
-			Position = UDim2.fromScale(0.5, 0.5),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Stroke = { Thickness = 3 },
+		return e(InsetFrame, {
+			Size = UDim2.new(0.9, 0, 0, 160),
+			Position = UDim2.fromScale(0.5, 0.48),
+			AnchorPoint = Vector2.new(0.5, 0),
+		}, {
+			e(TextLabel, {
+				Text = "MAXED",
+				Size = UDim2.fromScale(1, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Stroke = { Thickness = 3 },
+			}),
 		})
 	end
 
@@ -290,6 +313,23 @@ local function RewardsFrame()
 	})
 end
 
+local function RebirthButton()
+	local rebirths: number = useDataState("rebirths")
+	local isMaxed = RebirthUtils.isMaxedRebirths(rebirths)
+	return e(StudButton.Green, {
+		Text = if isMaxed then "MAXED" else "Rebirth!",
+		Size = UDim2.fromOffset(200, 60),
+		Position = UDim2.fromScale(0.5, 0.88),
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Activated = function()
+			if isMaxed then
+				return
+			end
+			PlotServiceClient:rebirth()
+		end,
+	})
+end
+
 return function()
 	return e(Menu.Component, {
 		menuName = "RebirthMenu",
@@ -328,15 +368,7 @@ return function()
 
 		Rewards = e(RewardsFrame),
 
-		Button = e(StudButton.Green, {
-			Text = "Rebirth!",
-			Size = UDim2.fromOffset(200, 60),
-			Position = UDim2.fromScale(0.5, 0.88),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Activated = function()
-				PlotServiceClient:rebirth()
-			end,
-		}),
+		Button = e(RebirthButton),
 
 		Warning = e(TextLabel, {
 			Text = "[ ! ]  Money is RESET, eveything else is kept! [ ! ]",

@@ -12,6 +12,7 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 function DataService:onPlayerInit(_player, data)
 	print(data)
 	data.sessionStart = os.time()
+	data.rebirths = 6
 end
 
 DataService:addPlayerRemovingCallback(function(_player, data)
