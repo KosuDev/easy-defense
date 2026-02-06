@@ -9,6 +9,7 @@ return {
 	upgrade = "rbxassetid://111429016203389",
 	floorSlot = "rbxassetid://72309113898700",
 	heart = "rbxassetid://138475464531371",
+	shoppingCart = "rbxassetid://84258174459980",
 	mutations = {
 		diamond = "rbxassetid://108049478374755",
 		gold = "rbxassetid://111372280889175",

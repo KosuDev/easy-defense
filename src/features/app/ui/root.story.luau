@@ -15,7 +15,7 @@ return function(parent)
 	root:render(app)
 
 	local menuCleanup = Menu.init()
-	Menu.setOpenedMenu("SellMenu")
+	--Menu.setOpenedMenu("SellMenu")
 
 	return function()
 		menuCleanup()
