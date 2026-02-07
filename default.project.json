@@ -61,6 +61,9 @@
                 },
                 "SellMenu": {
                   "$path": "src/features/app/ui/menus/SellMenu.luau"
+                },
+                "ShopMenu": {
+                  "$path": "src/features/app/ui/menus/ShopMenu.luau"
                 }
               },
               "root.story": {

@@ -82,7 +82,9 @@ local function ShopButton()
 		BackgroundTransparency = 0.5,
 		BackgroundColor3 = Color3.fromRGB(20, 20, 20),
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		Activated = function() end,
+		Activated = function()
+			Menu.setOpenedMenu("Shop")
+		end,
 	}, {
 		Stroke = e("UIStroke", {
 			Thickness = 4,
