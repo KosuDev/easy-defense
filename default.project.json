@@ -539,6 +539,12 @@
           "Configs": {
             "$path": "src/game/Configs.luau"
           },
+          "Definitions": {
+            "$className": "Folder",
+            "defs.d": {
+              "$path": "src/game/definitions/defs.d.luau"
+            }
+          },
           "Items": {
             "$className": "Folder",
             "ConveyorUpgrades": {
