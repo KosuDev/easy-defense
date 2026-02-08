@@ -4,6 +4,8 @@ local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundCont
 local AutoRejoinServiceClient = require(ReplicatedStorage.Source.Features.AutoRejoin.AutoRejoinServiceClient)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local LeaderboardServiceClient = require(ReplicatedStorage.Source.Features.Leaderboards.LeaderboardServiceClient)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
+local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 local MutationsServiceClient = require(ReplicatedStorage.Source.Features.Mutations.MutationsServiceClient)
 local PlotServiceClient = require(ReplicatedStorage.Source.Features.Plots.PlotServiceClient)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
@@ -13,6 +15,7 @@ local DataService = require(ReplicatedStorage.Packages.DataService).client
 DataService:init()
 MountUI()
 
+MonetizationServiceClient:init(Products)
 PlotServiceClient:init()
 InventoryServiceClient:init()
 MutationsServiceClient:init()

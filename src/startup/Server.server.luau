@@ -2,9 +2,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local AutoRejoinServiceServer = require(ServerScriptService.Features.AutoRejoin.AutoRejoinServiceServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local LeaderboardServiceServer = require(ServerScriptService.Features.Leaderboards.LeaderboardServiceServer)
+local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -27,6 +29,13 @@ DataService:init({
 	useMock = false,
 	resetData = false,
 	dontSave = false,
+})
+
+MonetizationServiceServer:init({
+	products = Products,
+	canAwardGamepasses = true,
+	freePassesGroupRank = 45,
+	groupId = 15794692,
 })
 
 PlotServiceServer:init()

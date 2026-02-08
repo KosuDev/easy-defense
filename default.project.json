@@ -338,6 +338,30 @@
               }
             }
           },
+          "Monetization": {
+            "$className": "Folder",
+            "Hooks": {
+              "$className": "Folder",
+              "useGamepass": {
+                "$path": "src/features/monetization/hooks/useGamepass.luau"
+              },
+              "useProduct": {
+                "$path": "src/features/monetization/hooks/useProduct.luau"
+              }
+            },
+            "Modules": {
+              "$className": "Folder",
+              "Products": {
+                "$path": "src/features/monetization/modules/Products.luau"
+              }
+            },
+            "MonetizationServiceClient": {
+              "$path": "src/features/monetization/MonetizationServiceClient.luau"
+            },
+            "MonetizationServiceUtils": {
+              "$path": "src/features/monetization/MonetizationServiceUtils.luau"
+            }
+          },
           "Mutations": {
             "$className": "Folder",
             "Modules": {
@@ -612,6 +636,18 @@
           "$className": "Folder",
           "LeaderboardServiceServer": {
             "$path": "src/features/leaderboards/LeaderboardServiceServer.luau"
+          }
+        },
+        "Monetization": {
+          "$className": "Folder",
+          "Modules": {
+            "$className": "Folder",
+            "ProductServerCallbacks": {
+              "$path": "src/features/monetization/modules/ProductServerCallbacks.luau"
+            }
+          },
+          "MonetizationServiceServer": {
+            "$path": "src/features/monetization/MonetizationServiceServer.luau"
           }
         },
         "Mutations": {
