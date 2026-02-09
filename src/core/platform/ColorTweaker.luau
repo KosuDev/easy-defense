@@ -56,7 +56,7 @@ local function tweakColor(color: Color3, tweak: Tweak): Color3
 	return Color3.fromHSV(h, s, v)
 end
 
-local function tweakColorSequence(colorSequence: ColorSequence, tweaks: Tweaks): ColorSequence
+function ColorTweaker.tweakColorSequence(colorSequence: ColorSequence, tweaks: Tweaks): ColorSequence
 	local newKeypoints = {}
 	for _, keypoint in ipairs(colorSequence.Keypoints) do
 		local color = ColorTweaker.tweak(keypoint.Value, tweaks)
@@ -106,7 +106,7 @@ function ColorTweaker.fromInstance(instance: any, tweaks: Tweaks, useOriginalCol
 		color = ColorTweaker.tweak(color, tweaks)
 		instance.VertexColor = Vector3.new(color.r, color.g, color.b)
 	elseif instance:IsA("ParticleEmitter") or instance:IsA("Beam") then
-		instance.Color = tweakColorSequence(original or instance.Color, tweaks)
+		instance.Color = ColorTweaker.tweakColorSequence(original or instance.Color, tweaks)
 	end
 end
 

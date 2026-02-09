@@ -10,6 +10,7 @@ return {
 	floorSlot = "rbxassetid://72309113898700",
 	heart = "rbxassetid://138475464531371",
 	shoppingCart = "rbxassetid://84258174459980",
+	gift = "rbxassetid://134519398228628",
 	mutations = {
 		diamond = "rbxassetid://108049478374755",
 		gold = "rbxassetid://111372280889175",

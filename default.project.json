@@ -17,11 +17,17 @@
                 "InsetFrame": {
                   "$path": "src/features/app/ui/components/InsetFrame.luau"
                 },
+                "RobuxButton": {
+                  "$path": "src/features/app/ui/components/RobuxButton.luau"
+                },
                 "StudBackground": {
                   "$path": "src/features/app/ui/components/StudBackground.luau"
                 },
                 "StudButton": {
                   "$path": "src/features/app/ui/components/StudButton.luau"
+                },
+                "StudFrame": {
+                  "$path": "src/features/app/ui/components/StudFrame.luau"
                 },
                 "TransparentFrame": {
                   "$path": "src/features/app/ui/components/TransparentFrame.luau"

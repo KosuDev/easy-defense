@@ -23,7 +23,6 @@ LeaderboardServiceClient:init()
 AutoRejoinServiceClient:init()
 
 -- Preload sounds
-
 for _, sound in Sounds.misc do
 	SoundController:Load(sound)
 end
