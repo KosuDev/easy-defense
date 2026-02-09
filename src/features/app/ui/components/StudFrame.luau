@@ -21,6 +21,7 @@ local function Background(props: UITypes.ImageLabelProps)
 end
 
 return function(props: StudFrameProps)
+	props.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	local safeProps = Sift.Dictionary.removeKeys(props, "Gradient")
 	return e("Frame", safeProps, {
 		Stroke = e("UIStroke", {

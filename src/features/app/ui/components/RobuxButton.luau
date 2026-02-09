@@ -29,10 +29,9 @@ return function(props: RobuxButtonProps)
 	local cost = MonetizationServiceClient:getProductCostString(props.product)
 	local buttonProps = Sift.Dictionary.removeKeys(props, "product", "children", "HideGift", "Scale", "Size")
 	local scale = props.Scale or 1
-	local size = props.Size or UDim2.fromOffset(404 * scale, 143 * scale)
-	buttonProps.Size = if giftId then UDim2.fromScale(0.8, 1) else UDim2.fromScale(1, 1)
+	local size = props.Size or UDim2.fromOffset(160 * scale, 50 * scale)
+	buttonProps.Size = UDim2.fromScale(1, 1)
 	buttonProps.Text = cost
-	buttonProps.Scale = 1
 	buttonProps.LayoutOrder = 2
 	buttonProps.Activated = function()
 		MonetizationServiceClient:promptProduct(props.product :: any)
@@ -54,7 +53,7 @@ return function(props: RobuxButtonProps)
 				HorizontalAlignment = Enum.HorizontalAlignment.Center,
 				VerticalAlignment = Enum.VerticalAlignment.Center,
 				SortOrder = Enum.SortOrder.LayoutOrder,
-				Padding = UDim.new(-0.02, 0),
+				Padding = UDim.new(0, 8),
 			}),
 			Buy = e(StudButton.Green, buttonProps),
 			Gift = if giftId
@@ -69,7 +68,7 @@ return function(props: RobuxButtonProps)
 					end,
 				}, {
 					e("ImageLabel", {
-						Size = UDim2.fromScale(0.6, 0.6),
+						Size = UDim2.fromScale(0.67, 0.67),
 						ScaleType = Enum.ScaleType.Fit,
 						Position = UDim2.fromScale(0.5, 0.475),
 						AnchorPoint = Vector2.new(0.5, 0.5),

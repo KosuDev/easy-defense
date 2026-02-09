@@ -2,22 +2,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Menu = require(script.Parent.Menu)
 local React = require(ReplicatedStorage.Packages.React)
-local StudFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.StudFrame)
+local ShopContent = require(ReplicatedStorage.Source.Features.Shop.UI.ShopContent)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local e = React.createElement
-
-local function Content()
-	return e(StudFrame, {
-		LayoutOrder = 1,
-		Size = UDim2.new(1, 0, 0, 208),
-		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-		Gradient = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 235, 192)),
-			ColorSequenceKeypoint.new(0.2, Color3.fromRGB(255, 212, 69)),
-			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 137, 27)),
-		}),
-	})
-end
 
 return function()
 	return e(Menu.Component, {
@@ -56,6 +43,6 @@ return function()
 				PaddingLeft = UDim.new(0, 6),
 				PaddingRight = UDim.new(0, 6),
 			}),
-		}, e(Content)),
+		}, e(ShopContent)),
 	})
 end

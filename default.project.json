@@ -445,6 +445,30 @@
                 }
               }
             }
+          },
+          "Shop": {
+            "$className": "Folder",
+            "UI": {
+              "$className": "Folder",
+              "Components": {
+                "$className": "Folder",
+                "ShopContentFrame": {
+                  "$path": "src/features/shop/ui/components/ShopContentFrame.luau"
+                },
+                "ShopFrame": {
+                  "$path": "src/features/shop/ui/components/ShopFrame.luau"
+                }
+              },
+              "Frames": {
+                "$className": "Folder",
+                "ShopGamepasses": {
+                  "$path": "src/features/shop/ui/frames/ShopGamepasses.luau"
+                }
+              },
+              "ShopContent": {
+                "$path": "src/features/shop/ui/ShopContent.luau"
+              }
+            }
           }
         },
         "Core": {
