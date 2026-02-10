@@ -138,11 +138,21 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		self.luckyRollOdds += 0.01
 	end
 
+	local ownsSuperLuck = MonetizationServiceServer:ownsGamepass(self.player, Products.superLuck)
+	local ownsUltraLuck = MonetizationServiceServer:ownsGamepass(self.player, Products.ultraLuck)
 	local ownsDouble = MonetizationServiceServer:ownsGamepass(self.player, Products.doubleCrates)
 	local ownsTriple = MonetizationServiceServer:ownsGamepass(self.player, Products.tripleCrates)
 	local crateRolls = if ownsDouble and ownsTriple then 3 else if ownsDouble or ownsTriple then 2 else 1
 	local conveyorLuck = ConveyorUpgrades[self.level].luck
+	local multiplier = 1
+	if ownsSuperLuck then
+		multiplier += 0.2
+	end
+	if ownsUltraLuck then
+		multiplier += 0.34
+	end
 
+	conveyorLuck *= multiplier
 	for i = 1, MAX_CRATES do
 		if i <= crateRolls then
 			local luckThisRoll = if isLuckyRoll and i == 1 then conveyorLuck * 500 else conveyorLuck
