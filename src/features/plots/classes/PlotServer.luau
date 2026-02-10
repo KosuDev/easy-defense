@@ -6,6 +6,7 @@ local ConveyorServer = require(ServerScriptService.Features.Conveyor.ConveyorSer
 local DefenseServer = require(ServerScriptService.Features.Defense.Classes.DefenseServer)
 local TowerServer = require(ServerScriptService.Features.Defense.Classes.TowerServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
+local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -13,6 +14,7 @@ local Sift = require(ReplicatedStorage.Packages.Sift)
 local DisplayNameWithIcons = require(ReplicatedStorage.Source.Core.UI.DisplayNameWithIcons)
 local GetPlayerPortraitImageId = require(ReplicatedStorage.Source.Core.UI.GetPlayerPortraitImageId)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -356,14 +358,21 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	assert(crateData.crateId and crateData.timeBuilt, "No crate to open at node " .. node)
 	local info = Towers.getTowerInfo(crateData.crateId)
 	local openTime = info.crateOpenTime
-	local timeRemaining = openTime - (workspace:GetServerTimeNow() - crateData.timeBuilt)
-	--assert(timeRemaining <= 0, "Crate is not ready to be opened")
+	local ownsQuickUnlock = MonetizationServiceServer:ownsGamepass(player, Products.doubleUnlockSpeed)
+	local timePassed = workspace:GetServerTimeNow() - crateData.timeBuilt
+	if ownsQuickUnlock then
+		timePassed *= 2
+	end
+	local timeRemaining = openTime - timePassed
+	if timeRemaining > 0 then
+		return
+	end
 
 	nodeInfo.data = nil
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
-	local mutations = MutationServiceServer:rollMutations()
+	local mutations = MutationServiceServer:rollMutations(self.player)
 	if mutations and crateData.mutations then
 		Sift.Dictionary.merge(mutations, crateData.mutations)
 	elseif not mutations then

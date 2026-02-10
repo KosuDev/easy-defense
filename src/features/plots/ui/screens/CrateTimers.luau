@@ -6,6 +6,8 @@ local FormatTime = require(ReplicatedStorage.Source.Core.UI.FormatTime)
 local useServerTimeBinding = require(ReplicatedStorage.Source.Core.UI.Hooks.useServerTimeBinding)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local useGamepass = require(ReplicatedStorage.Source.Features.Monetization.Hooks.useGamepass)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local Tiers = require(ReplicatedStorage.Source.Game.Items.Tiers)
@@ -18,12 +20,18 @@ type CrateTimerProps = {
 
 local function CrateTimer(props: CrateTimerProps)
 	local crateInfo = Towers.getTowerInfo(props.crateData.crateId)
+	local ownsQuickUnlock = useGamepass(Products.doubleUnlockSpeed)
 	local tier = Tiers.getTierForOdds(crateInfo.odds)
 	local timeToOpen = crateInfo.crateOpenTime
 	local crateOpenTime = props.crateData.timeBuilt + timeToOpen
 	local serverTime = useServerTimeBinding()
 	local text = serverTime:map(function(t)
-		local tLeft = math.ceil(crateOpenTime - t)
+		local timePassed = t - props.crateData.timeBuilt
+		if ownsQuickUnlock then
+			timePassed *= 2
+		end
+
+		local tLeft = math.ceil(crateOpenTime - props.crateData.timeBuilt - timePassed)
 		if tLeft <= 0 then
 			return "Ready!"
 		end
@@ -31,7 +39,11 @@ local function CrateTimer(props: CrateTimerProps)
 	end)
 
 	local barSize = serverTime:map(function(t)
-		local tLeft = math.ceil(crateOpenTime - t)
+		local timePassed = t - props.crateData.timeBuilt
+		if ownsQuickUnlock then
+			timePassed *= 2
+		end
+		local tLeft = math.ceil(crateOpenTime - props.crateData.timeBuilt - timePassed)
 		local percent = math.clamp(tLeft / timeToOpen, 0, 1)
 		return UDim2.fromScale(1 - percent, 1)
 	end)
