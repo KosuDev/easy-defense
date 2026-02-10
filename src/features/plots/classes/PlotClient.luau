@@ -54,6 +54,8 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 		nodesUpdated = Signal.new(),
 	}, PlotClient) :: any
 
+	self.defense.currencyMult = plotData.currencyMult
+	self.defense.damageMult = plotData.damageMult
 	self.defense:pathsUpdated(plotData.paths)
 	self.networker = Networker.client.new("Plot" .. plotData.index, self :: any)
 	self.conveyor =

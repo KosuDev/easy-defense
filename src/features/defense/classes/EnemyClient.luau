@@ -33,6 +33,7 @@ export type EnemyClient = typeof(setmetatable(
 		floor: number,
 		burnVfx: ParticleEmitter?,
 		poisonVfx: ParticleEmitter?,
+		rewardMult: number,
 	},
 	EnemyClient
 ))
@@ -41,7 +42,8 @@ function EnemyClient.new(
 	floor: number,
 	enemyStats: Enemies.EnemyStats,
 	uniqueId: number,
-	path: PathUtils.Path
+	path: PathUtils.Path,
+	rewardMult: number
 ): EnemyClient
 	local self = setmetatable({
 		floor = floor,
@@ -56,6 +58,7 @@ function EnemyClient.new(
 		maxHealth = enemyStats.health,
 		reachedEnd = false,
 		destroyed = Signal.new(),
+		rewardMult = rewardMult,
 	}, EnemyClient)
 
 	local index = enemyStats.x
@@ -111,7 +114,7 @@ function EnemyClient.damage(self: EnemyClient, amt: number): ()
 	if self.health <= 0 then
 		self.dead = true
 		local color = self.info.color
-		local reward = Enemies.getEnemyReward(self.maxHealth, DataService.client:get("rebirths"))
+		local reward = Enemies.getEnemyReward(self.maxHealth, DataService.client:get("rebirths")) * self.rewardMult
 		HitSplat(self:getPosition(), color, reward)
 	else
 		self:updateHpBar()

@@ -115,6 +115,8 @@ function PlotServer.get(self: PlotServer): PlotTypes.PlotData
 		paths = self.defense.paths,
 		conveyorModel = self.conveyor.model,
 		conveyorLevel = self.conveyor.level,
+		currencyMult = self.defense.currencyMult,
+		damageMult = self.defense.damageMult,
 	}
 end
 

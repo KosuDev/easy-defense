@@ -1,12 +1,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
+local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local EnemyServer = require(script.Parent.EnemyServer)
 local TowerServer = require(script.Parent.TowerServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 
 type TowerServer = TowerServer.TowerServer
@@ -34,6 +38,9 @@ export type DefenseServer = typeof(setmetatable(
 		poisonCooldown: number,
 		strength: { number },
 		spawnCd: number,
+		janitor: Janitor.Janitor,
+		damageMult: number,
+		currencyMult: number,
 	},
 	DefenseServer
 ))
@@ -50,16 +57,39 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 		burnCooldown = BURN_COOLDOWN,
 		poisonCooldown = POISON_COOLDOWN,
 		spawnCd = SPAWN_COOLDOWN,
+		damageMult = if MonetizationServiceServer:ownsGamepass(player, Products.doubleDamage) then 2 else 1,
+		currencyMult = if MonetizationServiceServer:ownsGamepass(player, Products.doubleMoney) then 2 else 1,
+		janitor = Janitor.new(),
 	}, DefenseServer)
 
 	self.networker = Networker.server.new("Defense" .. index, self, {})
 	self:start()
 
+	local doubleDmgChangedSignal = MonetizationServiceServer:getPassOwnshipChanged(player, Products.doubleDamage)
+	local doubleMoneyChangedSignal = MonetizationServiceServer:getPassOwnshipChanged(player, Products.doubleMoney)
+
+	self.networker:setAll("damageMult", self.damageMult)
+	self.janitor:Add(doubleDmgChangedSignal:Connect(function(owns)
+		self.damageMult = if owns then 2 else 1
+		self.networker:setAll("damageMult", self.damageMult)
+		for _, towers in self.towers do
+			for _, tower in towers do
+				tower.damageMult = self.damageMult
+			end
+		end
+	end))
+
+	self.networker:setAll("currencyMult", self.currencyMult)
+	self.janitor:Add(doubleMoneyChangedSignal:Connect(function(owns)
+		self.currencyMult = if owns then 2 else 1
+		self.networker:setAll("currencyMult", self.currencyMult)
+	end))
+
 	return self
 end
 
 function DefenseServer.spawnEnemy(self: DefenseServer, floor: number)
-	local strength = math.max(self.strength[floor] or 1, 1)
+	local strength = math.max(self.strength[floor] or 1, 1) * self.damageMult
 	local enemyStats = Enemies.getEnemyForStrength(strength)
 	local enemy = EnemyServer.new(floor, enemyStats)
 	self:addEnemy(enemy)
@@ -151,6 +181,7 @@ function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: To
 		self.towers[tower.floor] = {}
 	end
 
+	tower.damageMult = self.damageMult
 	tower.enemies = self.enemies[tower.floor]
 	tower.networker = self.networker
 	self.towers[tower.floor][uniqueId] = tower
@@ -172,7 +203,7 @@ end
 
 function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
 	local rebirths: number = DataService:get(self.player, "rebirths")
-	local reward = Enemies.getEnemyReward(enemy.maxHealth, rebirths)
+	local reward = math.round(Enemies.getEnemyReward(enemy.maxHealth, rebirths) * self.currencyMult)
 	DataService:update(self.player, "currency", function(amt: number)
 		return amt + reward
 	end)
@@ -287,6 +318,7 @@ end
 function DefenseServer.destroy(self: DefenseServer)
 	self.networker:destroy()
 	self:stop()
+	self.janitor:Destroy()
 end
 
 return DefenseServer

@@ -17,6 +17,10 @@ local openedMenu = Charm.atom(nil :: string?)
 local hasInitialized = false
 
 local function init()
+	if not RunService:IsRunning() then
+		return function() end
+	end
+
 	if hasInitialized then
 		warn("Menu module has already been initialized!")
 		return

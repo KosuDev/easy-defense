@@ -31,13 +31,13 @@ export type TowerGui = BillboardGui & {
 
 local TowerBillboardGui = {}
 
-function TowerBillboardGui.new(towerData: DataTemplate.TowerData): TowerGui
+function TowerBillboardGui.new(towerData: DataTemplate.TowerData, dmgMult: number?): TowerGui
 	local gui = ReplicatedStorage.Assets.VFX.TowerBillboard:Clone()
-	TowerBillboardGui.update(gui, towerData)
+	TowerBillboardGui.update(gui, towerData, dmgMult)
 	return gui
 end
 
-function TowerBillboardGui.update(gui: TowerGui, towerData: DataTemplate.TowerData): ()
+function TowerBillboardGui.update(gui: TowerGui, towerData: DataTemplate.TowerData, dmgMult: number?): ()
 	local info = Towers.getTowerInfo(towerData.itemId)
 	local rarityTier = Tiers.getTierForOdds(info.odds)
 	local scale = PlotServiceUtils.getScaleFromLevel(towerData.level)
@@ -45,7 +45,7 @@ function TowerBillboardGui.update(gui: TowerGui, towerData: DataTemplate.TowerDa
 	gui.TowerName.TextLabel.Text = info.name
 	gui.Rarity.TextLabel.Text = rarityTier.name
 	gui.Rarity.TextLabel.Gradient.Color = rarityTier.gradient
-	gui.Dps.TextLabel.Text = `💪 {Abbreviate(PlotServiceUtils.getDps(towerData))}`
+	gui.Dps.TextLabel.Text = `💪 {Abbreviate(PlotServiceUtils.getDps(towerData) * (dmgMult or 1))}`
 	for mutation, _ in Mutations.mutations do
 		local hasMutation = towerData.mutations and towerData.mutations[mutation]
 		local mutationImg = gui.Mutations:FindFirstChild(mutation)

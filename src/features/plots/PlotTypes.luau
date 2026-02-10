@@ -18,6 +18,8 @@ export type PlotData = {
 	paths: any,
 	conveyorModel: (Model & any)?,
 	conveyorLevel: number,
+	currencyMult: number,
+	damageMult: number,
 }
 
 export type ClientNode = Node & {

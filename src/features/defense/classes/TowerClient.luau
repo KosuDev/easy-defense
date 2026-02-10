@@ -2,7 +2,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
-local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local TowerBillboardGui = require(ReplicatedStorage.Source.Features.Defense.UI.Screens.TowerBillboardGui)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
@@ -24,17 +23,19 @@ export type TowerClient = typeof(setmetatable(
 		attackAnim: any,
 		janitor: Janitor.Janitor,
 		gui: TowerBillboardGui.TowerGui,
+		damageMult: number,
 	},
 	TowerClient
 ))
 
-function TowerClient.new(floor: number, node: number, cf: CFrame, data: TowerData)
+function TowerClient.new(floor: number, node: number, cf: CFrame, data: TowerData, damageMult: number): TowerClient
 	local self = setmetatable({
 		floor = floor,
 		node = node,
 		data = data,
 		cf = cf,
 		janitor = Janitor.new(),
+		damageMult = damageMult,
 	}, TowerClient)
 
 	local model = Towers.getTowerModel(data.itemId, data.mutations)
@@ -42,7 +43,7 @@ function TowerClient.new(floor: number, node: number, cf: CFrame, data: TowerDat
 	model:PivotTo(cf * CFrame.new(0, 0.5, 0))
 	self.model = model
 	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(data.level))
-	local gui = TowerBillboardGui.new(data)
+	local gui = TowerBillboardGui.new(data, self.damageMult)
 	gui.Parent = model.PrimaryPart
 	self.gui = gui
 	self:charFloorChanged()
@@ -57,6 +58,11 @@ function TowerClient.new(floor: number, node: number, cf: CFrame, data: TowerDat
 	end
 
 	return self
+end
+
+function TowerClient.setDamageMult(self: TowerClient, damageMult: number): ()
+	self.damageMult = damageMult
+	TowerBillboardGui.update(self.gui, self.data, damageMult)
 end
 
 function TowerClient.charFloorChanged(self: TowerClient)
@@ -77,7 +83,7 @@ end
 function TowerClient.setData(self: TowerClient, data: TowerData): ()
 	self.data = data
 	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(data.level))
-	TowerBillboardGui.update(self.gui, data)
+	TowerBillboardGui.update(self.gui, data, self.damageMult)
 end
 
 function TowerClient.attack(self: TowerClient, enemy: EnemyClient.EnemyClient, damage: number): ()
@@ -88,7 +94,6 @@ function TowerClient.attack(self: TowerClient, enemy: EnemyClient.EnemyClient, d
 end
 
 function TowerClient.destroy(self: TowerClient): ()
-	DefenseSlice.actions.removeTower(self.model.PrimaryPart)
 	self.janitor:Destroy()
 	if self.model then
 		self.model:Destroy()

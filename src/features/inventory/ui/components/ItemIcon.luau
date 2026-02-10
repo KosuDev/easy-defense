@@ -6,6 +6,8 @@ local React = require(ReplicatedStorage.Packages.React)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local useGamepass = require(ReplicatedStorage.Source.Features.Monetization.Hooks.useGamepass)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -27,6 +29,8 @@ type ItemIconProps = {
 }
 
 return function(props: ItemIconProps)
+	local ownsDoubleDamage = useGamepass(Products.doubleDamage)
+	local damageMult = if ownsDoubleDamage then 2 else 1
 	local isTower = not props.itemData.crateId
 	local info = if not isTower
 		then Towers.getTowerInfo(props.itemData.crateId)
@@ -80,12 +84,7 @@ return function(props: ItemIconProps)
 
 		Strength = if isTower and props.showStrength ~= false
 			then e(TextLabel, {
-				Text = "💪 "
-					.. Abbreviate(
-						math.round(
-							info.damage * info.firerate * PlotServiceUtils.getDamageMultiplier(props.itemData.level)
-						)
-					),
+				Text = "💪 " .. Abbreviate(math.round(PlotServiceUtils.getDps(props.itemData) * damageMult)),
 				AnchorPoint = Vector2.new(1, 1),
 				TextXAlignment = Enum.TextXAlignment.Right,
 				Position = UDim2.fromScale(0.95, 0.95),

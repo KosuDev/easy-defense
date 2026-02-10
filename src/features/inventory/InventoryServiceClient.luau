@@ -8,7 +8,10 @@ local InventorySlice = require(script.Parent.InventorySlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Sift = require(ReplicatedStorage.Packages.Sift)
 local CrateBillboardGui = require(ReplicatedStorage.Source.Features.Crates.UI.Screens.CrateBillboardGui)
-local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
+local TowerBillboardGui = require(ReplicatedStorage.Source.Features.Defense.UI.Screens.TowerBillboardGui)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
+local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
+local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -169,9 +172,6 @@ function InventoryServiceClient.setPlayerItem(
 	end
 
 	if equippedItem.model then
-		if equippedItem.itemData and equippedItem.itemData.itemId then
-			DefenseSlice.actions.removeTower(equippedItem.model.PrimaryPart)
-		end
 		equippedItem.model:Destroy()
 	end
 
@@ -270,7 +270,10 @@ function InventoryServiceClient.update(self: InventoryServiceClient)
 		rootWeld.Part1 = pChar.Head
 		model.Parent = pChar
 		if equippedItem.itemData.itemId then
-			DefenseSlice.actions.addTower(model.PrimaryPart, equippedItem.itemData)
+			model:ScaleTo(PlotServiceUtils.getScaleFromLevel(equippedItem.itemData.level))
+			local dmgMult = if MonetizationServiceClient:ownsGamepass(Products.doubleDamage :: any) then 2 else 1
+			local gui = TowerBillboardGui.new(equippedItem.itemData, dmgMult)
+			gui.Parent = model.PrimaryPart
 		else
 			local crateGui = CrateBillboardGui.new(equippedItem.itemData, true)
 			crateGui.Parent = model.PrimaryPart

@@ -23,6 +23,8 @@ export type DefenseClient = typeof(setmetatable(
 		networker: Networker.Client,
 		paths: { PathUtils.Path },
 		updateConn: RBXScriptConnection?,
+		damageMult: number,
+		currencyMult: number,
 	},
 	DefenseClient
 ))
@@ -34,10 +36,26 @@ function DefenseClient.new(index: number, player: Player): DefenseClient
 		index = index,
 		player = player,
 		paths = {},
+		damageMult = 1,
+		currencyMult = 1,
 	}, DefenseClient)
 
 	self.networker = Networker.client.new("Defense" .. index, self :: any)
 	self:start()
+
+	self.networker:getServerChangedSignal("damageMult"):Connect(function()
+		for _, tower in self.towers do
+			for _, t in tower do
+				t:setDamageMult(self.damageMult)
+			end
+		end
+	end)
+
+	self.networker:getServerChangedSignal("currencyMult"):Connect(function()
+		for _, enemy in self.enemies do
+			enemy.rewardMult = self.currencyMult
+		end
+	end)
 
 	return self
 end
@@ -75,7 +93,7 @@ function DefenseClient.towerRemoved(self: DefenseClient, floor: number, node: nu
 end
 
 function DefenseClient.towerAdded(self: DefenseClient, floor: number, node: number, cf: CFrame, data: TowerData): ()
-	local tower = TowerClient.new(floor, node, cf, data)
+	local tower = TowerClient.new(floor, node, cf, data, self.damageMult)
 	if not self.towers[floor] then
 		self.towers[floor] = {}
 	end
@@ -96,7 +114,7 @@ function DefenseClient.enemyAdded(
 	uniqueId: number,
 	enemyStats: Enemies.EnemyStats
 ): ()
-	local enemy = EnemyClient.new(floor, enemyStats, uniqueId, self.paths[floor])
+	local enemy = EnemyClient.new(floor, enemyStats, uniqueId, self.paths[floor], self.currencyMult)
 	self.enemies[uniqueId] = enemy
 end
 
