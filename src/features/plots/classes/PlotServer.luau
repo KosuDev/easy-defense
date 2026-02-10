@@ -17,6 +17,7 @@ local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local ShopUtils = require(ReplicatedStorage.Source.Features.Shop.ShopUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local PlotModel = ReplicatedStorage.Assets.Misc.Plot
 local PlotDefenses = ReplicatedStorage.Assets.PlotDefenses
@@ -351,6 +352,61 @@ function PlotServer.requestUpgrade(self: PlotServer, player: Player, floor: numb
 	self.defense.networker:fireAll("towerUpdated", floor, node, towerData)
 end
 
+function PlotServer.promptOpenCrate(
+	_self: PlotServer,
+	player: Player,
+	timeRemaining: number,
+	floor: number,
+	node: number
+): ()
+	local instaOpenProduct, n = ShopUtils.getProductFromTimeRemaining(timeRemaining)
+	if not instaOpenProduct then
+		return
+	end
+
+	local prompted = MonetizationServiceServer:promptProduct(player, instaOpenProduct)
+	if not prompted then
+		return
+	end
+
+	DataService:set(player, { "instaOpenCrates", n }, {
+		floor = floor,
+		node = node,
+		n = n,
+	})
+end
+
+function PlotServer.openCrate(self: PlotServer, floor: number, node: number): boolean
+	local nodeInfo = self.nodes[floor][node]
+	if not nodeInfo.data or not nodeInfo.data.crateId then
+		warn("No crate to open at floor " .. floor .. " node " .. node)
+		return false
+	end
+
+	local crateData: CrateNode = nodeInfo.data
+	if not crateData.crateId or not crateData.timeBuilt then
+		warn("Invalid crate data at floor " .. floor .. " node " .. node)
+		return false
+	end
+
+	local info = Towers.getTowerInfo(crateData.crateId)
+	nodeInfo.data = nil
+	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
+	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
+
+	local mutations = MutationServiceServer:rollMutations(self.player)
+	if mutations and crateData.mutations then
+		Sift.Dictionary.merge(mutations, crateData.mutations)
+	elseif not mutations then
+		mutations = crateData.mutations
+	end
+	local towerData: DataTemplate.TowerData = { itemId = info.id, level = 1, mutations = mutations }
+	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
+	self.networker:fireAll("crateOpened", floor, node, towerData, nodeInfo.cf)
+	self:build(floor, node, uniqueId, nil, true)
+	return true
+end
+
 function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: number, node: number): ()
 	assert(self:isOwner(player), "Player is not the owner of this plot")
 	assert(self:isValidNode(floor, node), "Invalid floor or node")
@@ -367,23 +423,11 @@ function PlotServer.requestOpenCrate(self: PlotServer, player: Player, floor: nu
 	end
 	local timeRemaining = openTime - timePassed
 	if timeRemaining > 0 then
+		self:promptOpenCrate(player, timeRemaining, floor, node)
 		return
 	end
 
-	nodeInfo.data = nil
-	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
-	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
-
-	local mutations = MutationServiceServer:rollMutations(self.player)
-	if mutations and crateData.mutations then
-		Sift.Dictionary.merge(mutations, crateData.mutations)
-	elseif not mutations then
-		mutations = crateData.mutations
-	end
-	local towerData: DataTemplate.TowerData = { itemId = info.id, level = 1, mutations = mutations }
-	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
-	self.networker:fireAll("crateOpened", floor, node, towerData, nodeInfo.cf)
-	self:build(floor, node, uniqueId, nil, true)
+	self:openCrate(floor, node)
 end
 
 function PlotServer.destroy(self: PlotServer): ()

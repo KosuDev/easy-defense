@@ -439,6 +439,9 @@
           },
           "Shop": {
             "$className": "Folder",
+            "ShopUtils": {
+              "$path": "src/features/shop/ShopUtils.luau"
+            },
             "UI": {
               "$className": "Folder",
               "Components": {

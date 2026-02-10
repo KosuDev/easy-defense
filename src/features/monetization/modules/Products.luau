@@ -74,6 +74,46 @@ local products = {
 		id = 1704321547,
 		isPass = true,
 	} :: MonetizationProduct,
+
+	insta1 = {
+		id = 3534504112,
+	} :: MonetizationProduct,
+
+	insta2 = {
+		id = 3534504181,
+	} :: MonetizationProduct,
+
+	insta3 = {
+		id = 3534504265,
+	} :: MonetizationProduct,
+
+	insta4 = {
+		id = 3534504356,
+	} :: MonetizationProduct,
+
+	insta5 = {
+		id = 3534504433,
+	} :: MonetizationProduct,
+
+	insta6 = {
+		id = 3534504501,
+	} :: MonetizationProduct,
+
+	insta7 = {
+		id = 3534504617,
+	} :: MonetizationProduct,
+
+	insta8 = {
+		id = 3534504724,
+	} :: MonetizationProduct,
+
+	insta9 = {
+		id = 3534504808,
+	} :: MonetizationProduct,
+
+	insta10 = {
+		id = 3534504893,
+	} :: MonetizationProduct,
 }
 
 return products -- :: { [keyof<typeof(products)>]: MonetizationProduct }

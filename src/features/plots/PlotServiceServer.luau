@@ -9,6 +9,7 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local ServicePlayerData = require(ReplicatedStorage.Packages.ServicePlayerData)
 local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 type Plot = PlotServer.PlotServer
 type PlotSpawn = PlotTypes.PlotSpawn
@@ -134,6 +135,33 @@ function PlotServiceServer.tpToSell(_self: PlotServiceServer, player: Player)
 	if char then
 		char:PivotTo(sellTpPart.CFrame)
 	end
+end
+
+function PlotServiceServer.getPlotFromPlayer(self: PlotServiceServer, player: Player): Plot?
+	local playerData = self.playerData:get(player)
+	if not playerData then
+		return
+	end
+
+	return playerData.plot
+end
+
+function PlotServiceServer.instaOpenCrate(self: PlotServiceServer, player: Player, n: number): boolean
+	local plot = self:getPlotFromPlayer(player)
+	if not plot then
+		return false
+	end
+
+	local instaOpenInfo: DataTemplate.InstaOpenCrates = DataService:get(player, "instaOpenCrates")
+	local unprocessedCrateInfo = instaOpenInfo[n]
+	if not unprocessedCrateInfo then
+		warn("No unprocessed crate info for n =", n)
+		return false
+	end
+
+	plot:openCrate(unprocessedCrateInfo.floor, unprocessedCrateInfo.node)
+
+	return true
 end
 
 type PlotServiceServer = typeof(PlotServiceServer) & {

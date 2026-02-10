@@ -263,6 +263,31 @@ function MonetizationServiceServer.promptGift(
 	return true
 end
 
+function MonetizationServiceServer.promptProduct(
+	self: MonetizationService,
+	player: Player,
+	product: MonetizationProduct
+): (boolean, string?)
+	if product.isPass then
+		if self:ownsGamepass(player, product) then
+			return false, "Already own gamepass"
+		end
+		MarketplaceService:PromptGamePassPurchase(player, product.id)
+		return true
+	else
+		if product.oneTimePurchase and self:ownsOneTimePurchase(player, product) then
+			return false, "Already own one-time purchase"
+		end
+
+		if product.purchaseCooldown and not self:canBuyCooldownProduct(player, product) then
+			return false, "Cannot buy this product yet"
+		end
+
+		MarketplaceService:PromptProductPurchase(player, product.id)
+		return true
+	end
+end
+
 function MonetizationServiceServer._attemptGift(
 	self: MonetizationService,
 	player: Player,

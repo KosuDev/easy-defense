@@ -38,10 +38,19 @@ export type PlotNodes = { [string]: PlotNode }
 export type OccupiedNode = CrateNode & string
 export type OccupiedNodes = { [string]: OccupiedNode }
 
+export type UnprocessedInstaCrate = {
+	floor: number,
+	node: number,
+	n: number,
+}
+
+export type InstaOpenCrates = { [number]: UnprocessedInstaCrate }
+
 return {
 	currency = 100,
 	rebirths = 0,
 	conveyorLevel = 1,
+	instaOpenCrates = {},
 	towerIndex = {
 		normal = {},
 		gold = {},
