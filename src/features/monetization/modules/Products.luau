@@ -52,6 +52,12 @@ local products = {
 		isPass = true,
 	},
 
+	tripleCrates = {
+		id = 1704095646,
+		giftId = 3532526057,
+		isPass = true,
+	},
+
 	ultraLuck = {
 		id = 1704275544,
 		giftId = 3532524696,
