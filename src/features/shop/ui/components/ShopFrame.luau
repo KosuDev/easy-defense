@@ -18,9 +18,9 @@ local GREEN = ColorSequence.new({
 })
 
 local BLUE = ColorSequence.new({
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(192, 230, 255)),
-	ColorSequenceKeypoint.new(0.2, Color3.fromRGB(69, 165, 255)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(27, 126, 255)),
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(235, 247, 255)),
+	ColorSequenceKeypoint.new(0.2, Color3.fromRGB(69, 227, 255)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 153, 255)),
 })
 
 local PURPLE = ColorSequence.new({

@@ -126,7 +126,7 @@ end
 return function()
 	return e(ShopContentFrame, {
 		Text = "Gamepasses",
-		LayoutOrder = 10,
+		LayoutOrder = 20,
 	}, {
 		e(GamepassFrame, {
 			product = Products.superLuck,

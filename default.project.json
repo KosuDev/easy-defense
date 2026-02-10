@@ -463,6 +463,12 @@
                 "$className": "Folder",
                 "ShopGamepasses": {
                   "$path": "src/features/shop/ui/frames/ShopGamepasses.luau"
+                },
+                "ShopLimitedItems": {
+                  "$path": "src/features/shop/ui/frames/ShopLimitedItems.luau"
+                },
+                "ShopPacks": {
+                  "$path": "src/features/shop/ui/frames/ShopPacks.luau"
                 }
               },
               "ShopContent": {
@@ -500,6 +506,9 @@
               },
               "NotificationMessage": {
                 "$path": "src/core/ui/components/NotificationMessage.luau"
+              },
+              "RainbowGradient": {
+                "$path": "src/core/ui/components/RainbowGradient.luau"
               }
             },
             "DisplayNameWithIcons": {
