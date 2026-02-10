@@ -200,7 +200,7 @@ return function()
 			Image = ImageIds.flex,
 			Frame = ShopFrame.Gold,
 			Text = "Double Damage",
-			Description = "More Damage!",
+			Description = "Do more damage!",
 			TitleGradient = ColorSequence.new({
 				ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
 				ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 187, 0)),
@@ -216,7 +216,7 @@ return function()
 			Image = ImageIds.currency,
 			Frame = ShopFrame.Green,
 			Text = "Double Money",
-			Description = "More Money!",
+			Description = "Earn more money!",
 			TitleGradient = ColorSequence.new({
 				ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
 				ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 34)),

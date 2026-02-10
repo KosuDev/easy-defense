@@ -1,6 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
+local ShopCurrency = require(ReplicatedStorage.Source.Features.Shop.UI.Frames.ShopCurrency)
 local ShopGamepasses = require(ReplicatedStorage.Source.Features.Shop.UI.Frames.ShopGamepasses)
 local ShopLimitedItems = require(ReplicatedStorage.Source.Features.Shop.UI.Frames.ShopLimitedItems)
 local ShopPacks = require(ReplicatedStorage.Source.Features.Shop.UI.Frames.ShopPacks)
@@ -11,5 +12,6 @@ return function()
 		Gamepasses = e(ShopGamepasses),
 		Packs = e(ShopPacks),
 		LimitedItems = e(ShopLimitedItems),
+		Currency = e(ShopCurrency),
 	})
 end

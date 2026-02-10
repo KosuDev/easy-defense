@@ -461,6 +461,9 @@
               },
               "Frames": {
                 "$className": "Folder",
+                "ShopCurrency": {
+                  "$path": "src/features/shop/ui/frames/ShopCurrency.luau"
+                },
                 "ShopGamepasses": {
                   "$path": "src/features/shop/ui/frames/ShopGamepasses.luau"
                 },

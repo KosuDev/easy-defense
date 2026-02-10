@@ -69,6 +69,11 @@ local products = {
 		giftId = 3532524696,
 		isPass = true,
 	},
+
+	currency1 = {
+		id = 1704321547,
+		isPass = true,
+	},
 }
 
 return products :: { [keyof<typeof(products)>]: MonetizationProduct }
