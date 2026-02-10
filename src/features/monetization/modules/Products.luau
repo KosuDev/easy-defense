@@ -71,8 +71,15 @@ local products = {
 	} :: MonetizationProduct,
 
 	currency1 = {
-		id = 1704321547,
-		isPass = true,
+		id = 3534567556,
+	} :: MonetizationProduct,
+
+	currency2 = {
+		id = 3534567655,
+	} :: MonetizationProduct,
+
+	currency3 = {
+		id = 3534567812,
 	} :: MonetizationProduct,
 
 	insta1 = {

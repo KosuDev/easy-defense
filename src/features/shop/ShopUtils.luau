@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local MonetizationServiceUtils = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceUtils)
+local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
 local ShopUtils = {}
 
 local MINUTE = 60
@@ -18,6 +19,8 @@ local instaOpenProducts = {
 	3 * HOUR,
 	5 * HOUR,
 }
+
+local CURENCY_TIER_MULTIPLIERS = { 0.3, 1.27, 5.1 }
 
 function ShopUtils.getInstaOpenTimeFromN(n: number): number
 	return instaOpenProducts[n]
@@ -37,6 +40,12 @@ function ShopUtils.getProductFromTimeRemaining(
 	end
 
 	return Products.insta10, 10
+end
+
+function ShopUtils.getCurrencyAmtFromRebirth(tier: number, rebirths: number): number
+	local rebirthCost = RebirthUtils.getRebirthCost(rebirths)
+	local tierMultiplier = CURENCY_TIER_MULTIPLIERS[tier]
+	return math.floor(rebirthCost * tierMultiplier)
 end
 
 return ShopUtils

@@ -52,7 +52,7 @@ local RebirthUtils = {
 }
 
 function RebirthUtils.getRebirthCost(rebirths: number)
-	return rebirthRequirements[rebirths + 1].currency
+	return rebirthRequirements[math.min(rebirths + 1, #rebirthRequirements)].currency
 end
 
 function RebirthUtils.getRebirthTowerRequirement(rebirths: number)

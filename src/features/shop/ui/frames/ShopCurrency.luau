@@ -2,16 +2,19 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local React = require(ReplicatedStorage.Packages.React)
 local FormatCurrency = require(ReplicatedStorage.Source.Core.UI.FormatCurrency)
+local useDataState = require(ReplicatedStorage.Source.Core.UI.Hooks.useDataState)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local RobuxButton = require(ReplicatedStorage.Source.Features.App.UI.Components.RobuxButton)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
+local ShopUtils = require(ReplicatedStorage.Source.Features.Shop.ShopUtils)
 local ShopContentFrame = require(ReplicatedStorage.Source.Features.Shop.UI.Components.ShopContentFrame)
 local ShopFrame = require(ReplicatedStorage.Source.Features.Shop.UI.Components.ShopFrame)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local e = React.createElement
 
 local function MoneyFrame(props)
-	local amt = 1e3 * 2 ^ props.mult
+	local rebriths = useDataState("rebirths")
+	local amt = ShopUtils.getCurrencyAmtFromRebirth(props.tier, rebriths)
 	return e(ShopFrame.Green, {
 		Size = UDim2.fromOffset(376, 190),
 		LayoutOrder = props.LayoutOrder,
@@ -52,7 +55,8 @@ local function MoneyFrame(props)
 end
 
 local function LargeMoneyFrame(props)
-	local amt = 1e3 * 2 ^ props.mult
+	local rebriths = useDataState("rebirths")
+	local amt = ShopUtils.getCurrencyAmtFromRebirth(props.tier, rebriths)
 	return e(ShopFrame.Green, {
 		Size = UDim2.fromOffset(768, 190),
 		LayoutOrder = props.LayoutOrder,
@@ -118,22 +122,22 @@ return function()
 	}, {
 		e(MoneyFrame, {
 			LayoutOrder = 1,
-			mult = 1,
+			tier = 1,
 			product = Products.currency1,
 			Text = "Small",
 		}),
 
 		e(MoneyFrame, {
 			LayoutOrder = 2,
-			mult = 4,
-			product = Products.currency1,
+			tier = 2,
+			product = Products.currency2,
 			Text = "Medium",
 		}),
 
 		e(LargeMoneyFrame, {
 			LayoutOrder = 3,
-			mult = 8,
-			product = Products.currency1,
+			tier = 3,
+			product = Products.currency3,
 			Text = "TONS of Money!!",
 		}),
 	})
