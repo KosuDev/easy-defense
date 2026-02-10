@@ -7,7 +7,12 @@ type Mutations = DataTemplate.Mutations
 
 local MutationServiceUtils = {}
 
-function MutationServiceUtils.rollMutations(activeEvents: { string }, luck: number): Mutations?
+function MutationServiceUtils.rollMutations(
+	activeEvents: { string },
+	goldHunterPass: boolean,
+	diamondHunterPass: boolean
+): Mutations?
+	local luck = 1
 	local mutations = {}
 
 	for _, eventId in activeEvents do
@@ -21,6 +26,15 @@ function MutationServiceUtils.rollMutations(activeEvents: { string }, luck: numb
 
 	local diamondChance = 1 - (1 - Mutations.mutations.diamond.odds) ^ luck
 	local goldChance = 1 - (1 - Mutations.mutations.gold.odds) ^ luck
+
+	if diamondHunterPass then
+		diamondChance *= 2
+	end
+
+	if goldHunterPass then
+		goldChance *= 2
+	end
+
 	if math.random() < diamondChance then
 		mutations.diamond = true
 	elseif math.random() < goldChance then

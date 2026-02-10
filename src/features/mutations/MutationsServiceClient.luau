@@ -5,6 +5,8 @@ local MutationServiceUtils = require(script.Parent.MutationServiceUtils)
 local MutationSlice = require(script.Parent.MutationSlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local NotificationMessage = require(ReplicatedStorage.Source.Core.UI.Components.NotificationMessage)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
+local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 local MutationEvents = require(ReplicatedStorage.Source.Features.Mutations.Modules.MutationEvents)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -58,7 +60,9 @@ function MutationServiceClient.getActiveEvents(_self: MutationServiceClient): { 
 end
 
 function MutationServiceClient.rollMutations(self: MutationServiceClient): Mutations?
-	return MutationServiceUtils.rollMutations(self:getActiveEvents(), 1)
+	local goldHunterPass = MonetizationServiceClient:ownsGamepass(Products.goldHunter)
+	local diamondHunterPass = MonetizationServiceClient:ownsGamepass(Products.diamondHunter)
+	return MutationServiceUtils.rollMutations(self:getActiveEvents(), goldHunterPass, diamondHunterPass)
 end
 
 function MutationServiceClient.activeEventsUpdated(_self: MutationServiceClient, activeEvents: { [string]: number })

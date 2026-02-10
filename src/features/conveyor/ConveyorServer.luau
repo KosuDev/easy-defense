@@ -5,7 +5,9 @@ local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
+local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
@@ -120,17 +122,17 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		self.luckyRollOdds += 0.01
 	end
 
-	local crateRolls = 1 -- TODO: Make this depend on some pass
+	local ownsDouble = MonetizationServiceServer:ownsGamepass(self.player, Products.doubleCrates)
+	local ownsTriple = MonetizationServiceServer:ownsGamepass(self.player, Products.tripleCrates)
+	local crateRolls = if ownsDouble and ownsTriple then 3 else if ownsDouble or ownsTriple then 2 else 1
 	local conveyorLuck = ConveyorUpgrades[self.level].luck
-	if isLuckyRoll then
-		conveyorLuck *= 500
-	end
 
 	for i = 1, MAX_CRATES do
 		if i <= crateRolls then
+			local luckThisRoll = if isLuckyRoll and i == 1 then conveyorLuck * 500 else conveyorLuck
 			self.crates[i] = {
-				crateId = Towers.rollTowerId(conveyorLuck),
-				mutations = MutationServiceServer:rollMutations(),
+				crateId = Towers.rollTowerId(luckThisRoll),
+				mutations = MutationServiceServer:rollMutations(self.player),
 				amt = 1,
 			}
 		else

@@ -1,6 +1,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
+local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local MutationEvents = require(ReplicatedStorage.Source.Features.Mutations.Modules.MutationEvents)
 local MutationServiceUtils = require(ReplicatedStorage.Source.Features.Mutations.MutationServiceUtils)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -68,10 +71,11 @@ function MutationServiceServer.requestEventData(self: MutationServiceServer, _pl
 	return self.activeEvents
 end
 
-function MutationServiceServer.rollMutations(self: MutationServiceServer): Mutations?
+function MutationServiceServer.rollMutations(self: MutationServiceServer, player: Player): Mutations?
 	local activeEvents = self:getActiveEvents()
-	local luck = 1 -- Placeholder for player luck calculation, not sure if needed
-	return MutationServiceUtils.rollMutations(activeEvents, luck)
+	local goldHunterPass = MonetizationServiceServer:ownsGamepass(player, Products.goldHunter)
+	local diamondHunterPass = MonetizationServiceServer:ownsGamepass(player, Products.diamondHunter)
+	return MutationServiceUtils.rollMutations(activeEvents, goldHunterPass, diamondHunterPass)
 end
 
 type MutationServiceServer = typeof(MutationServiceServer) & {
