@@ -56,11 +56,24 @@ function ConveyorServer.new(index: number, plotModel: Model, player: Player): Co
 		self.buyCrate :: any,
 		self.requestUpgrade,
 	})
+
 	self.janitor:Add(DataService:getChangedSignal(player, "conveyorLevel"):Connect(function(newLevel: number)
 		self.level = newLevel
 		self.networker:fireAll("setLevel", newLevel)
 		self:update()
 	end))
+
+	if MonetizationServiceServer:ownsGamepass(player, Products.fastConveyor) then
+		self.networker:set(player, "speedMultiplier", PlotServiceUtils.enums.factConveyorSpeed)
+	end
+
+	self.janitor:Add(
+		MonetizationServiceServer:getPassOwnshipChanged(player, Products.fastConveyor):Connect(function(owns)
+			if owns then
+				self.networker:set(player, "speedMultiplier", PlotServiceUtils.enums.factConveyorSpeed)
+			end
+		end)
+	)
 
 	self:update()
 
@@ -107,7 +120,10 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		return false
 	end
 
-	if os.clock() - self.timeOfLastCrateSpawn < CRATE_SPAWN_CD then
+	local speed = if MonetizationServiceServer:ownsGamepass(player, Products.fastConveyor)
+		then PlotServiceUtils.enums.factConveyorSpeed
+		else 1
+	if os.clock() - self.timeOfLastCrateSpawn < CRATE_SPAWN_CD / speed then
 		return false
 	end
 
