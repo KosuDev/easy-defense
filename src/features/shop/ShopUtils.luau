@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local MonetizationServiceUtils = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceUtils)
 local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
@@ -40,6 +41,17 @@ function ShopUtils.getProductFromTimeRemaining(
 	end
 
 	return Products.insta10, 10
+end
+
+function ShopUtils.getProductFromConveyorCrate(
+	rebirths: number,
+	crateId: string
+): (MonetizationServiceUtils.MonetizationProduct, number)
+	local rebirthCost = RebirthUtils.getRebirthCost(rebirths)
+	local crateCost = Towers.getTowerInfo(crateId).crateCost
+	local n = math.log(1 + crateCost / rebirthCost, 2) + 0.5
+	n = math.clamp(math.ceil(n), 1, 9)
+	return Products["crate" .. n], n
 end
 
 function ShopUtils.getCurrencyAmtFromRebirth(tier: number, rebirths: number): number

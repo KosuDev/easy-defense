@@ -16,6 +16,16 @@ for i = 1, 10 do
 	end
 end
 
+local function crateCallback(player: Player, n: number): ()
+	PlotServiceServer:boughtProductCrate(player, n)
+end
+
+for i = 1, 9 do
+	Products["crate" .. i].callback = function(player: Player)
+		crateCallback(player, i)
+	end
+end
+
 Products.currency1.callback = function(player: Player)
 	local rebirths: number = DataService:get(player, "rebirths")
 	DataService:update(player, "currency", function(amt: number)

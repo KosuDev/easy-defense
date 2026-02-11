@@ -121,6 +121,42 @@ local products = {
 	insta10 = {
 		id = 3534504893,
 	} :: MonetizationProduct,
+
+	crate1 = {
+		id = 3534576125,
+	} :: MonetizationProduct,
+
+	crate2 = {
+		id = 3534576195,
+	} :: MonetizationProduct,
+
+	crate3 = {
+		id = 3534576263,
+	} :: MonetizationProduct,
+
+	crate4 = {
+		id = 3534576417,
+	} :: MonetizationProduct,
+
+	crate5 = {
+		id = 3534576506,
+	} :: MonetizationProduct,
+
+	crate6 = {
+		id = 3534576601,
+	} :: MonetizationProduct,
+
+	crate7 = {
+		id = 3534576698,
+	} :: MonetizationProduct,
+
+	crate8 = {
+		id = 3534576761,
+	} :: MonetizationProduct,
+
+	crate9 = {
+		id = 3534576814,
+	} :: MonetizationProduct,
 }
 
 return products -- :: { [keyof<typeof(products)>]: MonetizationProduct }

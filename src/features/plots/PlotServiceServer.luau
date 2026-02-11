@@ -160,6 +160,25 @@ function PlotServiceServer.instaOpenCrate(self: PlotServiceServer, player: Playe
 	end
 
 	plot:openCrate(unprocessedCrateInfo.floor, unprocessedCrateInfo.node)
+	DataService:set(player, { "instaOpenCrates", n }, nil)
+
+	return true
+end
+
+function PlotServiceServer.boughtProductCrate(self: PlotServiceServer, player: Player, n: number): boolean
+	local plot = self:getPlotFromPlayer(player)
+	if not plot then
+		return false
+	end
+
+	local conveyorBoughtCrate: DataTemplate.ConveyorBoughtCrate = DataService:get(player, { "conveyorBoughtCrates", n })
+	if not conveyorBoughtCrate then
+		warn("No conveyor bought crate info for n =", n)
+		return false
+	end
+
+	plot.conveyor:crateProductBought(conveyorBoughtCrate)
+	DataService:set(player, { "conveyorBoughtCrates", n }, nil)
 
 	return true
 end

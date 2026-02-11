@@ -4,6 +4,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local Sift = require(ReplicatedStorage.Packages.Sift)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
@@ -11,6 +12,7 @@ local MonetizationServiceServer = require(ServerScriptService.Features.Monetizat
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local ShopUtils = require(ReplicatedStorage.Source.Features.Shop.ShopUtils)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -172,6 +174,73 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 	return true
 end
 
+function ConveyorServer.promptCrate(self: ConveyorServer, crateIndex: number)
+	local crateData = self.crates[crateIndex]
+	if not crateData then
+		return
+	end
+
+	local crateId = crateData.crateId
+	local rebirths: number = DataService:get(self.player, "rebirths")
+	local product, n = ShopUtils.getProductFromConveyorCrate(rebirths, crateId)
+	MonetizationServiceServer:promptProduct(self.player, product)
+
+	DataService:set(self.player, { "conveyorBoughtCrates", n }, {
+		conveyorIndex = crateIndex,
+		mutations = crateData.mutations,
+		crateId = crateId,
+		n = n,
+	})
+end
+
+local function doesCrateDataMatch(crateData: CrateData?, conveyorBoughtCrate: DataTemplate.ConveyorBoughtCrate): boolean
+	if not crateData then
+		return false
+	end
+
+	if crateData.crateId ~= conveyorBoughtCrate.crateId then
+		return false
+	end
+
+	if crateData.mutations and conveyorBoughtCrate.mutations then
+		return Sift.Dictionary.equalsDeep(crateData.mutations, conveyorBoughtCrate.mutations)
+	end
+
+	return crateData.mutations == conveyorBoughtCrate.mutations
+end
+
+function ConveyorServer.crateProductBought(
+	self: ConveyorServer,
+	conveyorBoughtCrate: DataTemplate.ConveyorBoughtCrate
+): ()
+	local currentIndexData = self.crates[conveyorBoughtCrate.conveyorIndex]
+	local doesMatch = doesCrateDataMatch(currentIndexData, conveyorBoughtCrate)
+	if doesMatch then
+		self:boughtCrate(conveyorBoughtCrate.conveyorIndex)
+		return
+	end
+
+	local crateData = {
+		crateId = conveyorBoughtCrate.crateId,
+		mutations = conveyorBoughtCrate.mutations,
+		amt = 1,
+	}
+
+	local uniqueId = InventoryServiceServer:addCrate(self.player, crateData)
+	InventoryServiceServer:addToHotBar(self.player, uniqueId)
+end
+
+function ConveyorServer.boughtCrate(self: ConveyorServer, crateIndex: number)
+	local crateData = self.crates[crateIndex]
+	assert(crateData, "No crate data at index" .. crateIndex)
+
+	self.crates[crateIndex] = nil
+	self.networker:fireAll("crateBought", crateIndex)
+
+	local uniqueId = InventoryServiceServer:addCrate(self.player, crateData)
+	InventoryServiceServer:addToHotBar(self.player, uniqueId)
+end
+
 function ConveyorServer.buyCrate(self: ConveyorServer, player: Player, crateIndex: number): boolean
 	if self.player ~= player then
 		return false
@@ -185,6 +254,7 @@ function ConveyorServer.buyCrate(self: ConveyorServer, player: Player, crateInde
 	local info = Towers.getTowerInfo(crateData.crateId)
 	local cost = info.crateCost
 	if DataService:get(player, "currency") < cost then
+		self:promptCrate(crateIndex)
 		return false
 	end
 
@@ -192,11 +262,7 @@ function ConveyorServer.buyCrate(self: ConveyorServer, player: Player, crateInde
 		return value - cost
 	end)
 
-	self.crates[crateIndex] = nil
-	self.networker:fireAll("crateBought", crateIndex)
-
-	local uniqueId = InventoryServiceServer:addCrate(player, crateData)
-	InventoryServiceServer:addToHotBar(player, uniqueId)
+	self:boughtCrate(crateIndex)
 
 	return true
 end

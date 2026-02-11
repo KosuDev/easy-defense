@@ -46,11 +46,19 @@ export type UnprocessedInstaCrate = {
 
 export type InstaOpenCrates = { [number]: UnprocessedInstaCrate }
 
+export type ConveyorBoughtCrate = {
+	conveyorIndex: number,
+	n: number,
+	crateId: string,
+	mutations: Mutations?,
+}
+
 return {
 	currency = 100,
 	rebirths = 0,
 	conveyorLevel = 1,
 	instaOpenCrates = {},
+	conveyorBoughtCrates = {},
 	towerIndex = {
 		normal = {},
 		gold = {},

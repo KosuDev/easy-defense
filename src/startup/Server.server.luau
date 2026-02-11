@@ -16,6 +16,7 @@ function DataService:onPlayerInit(_player, data)
 	print(data)
 	data.sessionStart = os.time()
 	data.rebirths = 6
+	data.currency = 0
 end
 
 DataService:addPlayerRemovingCallback(function(_player, data)
