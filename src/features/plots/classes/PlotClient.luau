@@ -7,6 +7,7 @@ local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local ConveyorClient = require(ReplicatedStorage.Source.Features.Conveyor.ConveyorClient)
+local TouchPad = require(ReplicatedStorage.Source.Features.Conveyor.Modules.TouchPad)
 local CrateOpenVfx = require(ReplicatedStorage.Source.Features.Crates.Modules.CrateOpenVfx)
 local LuckyBlockOpenVfx = require(ReplicatedStorage.Source.Features.Crates.Modules.LuckyBlockOpenVfx)
 local DefenseClient = require(ReplicatedStorage.Source.Features.Defense.Classes.DefenseClient)
@@ -14,6 +15,8 @@ local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
+local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
@@ -32,7 +35,7 @@ export type PlotClient = typeof(setmetatable(
 		cf: CFrame,
 		index: number,
 		player: Player,
-		plotModel: Model,
+		plotModel: Model & any,
 		janitor: Janitor.Janitor,
 		nodes: { { ClientNode } },
 		defense: DefenseClient.DefenseClient,
@@ -64,6 +67,19 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 	self.conveyor =
 		ConveyorClient.new(self.index, self.plotModel, plotData.conveyorModel, self.player, plotData.conveyorLevel)
 	self:loadDefense()
+
+	self.plotModel.StarterPack.StarterPackRoot.BillboardGui.Cost.Text =
+		MonetizationServiceClient:getProductInfo(Products.starterPack).CostText
+	self.janitor:Add(MonetizationServiceClient:getProductInfoChangedSignal(Products.starterPack):Connect(function()
+		local info = MonetizationServiceClient:getProductInfo(Products.starterPack)
+		self.plotModel.StarterPack.StarterPackRoot.BillboardGui.Cost.Text = info.CostText
+	end))
+
+	self.janitor:Add(TouchPad.new(self.plotModel.StarterPack.Hitbox, function()
+		if not MonetizationServiceClient:ownsGamepass(Products.starterPack :: any) then
+			MonetizationServiceClient:promptProduct(Products.starterPack :: any)
+		end
+	end))
 
 	return self
 end

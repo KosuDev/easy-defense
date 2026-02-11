@@ -13,7 +13,7 @@ export type PlotData = {
 	cf: CFrame,
 	index: number,
 	player: Player,
-	plotModel: Model,
+	plotModel: Model & any,
 	nodes: { { Node } },
 	paths: any,
 	conveyorModel: (Model & any)?,
