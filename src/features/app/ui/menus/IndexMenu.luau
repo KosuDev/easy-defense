@@ -72,6 +72,9 @@ end
 
 local function AllTowers()
 	return Sift.Dictionary.map(Towers.towers, function(towerInfo: Towers.TowerInfo, towerId: string)
+		if towerInfo.isLuckyBlock then
+			return nil
+		end
 		return e(TowerIndex, {
 			towerId = towerId,
 			towerInfo = towerInfo,

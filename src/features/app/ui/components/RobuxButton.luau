@@ -21,16 +21,18 @@ type RobuxButtonProps = {
 	AnchorPoint: Vector2?,
 	Scale: number?,
 	Size: UDim2?,
+	ButtonSize: UDim2?,
 }
 
 return function(props: RobuxButtonProps)
 	local product = useProduct(props.product)
 	local giftId = if props.HideGift then nil else product.giftId
 	local cost = MonetizationServiceClient:getProductCostString(props.product)
-	local buttonProps = Sift.Dictionary.removeKeys(props, "product", "children", "HideGift", "Scale", "Size")
+	local buttonProps =
+		Sift.Dictionary.removeKeys(props, "product", "children", "HideGift", "Scale", "Size", "ButtonSize")
 	local scale = props.Scale or 1
 	local size = props.Size or UDim2.fromOffset(160 * scale, 50 * scale)
-	buttonProps.Size = UDim2.fromScale(1, 1)
+	buttonProps.Size = props.ButtonSize or UDim2.fromScale(1, 1)
 	buttonProps.Text = cost
 	buttonProps.LayoutOrder = 2
 	buttonProps.Activated = function()
@@ -77,8 +79,6 @@ return function(props: RobuxButtonProps)
 					}),
 				})
 				else nil,
-		}),
-
-		props.children,
+		}, props.children),
 	})
 end

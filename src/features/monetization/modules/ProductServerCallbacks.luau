@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local ShopUtils = require(ReplicatedStorage.Source.Features.Shop.ShopUtils)
@@ -45,6 +46,23 @@ Products.currency3.callback = function(player: Player)
 	DataService:update(player, "currency", function(amt: number)
 		return amt + ShopUtils.getCurrencyAmtFromRebirth(3, rebirths)
 	end)
+end
+
+local function luckyBlockCallback(player: Player, id: string, amt: number): ()
+	InventoryServiceServer:addCrate(player, {
+		crateId = id,
+		amt = amt,
+	})
+end
+
+for i = 1, 3, 1 do
+	local id = "luckyBlock" .. i
+	Products["luckyBlock" .. i].callback = function(player: Player)
+		return luckyBlockCallback(player, id, 1)
+	end
+	Products["threeLuckyBlock" .. i].callback = function(player: Player)
+		return luckyBlockCallback(player, id, 3)
+	end
 end
 
 return nil

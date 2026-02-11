@@ -157,6 +157,39 @@ local products = {
 	crate9 = {
 		id = 3534576814,
 	} :: MonetizationProduct,
+
+	luckyBlock1 = {
+		id = 3534681159,
+		giftId = 3534681227,
+		random = true,
+	} :: MonetizationProduct,
+
+	luckyBlock2 = {
+		id = 3534681555,
+		giftId = 3534681611,
+		random = true,
+	} :: MonetizationProduct,
+
+	luckyBlock3 = {
+		id = 3534681871,
+		giftId = 3534681812,
+		random = true,
+	} :: MonetizationProduct,
+
+	threeLuckyBlock1 = {
+		id = 3534681390,
+		random = true,
+	} :: MonetizationProduct,
+
+	threeLuckyBlock2 = {
+		id = 3534681726,
+		random = true,
+	} :: MonetizationProduct,
+
+	threeLuckyBlock3 = {
+		id = 3534681979,
+		random = true,
+	} :: MonetizationProduct,
 }
 
 return products -- :: { [keyof<typeof(products)>]: MonetizationProduct }
