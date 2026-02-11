@@ -41,6 +41,12 @@ local ORANGE = ColorSequence.new({
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 94, 27)),
 })
 
+local GREY = ColorSequence.new({
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(224, 224, 224)),
+	ColorSequenceKeypoint.new(0.2, Color3.fromRGB(144, 144, 144)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(94, 94, 94)),
+})
+
 local function gold(props)
 	local newProps = Sift.Dictionary.set(props, "Gradient", GOLD)
 	return e(StudFrame, newProps, props.children)
@@ -71,6 +77,11 @@ local function orange(props)
 	return e(StudFrame, newProps, props.children)
 end
 
+local function grey(props)
+	local newProps = Sift.Dictionary.set(props, "Gradient", GREY)
+	return e(StudFrame, newProps, props.children)
+end
+
 return {
 	Gold = gold,
 	Green = green,
@@ -78,4 +89,5 @@ return {
 	Purple = purple,
 	Red = red,
 	Orange = orange,
+	Grey = grey,
 }
