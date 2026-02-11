@@ -395,6 +395,18 @@
               "$path": "src/features/mutations/MutationsServiceClient.luau"
             }
           },
+          "Notifications": {
+            "$className": "Folder",
+            "NotificationServiceClient": {
+              "$path": "src/features/notifications/NotificationServiceClient.luau"
+            },
+            "UI": {
+              "$className": "Folder",
+              "Notifications": {
+                "$path": "src/features/notifications/ui/Notifications.luau"
+              }
+            }
+          },
           "Plots": {
             "$className": "Folder",
             "Classes": {
@@ -480,6 +492,9 @@
             "$className": "Folder",
             "ColorTweaker": {
               "$path": "src/core/platform/ColorTweaker.luau"
+            },
+            "RetryAsync": {
+              "$path": "src/core/platform/RetryAsync.luau"
             },
             "SafeTeleport": {
               "$path": "src/core/platform/SafeTeleport.luau"
@@ -690,6 +705,12 @@
           "$className": "Folder",
           "MutationServiceServer": {
             "$path": "src/features/mutations/MutationServiceServer.luau"
+          }
+        },
+        "Notifications": {
+          "$className": "Folder",
+          "NotificationServiceServer": {
+            "$path": "src/features/notifications/NotificationServiceServer.luau"
           }
         },
         "Plots": {

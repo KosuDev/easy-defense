@@ -22,6 +22,11 @@ return {
 			SoundId = "rbxassetid://71294801358152",
 			Volume = 1,
 		},
+
+		notification = {
+			SoundId = "rbxassetid://4612375802",
+			Volume = 0.5,
+		},
 	},
 
 	misc = {
