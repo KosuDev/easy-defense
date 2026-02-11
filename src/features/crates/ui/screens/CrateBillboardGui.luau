@@ -33,7 +33,8 @@ function CrateBillboardGui.update(gui: CrateGui, crateData: DataTemplate.CrateDa
 	local info = Towers.getTowerInfo(crateData.crateId)
 	local rarityTier = Tiers.getTierForOdds(info.odds)
 	--gui.StudsOffsetWorldSpace = Vector3.new(0, info.height * scale, 0)
-	gui.CrateName.Text = info.name .. " Crate"
+	local isLuckyBlock = info.isLuckyBlock
+	gui.CrateName.Text = if isLuckyBlock then info.name else info.name .. " Crate"
 	gui.Rarity.Text = rarityTier.name
 	gui.Rarity.Gradient.Color = rarityTier.gradient
 	gui.Cost.Text = `${Abbreviate(info.crateCost)}`

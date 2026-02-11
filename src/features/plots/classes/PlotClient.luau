@@ -8,7 +8,9 @@ local Networker = require(ReplicatedStorage.Packages.Networker)
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local ConveyorClient = require(ReplicatedStorage.Source.Features.Conveyor.ConveyorClient)
 local CrateOpenVfx = require(ReplicatedStorage.Source.Features.Crates.Modules.CrateOpenVfx)
+local LuckyBlockOpenVfx = require(ReplicatedStorage.Source.Features.Crates.Modules.LuckyBlockOpenVfx)
 local DefenseClient = require(ReplicatedStorage.Source.Features.Defense.Classes.DefenseClient)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.InventorySlice)
@@ -131,11 +133,17 @@ function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, t
 	local nodeData = self.nodes[floor][node]
 	local crateModel = nodeData.model
 	PlotSlice.actions.removeCrate(nodeData.root)
+	local crateInfo = Towers.getTowerInfo(nodeData.data.crateId)
+	local isLuckyBlock = crateInfo.isLuckyBlock
 	nodeData.data = nil
 	nodeData.model = nil :: any
 	self.nodesUpdated:Fire(floor, node)
 
-	CrateOpenVfx(nodeData.cf, crateModel, towerData)
+	if isLuckyBlock then
+		LuckyBlockOpenVfx(nodeData.cf, crateModel, towerData, crateInfo.luck)
+	else
+		CrateOpenVfx(nodeData.cf, crateModel, towerData)
+	end
 
 	self.defense:towerAdded(floor, node, towerCf, towerData)
 end

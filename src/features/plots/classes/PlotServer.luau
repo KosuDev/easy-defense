@@ -394,13 +394,14 @@ function PlotServer.openCrate(self: PlotServer, floor: number, node: number): bo
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
+	local id = if info.isLuckyBlock then Towers.rollTowerId(info.luck) else info.id
 	local mutations = MutationServiceServer:rollMutations(self.player)
 	if mutations and crateData.mutations then
 		Sift.Dictionary.merge(mutations, crateData.mutations)
 	elseif not mutations then
 		mutations = crateData.mutations
 	end
-	local towerData: DataTemplate.TowerData = { itemId = info.id, level = 1, mutations = mutations }
+	local towerData: DataTemplate.TowerData = { itemId = id, level = 1, mutations = mutations }
 	local uniqueId = InventoryServiceServer:addTower(self.player, towerData)
 	self.networker:fireAll("crateOpened", floor, node, towerData, nodeInfo.cf)
 	self:build(floor, node, uniqueId, nil, true)

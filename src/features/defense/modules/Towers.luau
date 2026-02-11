@@ -17,6 +17,9 @@ export type TowerInfo = {
 	id: string,
 	height: number,
 	layoutOrder: number,
+	hidden: boolean?,
+	isLuckyBlock: boolean?,
+	luck: number?,
 }
 
 local towers = {
@@ -278,6 +281,42 @@ local towers = {
 		range = 25,
 		firerate = 1,
 		height = 9,
+	},
+
+	luckyBlock1 = {
+		name = "Lucky Block",
+		image = "rbxassetid://139800799913497",
+		crateImage = "rbxassetid://139800799913497",
+		crateOpenTime = 0,
+		crateCost = 0,
+		weight = 0,
+		hidden = true,
+		isLuckyBlock = true,
+		luck = 100,
+	},
+
+	luckyBlock2 = {
+		name = "Lucky Block",
+		image = "rbxassetid://87990645026992",
+		crateImage = "rbxassetid://87990645026992",
+		crateOpenTime = 0,
+		crateCost = 0,
+		weight = 0,
+		hidden = true,
+		isLuckyBlock = true,
+		luck = 500,
+	},
+
+	luckyBlock3 = {
+		name = "Lucky Block",
+		image = "rbxassetid://122795423201439",
+		crateImage = "rbxassetid://122795423201439",
+		crateOpenTime = 0,
+		crateCost = 0,
+		weight = 0,
+		hidden = true,
+		isLuckyBlock = true,
+		luck = 1000,
 	},
 }
 

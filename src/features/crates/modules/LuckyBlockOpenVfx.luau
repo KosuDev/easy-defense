@@ -4,7 +4,6 @@ local RunService = game:GetService("RunService")
 local Signal = require(ReplicatedStorage.Packages.Signal)
 local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundController)
 local VfxUtils = require(ReplicatedStorage.Source.Core.Platform.VfxUtils)
-local DefenseSlice = require(ReplicatedStorage.Source.Features.Defense.DefenseSlice)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local TowerBillboardGui = require(ReplicatedStorage.Source.Features.Defense.UI.Screens.TowerBillboardGui)
 local MutationsServiceClient = require(ReplicatedStorage.Source.Features.Mutations.MutationsServiceClient)
@@ -15,8 +14,8 @@ local function xToScale(x: number, i: number): number
 	return math.clamp(1.2 * (-(2 * i * x - 1) ^ 2 + 1), 0.001, 1.2)
 end
 
-return function(cf: CFrame, towerData: DataTemplate.TowerData): ()
-	local luck = 1
+return function(cf: CFrame, crateModel: Model, towerData: DataTemplate.TowerData, luck: number): ()
+	crateModel:Destroy()
 	cf *= CFrame.new(0, 0.5, 0)
 	VfxUtils.emitAllAtPosition("CrateOpen", cf.Position)
 	SoundController:Play(Sounds.misc.woosh)
@@ -84,7 +83,6 @@ return function(cf: CFrame, towerData: DataTemplate.TowerData): ()
 				newTower(i - 1)
 			elseif scale <= 0.001 and hasSpawnedNext then
 				conn:Disconnect()
-				DefenseSlice.actions.removeTower(model.PrimaryPart)
 				model:Destroy()
 			end
 
