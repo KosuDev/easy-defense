@@ -190,6 +190,10 @@ local products = {
 		id = 3534681979,
 		random = true,
 	} :: MonetizationProduct,
+
+	recoverCrate = {
+		id = 3535143477,
+	} :: MonetizationProduct,
 }
 
 return products -- :: { [keyof<typeof(products)>]: MonetizationProduct }

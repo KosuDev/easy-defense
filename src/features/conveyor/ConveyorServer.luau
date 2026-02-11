@@ -33,6 +33,7 @@ export type ConveyorServer = typeof(setmetatable(
 		player: Player,
 		timeOfLastCrateSpawn: number,
 		crates: { CrateData? },
+		recoverableCrates: { CrateData? },
 		janitor: Janitor.Janitor,
 		luckyRollOdds: number,
 		model: Model?,
@@ -49,6 +50,7 @@ function ConveyorServer.new(index: number, plotModel: Model, player: Player): Co
 		timeOfLastCrateSpawn = 0,
 		luckyRollOdds = 0,
 		crates = {},
+		recoverableCrates = {},
 		model = nil,
 		janitor = Janitor.new(),
 	}, ConveyorServer)
@@ -117,6 +119,19 @@ function ConveyorServer.requestUpgrade(self: ConveyorServer, player: Player)
 	DataService:set(player, "conveyorLevel", nextLevel)
 end
 
+function ConveyorServer.recoverCrates(self: ConveyorServer)
+	local amt = #self.recoverableCrates
+	if amt == 0 then
+		return false
+	end
+
+	self.recoverableCrates, self.crates = self.crates, self.recoverableCrates
+	self.timeOfLastCrateSpawn = os.clock()
+	self.networker:fireAll("cratesChanged", self.crates)
+
+	return true
+end
+
 function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolean
 	if self.player ~= player then
 		return false
@@ -132,6 +147,9 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 	DataService:update(player, { "stats", "crateRolls" }, function(amt: number)
 		return amt + 1
 	end, true)
+
+	self.recoverableCrates = self.crates
+	self.crates = {}
 
 	local isLuckyRoll = math.random() < self.luckyRollOdds
 	if isLuckyRoll then

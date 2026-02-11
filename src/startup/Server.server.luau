@@ -18,6 +18,7 @@ function DataService:onPlayerInit(_player, data)
 	data.sessionStart = os.time()
 	data.rebirths = 6
 	data.currency = 0
+	--data.__gamepasses = {}
 
 	task.delay(3, function()
 		InventoryServiceServer:addCrate(_player, {
@@ -43,7 +44,7 @@ DataService:init({
 
 MonetizationServiceServer:init({
 	products = Products,
-	canAwardGamepasses = true,
+	--canAwardGamepasses = false,
 	freePassesGroupRank = 45,
 	groupId = 15794692,
 })

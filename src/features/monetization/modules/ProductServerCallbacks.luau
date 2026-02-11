@@ -97,4 +97,13 @@ for i = 1, 3, 1 do
 	end
 end
 
+Products.recoverCrate.callback = function(player: Player)
+	local plot = PlotServiceServer:getPlotFromPlayer(player)
+	if not plot then
+		return false
+	end
+
+	return plot.conveyor:recoverCrates()
+end
+
 return nil

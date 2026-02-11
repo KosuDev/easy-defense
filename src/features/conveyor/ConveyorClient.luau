@@ -9,6 +9,10 @@ local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundCont
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local TouchPad = require(ReplicatedStorage.Source.Features.Conveyor.Modules.TouchPad)
 local CrateClient = require(ReplicatedStorage.Source.Features.Crates.Classes.CrateClient)
+local CrateBillboardGui = require(ReplicatedStorage.Source.Features.Crates.UI.Screens.CrateBillboardGui)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
+local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
@@ -23,12 +27,18 @@ ConveyorClient.__index = ConveyorClient
 
 type Crate = CrateClient.Crate
 type CrateData = DataTemplate.CrateData
+type RecoverableCrate = {
+	crateData: CrateData,
+	index: number,
+	Model: Model,
+}
 
 export type ConveyorClient = typeof(setmetatable(
 	{} :: {
 		level: Charm.Atom<number>,
 		player: Player,
 		crates: { Crate },
+		recoverableCrates: { RecoverableCrate },
 		plotModel: Model & any,
 		crateSpawnCf: CFrame,
 		model: (Model & any)?,
@@ -56,6 +66,7 @@ function ConveyorClient.new(
 		player = player,
 		crateSpawnCf = plotModel.CrateStart.CFrame,
 		crates = {},
+		recoverableCrates = {},
 		plotModel = plotModel,
 		model = conveyorModel,
 		janitor = Janitor.new(),
@@ -107,10 +118,44 @@ function ConveyorClient.attemptCrateSpawn(self: ConveyorClient)
 	end)
 end
 
-function ConveyorClient.cratesChanged(self: ConveyorClient, crateDatas: { CrateData })
-	for _, prevCrate in self.crates do
-		prevCrate:despawn()
+local function getRecoverableOffset(index: number, max: number)
+	local PADDING = 3
+	local MIDPOINT = (max - 1) * PADDING / 2
+	local goalOffset = PADDING - (index - 1) * PADDING
+	return MIDPOINT + goalOffset
+end
+
+function ConveyorClient.updateRecoverableCrates(self: ConveyorClient, recoverableCrates: { RecoverableCrate }): ()
+	for _, recoverableCrate in self.recoverableCrates do
+		recoverableCrate.Model:Destroy()
 	end
+
+	self.recoverableCrates = recoverableCrates
+	local numCrates = #recoverableCrates
+	for i, recoverableCrate in self.recoverableCrates do
+		recoverableCrate.Model:ScaleTo(0.5)
+		local cf = CFrame.new(getRecoverableOffset(i, numCrates) - 3, 3, -4.5)
+		recoverableCrate.Model:PivotTo(self.plotModel.Pads.RecoverPad.Bottom.CFrame * cf)
+		recoverableCrate.Model.Parent = workspace
+	end
+end
+
+function ConveyorClient.cratesChanged(self: ConveyorClient, crateDatas: { CrateData })
+	local recoverableCrates = {}
+	for i, prevCrate in self.crates do
+		prevCrate:despawn()
+
+		local recoverableModel = Towers.getCrateModel(prevCrate.crateData.crateId)
+		local gui = CrateBillboardGui.new(prevCrate.crateData)
+		gui.Parent = recoverableModel.PrimaryPart
+
+		recoverableCrates[i] = {
+			crateData = prevCrate.crateData,
+			index = prevCrate.index,
+			Model = recoverableModel,
+		}
+	end
+	self:updateRecoverableCrates(recoverableCrates)
 
 	local isLocalPlayer = self.player == Players.LocalPlayer
 	self.crates = {}
@@ -163,6 +208,19 @@ function ConveyorClient.initPads(self: ConveyorClient)
 
 	self.janitor:Add(TouchPad.new(upgradePad.Button, function()
 		self.networker:fire("requestUpgrade")
+	end))
+
+	self.plotModel.Pads.RecoverPad.Bottom.BillboardGui.Cost.Text =
+		MonetizationServiceClient:getProductInfo(Products.recoverCrate).CostText
+	self.janitor:Add(MonetizationServiceClient:getProductInfoChangedSignal(Products.recoverCrate):Connect(function()
+		local info = MonetizationServiceClient:getProductInfo(Products.recoverCrate)
+		self.plotModel.Pads.RecoverPad.Bottom.BillboardGui.Cost.Text = info.CostText
+	end))
+
+	self.janitor:Add(TouchPad.new(self.plotModel.Pads.RecoverPad.Button, function()
+		if #self.recoverableCrates > 0 then
+			MonetizationServiceClient:promptProduct(Products.recoverCrate :: any)
+		end
 	end))
 end
 
