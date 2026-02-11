@@ -19,6 +19,7 @@ export type TowerInfo = {
 	layoutOrder: number,
 	hidden: boolean?,
 	isLuckyBlock: boolean?,
+	percentDamageOfBest: number?,
 	luck: number?,
 }
 
@@ -281,6 +282,20 @@ local towers = {
 		range = 25,
 		firerate = 1,
 		height = 9,
+	},
+
+	pyramidium = {
+		name = "Pyramidium",
+		image = "rbxassetid://98593813513836",
+		crateImage = "",
+		crateOpenTime = 0,
+		crateCost = 0,
+		weight = 0,
+		damage = 1,
+		percentDamageOfBest = 2.0,
+		range = 25,
+		firerate = 1,
+		height = 12,
 	},
 
 	luckyBlock1 = {

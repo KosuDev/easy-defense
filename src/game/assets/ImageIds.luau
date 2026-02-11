@@ -19,6 +19,7 @@ return {
 	doubleCrate = "rbxassetid://84414197601780",
 	tripleCrate = "rbxassetid://82795210322201",
 	flex = "rbxassetid://105099692250066",
+	pyraStroke = "rbxassetid://101453484700747",
 	mutations = {
 		diamond = "rbxassetid://108049478374755",
 		gold = "rbxassetid://111372280889175",

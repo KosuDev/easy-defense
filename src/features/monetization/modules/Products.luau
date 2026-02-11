@@ -194,6 +194,11 @@ local products = {
 	recoverCrate = {
 		id = 3535143477,
 	} :: MonetizationProduct,
+
+	pyramidiumTower = {
+		id = 3535178179,
+		giftId = 3535178260,
+	} :: MonetizationProduct,
 }
 
 return products -- :: { [keyof<typeof(products)>]: MonetizationProduct }

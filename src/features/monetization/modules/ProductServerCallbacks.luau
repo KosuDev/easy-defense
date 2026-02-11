@@ -106,4 +106,16 @@ Products.recoverCrate.callback = function(player: Player)
 	return plot.conveyor:recoverCrates()
 end
 
+Products.pyramidiumTower.callback = function(player: Player)
+	InventoryServiceServer:addToHotBar(
+		player,
+		InventoryServiceServer:addTower(player, {
+			itemId = "pyramidium",
+			level = 1,
+		})
+	)
+
+	NotificationServiceServer:sendNotification(player, Towers.getTowerInfo("pyramidium").image, 1)
+end
+
 return nil

@@ -8,6 +8,7 @@ local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local ShopContentFrame = require(ReplicatedStorage.Source.Features.Shop.UI.Components.ShopContentFrame)
 local ShopFrame = require(ReplicatedStorage.Source.Features.Shop.UI.Components.ShopFrame)
+local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 
 local e = React.createElement
 
@@ -61,9 +62,10 @@ local function OPLimitedFrame()
 		LayoutOrder = 3,
 	}, {
 		Title = e(TextLabel, {
-			Text = "Tower Name Here",
+			Text = "Pyramidium Tower",
+			TextXAlignment = Enum.TextXAlignment.Left,
 			Size = UDim2.fromScale(0.66, 0.24),
-			Position = UDim2.fromScale(-0.03, 0),
+			Position = UDim2.fromScale(0.02, 0),
 			Stroke = { Thickness = 4, Color = Color3.fromRGB(0, 0, 0) },
 			ZIndex = 3,
 		}, {
@@ -80,10 +82,10 @@ local function OPLimitedFrame()
 		}),
 
 		Icon = e("ImageLabel", {
-			Image = Towers.getTowerInfo("protonSniper").image,
-			Size = UDim2.fromScale(1.3, 1.3),
+			Image = ImageIds.pyraStroke,
+			Size = UDim2.fromScale(1.25, 1.25),
 			SizeConstraint = Enum.SizeConstraint.RelativeYY,
-			Position = UDim2.fromScale(1.05, 0.5),
+			Position = UDim2.fromScale(1, 0.525),
 			AnchorPoint = Vector2.new(1, 0.5),
 			BackgroundTransparency = 1,
 		}),
@@ -102,7 +104,7 @@ local function OPLimitedFrame()
 			Scale = 1.2,
 			Position = UDim2.fromScale(0.1, 0.955),
 			AnchorPoint = Vector2.new(0, 1),
-			product = Products.diamondHunter,
+			product = Products.pyramidiumTower,
 		}),
 	})
 end
