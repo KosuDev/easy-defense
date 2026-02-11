@@ -9,6 +9,7 @@ local InventoryServiceServer = require(ServerScriptService.Features.Inventory.In
 local LeaderboardServiceServer = require(ServerScriptService.Features.Leaderboards.LeaderboardServiceServer)
 local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
+local NotificationServiceServer = require(ServerScriptService.Features.Notifications.NotificationServiceServer)
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -52,3 +53,4 @@ InventoryServiceServer:init()
 MutationServiceServer:init()
 LeaderboardServiceServer:init()
 AutoRejoinServiceServer:init()
+NotificationServiceServer:init()

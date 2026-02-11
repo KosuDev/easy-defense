@@ -36,7 +36,7 @@ local function addNotification(props: NotificationProps)
 end
 
 local function NotificationComponent(props: NotificationProps & { id: string })
-	local size, spring = useSpring(UDim2.fromScale(0, 0), { frequency = 0.33, damping = 0.6 }, UDim2.fromScale(1, 1))
+	local size, spring = useSpring(UDim2.fromScale(0, 0), { frequency = 3, damping = 0.6 }, UDim2.fromScale(1, 1))
 
 	React.useEffect(function()
 		local discon
@@ -62,11 +62,10 @@ local function NotificationComponent(props: NotificationProps & { id: string })
 	return e(ShopFrame.Grey, {
 		Size = size,
 		SizeConstraint = Enum.SizeConstraint.RelativeYY,
-		BackgroundTransparency = 1,
 	}, {
 		e("ImageLabel", {
 			Image = props.Image,
-			Size = UDim2.fromScale(0.6, 0.6),
+			Size = UDim2.fromScale(0.8, 0.8),
 			Position = UDim2.fromScale(0.5, 0.5),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundTransparency = 1,
