@@ -18,6 +18,7 @@ local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local ShopUtils = require(ReplicatedStorage.Source.Features.Shop.ShopUtils)
+local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local PlotModel = ReplicatedStorage.Assets.Misc.Plot
 local PlotDefenses = ReplicatedStorage.Assets.PlotDefenses
@@ -394,7 +395,8 @@ function PlotServer.openCrate(self: PlotServer, floor: number, node: number): bo
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 	DataService:set(self.player, { "plotNodes", floorNodeStr }, nil)
 
-	local id = if info.isLuckyBlock then Towers.rollTowerId(info.luck) else info.id
+	local conveyorLuck = ConveyorUpgrades[self.conveyor.level].luck
+	local id = if info.isLuckyBlock then Towers.rollTowerId(info.luck * conveyorLuck) else info.id
 	local mutations = MutationServiceServer:rollMutations(self.player)
 	if mutations and crateData.mutations then
 		Sift.Dictionary.merge(mutations, crateData.mutations)

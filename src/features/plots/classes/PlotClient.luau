@@ -17,6 +17,7 @@ local InventorySlice = require(ReplicatedStorage.Source.Features.Inventory.Inven
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 local PlotClient = {}
@@ -140,7 +141,12 @@ function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, t
 	self.nodesUpdated:Fire(floor, node)
 
 	if isLuckyBlock then
-		LuckyBlockOpenVfx(nodeData.cf, crateModel, towerData, crateInfo.luck)
+		LuckyBlockOpenVfx(
+			nodeData.cf,
+			crateModel,
+			towerData,
+			crateInfo.luck * ConveyorUpgrades[self.conveyor.level()].luck
+		)
 	else
 		CrateOpenVfx(nodeData.cf, crateModel, towerData)
 	end
