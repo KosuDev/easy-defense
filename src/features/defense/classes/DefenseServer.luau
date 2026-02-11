@@ -203,7 +203,8 @@ end
 
 function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
 	local rebirths: number = DataService:get(self.player, "rebirths")
-	local reward = math.round(Enemies.getEnemyReward(enemy.maxHealth, rebirths) * self.currencyMult)
+	local ownsStarterPack = MonetizationServiceServer:ownsGamepass(self.player, Products.starterPack)
+	local reward = math.round(Enemies.getEnemyReward(enemy.maxHealth, rebirths, ownsStarterPack) * self.currencyMult)
 	DataService:update(self.player, "currency", function(amt: number)
 		return amt + reward
 	end)

@@ -13,6 +13,7 @@ local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local InsetFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.InsetFrame)
 local StudButton = require(ReplicatedStorage.Source.Features.App.UI.Components.StudButton)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local InventoryServiceUtils = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceUtils)
 local ItemIcon = require(ReplicatedStorage.Source.Features.Inventory.UI.Components.ItemIcon)
@@ -75,7 +76,10 @@ local function ItemButton(props: ItemButtonProps)
 
 	React.useEffect(function()
 		local function calc()
-			if props.itemData.fav then
+			local info = if props.itemData.itemId
+				then Towers.getTowerInfo(props.itemData.itemId)
+				else Towers.getTowerInfo(props.itemData.crateId)
+			if props.itemData.fav or info.isLuckyBlock then
 				return false
 			end
 

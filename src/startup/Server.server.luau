@@ -19,13 +19,6 @@ function DataService:onPlayerInit(_player, data)
 	data.rebirths = 6
 	data.currency = 0
 	--data.__gamepasses = {}
-
-	task.delay(3, function()
-		InventoryServiceServer:addCrate(_player, {
-			crateId = "luckyBlock1",
-			amt = 1,
-		})
-	end)
 end
 
 DataService:addPlayerRemovingCallback(function(_player, data)

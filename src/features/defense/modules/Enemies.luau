@@ -233,8 +233,11 @@ function Enemies.getEnemyForStrength(strength: number): EnemyStats
 	return getEnemyStats(x, enemyType)
 end
 
-function Enemies.getEnemyReward(maxHp: number, rebirths: number): number
+function Enemies.getEnemyReward(maxHp: number, rebirths: number, ownsStarterPack: boolean): number
 	local multiplier = 1 + rebirths * 0.1
+	if ownsStarterPack then
+		multiplier += 0.1
+	end
 	return (maxHp + BASE_REWARD) * multiplier
 end
 

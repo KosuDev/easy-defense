@@ -6,6 +6,8 @@ local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local HitSplat = require(ReplicatedStorage.Source.Features.Defense.Modules.HitSplat)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
+local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
+local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 
 local MODEL_OFFSET = CFrame.new(0, 0.125, 0) * CFrame.Angles(0, math.rad(-90), 0)
 local ANIMATION_SPEED = 5.5
@@ -114,7 +116,9 @@ function EnemyClient.damage(self: EnemyClient, amt: number): ()
 	if self.health <= 0 then
 		self.dead = true
 		local color = self.info.color
-		local reward = Enemies.getEnemyReward(self.maxHealth, DataService.client:get("rebirths")) * self.rewardMult
+		local ownsStarterPack = MonetizationServiceClient:ownsGamepass(Products.starterPack :: any)
+		local reward = Enemies.getEnemyReward(self.maxHealth, DataService.client:get("rebirths"), ownsStarterPack)
+			* self.rewardMult
 		HitSplat(self:getPosition(), color, reward)
 	else
 		self:updateHpBar()
