@@ -25,6 +25,7 @@ export type DefenseClient = typeof(setmetatable(
 		updateConn: RBXScriptConnection?,
 		damageMult: number,
 		currencyMult: number,
+		bestDps: number,
 	},
 	DefenseClient
 ))
@@ -38,6 +39,7 @@ function DefenseClient.new(index: number, player: Player): DefenseClient
 		paths = {},
 		damageMult = 1,
 		currencyMult = 1,
+		bestDps = 0,
 	}, DefenseClient)
 
 	self.networker = Networker.client.new("Defense" .. index, self :: any)
@@ -93,7 +95,7 @@ function DefenseClient.towerRemoved(self: DefenseClient, floor: number, node: nu
 end
 
 function DefenseClient.towerAdded(self: DefenseClient, floor: number, node: number, cf: CFrame, data: TowerData): ()
-	local tower = TowerClient.new(floor, node, cf, data, self.damageMult)
+	local tower = TowerClient.new(floor, node, cf, data, self.damageMult, self.bestDps)
 	if not self.towers[floor] then
 		self.towers[floor] = {}
 	end
@@ -105,6 +107,14 @@ function DefenseClient.towerUpdated(self: DefenseClient, floor: number, node: nu
 	if tower then
 		tower:setData(data)
 		VfxUtils.emitAllAtPosition("TowerUpgrade", tower.model:GetPivot().Position + Vector3.new(0, 3, 0), true)
+	end
+end
+
+function DefenseClient.bestDpsUpdated(self: DefenseClient, bestDps: number): ()
+	for _, towers in self.towers do
+		for _, tower in towers do
+			tower:setBestDps(bestDps)
+		end
 	end
 end
 

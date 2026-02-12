@@ -24,11 +24,19 @@ export type TowerClient = typeof(setmetatable(
 		janitor: Janitor.Janitor,
 		gui: TowerBillboardGui.TowerGui,
 		damageMult: number,
+		bestDps: number,
 	},
 	TowerClient
 ))
 
-function TowerClient.new(floor: number, node: number, cf: CFrame, data: TowerData, damageMult: number): TowerClient
+function TowerClient.new(
+	floor: number,
+	node: number,
+	cf: CFrame,
+	data: TowerData,
+	damageMult: number,
+	bestDps: number
+): TowerClient
 	local self = setmetatable({
 		floor = floor,
 		node = node,
@@ -36,6 +44,7 @@ function TowerClient.new(floor: number, node: number, cf: CFrame, data: TowerDat
 		cf = cf,
 		janitor = Janitor.new(),
 		damageMult = damageMult,
+		bestDps = bestDps,
 	}, TowerClient)
 
 	local model = Towers.getTowerModel(data.itemId, data.mutations)
@@ -43,7 +52,7 @@ function TowerClient.new(floor: number, node: number, cf: CFrame, data: TowerDat
 	model:PivotTo(cf * CFrame.new(0, 0.5, 0))
 	self.model = model
 	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(data.level))
-	local gui = TowerBillboardGui.new(data, self.damageMult)
+	local gui = TowerBillboardGui.new(data, self.damageMult, self.bestDps)
 	gui.Parent = model.PrimaryPart
 	self.gui = gui
 	self:charFloorChanged()
@@ -62,7 +71,7 @@ end
 
 function TowerClient.setDamageMult(self: TowerClient, damageMult: number): ()
 	self.damageMult = damageMult
-	TowerBillboardGui.update(self.gui, self.data, damageMult)
+	TowerBillboardGui.update(self.gui, self.data, damageMult, self.bestDps)
 end
 
 function TowerClient.charFloorChanged(self: TowerClient)
@@ -80,10 +89,15 @@ function TowerClient.charFloorChanged(self: TowerClient)
 	end
 end
 
+function TowerClient.setBestDps(self: TowerClient, bestDps: number): ()
+	self.bestDps = bestDps
+	TowerBillboardGui.update(self.gui, self.data, self.damageMult, self.bestDps)
+end
+
 function TowerClient.setData(self: TowerClient, data: TowerData): ()
 	self.data = data
 	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(data.level))
-	TowerBillboardGui.update(self.gui, data, self.damageMult)
+	TowerBillboardGui.update(self.gui, data, self.damageMult, self.bestDps)
 end
 
 function TowerClient.attack(self: TowerClient, enemy: EnemyClient.EnemyClient, damage: number): ()

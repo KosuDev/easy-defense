@@ -20,6 +20,7 @@ export type PlotData = {
 	conveyorLevel: number,
 	currencyMult: number,
 	damageMult: number,
+	bestDps: number,
 }
 
 export type ClientNode = Node & {

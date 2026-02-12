@@ -31,13 +31,18 @@ export type TowerGui = BillboardGui & {
 
 local TowerBillboardGui = {}
 
-function TowerBillboardGui.new(towerData: DataTemplate.TowerData, dmgMult: number?): TowerGui
+function TowerBillboardGui.new(towerData: DataTemplate.TowerData, dmgMult: number?, bestDps: number?): TowerGui
 	local gui = ReplicatedStorage.Assets.VFX.TowerBillboard:Clone()
-	TowerBillboardGui.update(gui, towerData, dmgMult)
+	TowerBillboardGui.update(gui, towerData, dmgMult, bestDps)
 	return gui
 end
 
-function TowerBillboardGui.update(gui: TowerGui, towerData: DataTemplate.TowerData, dmgMult: number?): ()
+function TowerBillboardGui.update(
+	gui: TowerGui,
+	towerData: DataTemplate.TowerData,
+	dmgMult: number?,
+	bestDps: number?
+): ()
 	local info = Towers.getTowerInfo(towerData.itemId)
 	local rarityTier = Tiers.getTierForOdds(info.odds)
 	local scale = PlotServiceUtils.getScaleFromLevel(towerData.level)
@@ -45,7 +50,13 @@ function TowerBillboardGui.update(gui: TowerGui, towerData: DataTemplate.TowerDa
 	gui.TowerName.TextLabel.Text = info.name
 	gui.Rarity.TextLabel.Text = rarityTier.name
 	gui.Rarity.TextLabel.Gradient.Color = rarityTier.gradient
-	gui.Dps.TextLabel.Text = `💪 {Abbreviate(PlotServiceUtils.getDps(towerData) * (dmgMult or 1))}`
+	if info.percentDamageOfBest and not bestDps then
+		gui.Dps.TextLabel.Text = `💪 {math.round(info.percentDamageOfBest * 100)}% of Best`
+	elseif info.percentDamageOfBest and bestDps then
+		gui.Dps.TextLabel.Text = `💪 {Abbreviate(bestDps * info.percentDamageOfBest * (dmgMult or 1))}`
+	else
+		gui.Dps.TextLabel.Text = `💪 {Abbreviate(PlotServiceUtils.getDps(towerData) * (dmgMult or 1))}`
+	end
 	for mutation, _ in Mutations.mutations do
 		local hasMutation = towerData.mutations and towerData.mutations[mutation]
 		local mutationImg = gui.Mutations:FindFirstChild(mutation)

@@ -32,6 +32,7 @@ export type TowerServer = typeof(setmetatable(
 		firerate: number,
 		dmg: number,
 		damageMult: number,
+		bestDps: number,
 	},
 	TowerServer
 ))
@@ -49,6 +50,7 @@ function TowerServer.new(floor: number, node: number, cf: CFrame, data: TowerDat
 		damageMult = 1,
 		enemies = nil :: any,
 		networker = nil :: any,
+		bestDps = nil :: any,
 	}, TowerServer)
 
 	self.cd = 3 + 1 / self.firerate
@@ -58,7 +60,9 @@ function TowerServer.new(floor: number, node: number, cf: CFrame, data: TowerDat
 end
 
 function TowerServer.attack(self: TowerServer, enemy: EnemyServer): ()
-	local damage = self.dmg * self.damageMult
+	local damage = if self.towerInfo.percentDamageOfBest and self.bestDps
+		then self.towerInfo.percentDamageOfBest * self.bestDps * self.damageMult
+		else self.dmg * self.damageMult
 	enemy:damage(damage)
 	self.cd = 1 / self.firerate
 	self.networker:fireAll("towerAttack", self.floor, self.node, enemy.uniqueId, damage)

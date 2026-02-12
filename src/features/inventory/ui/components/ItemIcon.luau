@@ -84,7 +84,9 @@ return function(props: ItemIconProps)
 
 		Strength = if isTower and props.showStrength ~= false
 			then e(TextLabel, {
-				Text = "💪 " .. Abbreviate(math.round(PlotServiceUtils.getDps(props.itemData) * damageMult)),
+				Text = if info.percentDamageOfBest
+					then `💪 {math.round(info.percentDamageOfBest * 100)}%`
+					else "💪 " .. Abbreviate(math.round(PlotServiceUtils.getDps(props.itemData) * damageMult)),
 				AnchorPoint = Vector2.new(1, 1),
 				TextXAlignment = Enum.TextXAlignment.Right,
 				Position = UDim2.fromScale(0.95, 0.95),

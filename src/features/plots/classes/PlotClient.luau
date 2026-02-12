@@ -62,6 +62,7 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 
 	self.defense.currencyMult = plotData.currencyMult
 	self.defense.damageMult = plotData.damageMult
+	self.defense.bestDps = plotData.bestDps
 	self.defense:pathsUpdated(plotData.paths)
 	self.networker = Networker.client.new("Plot" .. plotData.index, self :: any)
 	self.conveyor =

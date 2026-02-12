@@ -119,6 +119,7 @@ function PlotServer.get(self: PlotServer): PlotTypes.PlotData
 		conveyorLevel = self.conveyor.level,
 		currencyMult = self.defense.currencyMult,
 		damageMult = self.defense.damageMult,
+		bestDps = self.defense.bestDps,
 	}
 end
 

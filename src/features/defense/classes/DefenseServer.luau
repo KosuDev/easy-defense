@@ -31,6 +31,7 @@ export type DefenseServer = typeof(setmetatable(
 		enemies: { { EnemyServer } },
 		index: number,
 		player: Player,
+		bestDps: number,
 		networker: Networker.Server,
 		updateConn: RBXScriptConnection?,
 		sortCooldown: number,
@@ -53,6 +54,7 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 		paths = {},
 		index = index,
 		player = player,
+		bestDps = 0,
 		sortCooldown = SORT_COOLDOWN,
 		burnCooldown = BURN_COOLDOWN,
 		poisonCooldown = POISON_COOLDOWN,
@@ -99,17 +101,32 @@ function DefenseServer.strengthChanged(self: DefenseServer)
 	local numFloors = #self.paths
 	local strength: { number } = table.create(numFloors, 0)
 
+	local bestDps = 0
 	for floor, towers in self.towers do
 		for _, tower in towers do
-			local dps = tower.towerInfo.damage
-				* tower.towerInfo.firerate
-				* PlotServiceUtils.getDamageMultiplier(tower.data.level)
+			local dps = PlotServiceUtils.calcDamage(tower.data)
 			tower.dps = dps
 			strength[floor] += dps
+
+			if dps > bestDps then
+				bestDps = dps
+			end
 		end
 	end
 
 	self.strength = strength
+	if self.bestDps == bestDps then
+		return
+	end
+
+	self.bestDps = bestDps
+	for _, towers in self.towers do
+		for _, tower in towers do
+			tower.bestDps = bestDps
+		end
+	end
+
+	self.networker:fireAll("bestDpsUpdated", bestDps)
 end
 
 function DefenseServer.updatePaths(self: DefenseServer, defenseModel: Model & any)
@@ -184,6 +201,7 @@ function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: To
 	tower.damageMult = self.damageMult
 	tower.enemies = self.enemies[tower.floor]
 	tower.networker = self.networker
+	tower.bestDps = self.bestDps
 	self.towers[tower.floor][uniqueId] = tower
 	if not dontReplicate then
 		self.networker:fireAll("towerAdded", tower.floor, tower.node, tower.cf, tower.data)
