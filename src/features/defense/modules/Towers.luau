@@ -294,7 +294,7 @@ local towers = {
 		damage = 1,
 		percentDamageOfBest = 1.10,
 		range = 25,
-		firerate = 1,
+		firerate = 4,
 		height = 14,
 	},
 

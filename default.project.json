@@ -219,6 +219,9 @@
               "orbOfLight": {
                 "$path": "src/features/defense/towerAnimations/orbOfLight.luau"
               },
+              "overdrive": {
+                "$path": "src/features/defense/towerAnimations/overdrive.luau"
+              },
               "overseer": {
                 "$path": "src/features/defense/towerAnimations/overseer.luau"
               },

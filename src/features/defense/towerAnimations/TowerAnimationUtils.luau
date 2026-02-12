@@ -28,6 +28,24 @@ local function recycleAttachment(attachment: Attachment): ()
 	table.insert(cachedAttachments, attachment)
 end
 
+function TowerAnimationUtils.loopSound(tower: TowerClient.TowerClient, soundName: string): ()
+	local sound = tower.model.PrimaryPart:FindFirstChild(soundName) :: Sound
+	assert(sound, "Sound not found: " .. soundName .. " for " .. tower.data.itemId)
+	if sound.Playing then
+		return
+	end
+	sound.Looped = true
+	sound:Play()
+end
+
+function TowerAnimationUtils.stopSound(tower: TowerClient.TowerClient, soundName: string): ()
+	local sound = tower.model.PrimaryPart:FindFirstChild(soundName) :: Sound
+	assert(sound, "Sound not found: " .. soundName .. " for " .. tower.data.itemId)
+	if sound.Playing then
+		sound:Stop()
+	end
+end
+
 function TowerAnimationUtils.playSound(tower: TowerClient.TowerClient, soundName: string, overideLength: number?): ()
 	local sound = tower.model.PrimaryPart:FindFirstChild(soundName) :: Sound
 	assert(sound, "Sound not found: " .. soundName .. " for " .. tower.data.itemId)

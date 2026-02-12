@@ -61,7 +61,7 @@ end
 
 function TowerServer.attack(self: TowerServer, enemy: EnemyServer): ()
 	local damage = if self.towerInfo.percentDamageOfBest and self.bestDps
-		then self.towerInfo.percentDamageOfBest * self.bestDps * self.damageMult
+		then (self.towerInfo.percentDamageOfBest * self.bestDps * self.damageMult) / self.firerate
 		else self.dmg * self.damageMult
 	enemy:damage(damage)
 	self.cd = 1 / self.firerate
