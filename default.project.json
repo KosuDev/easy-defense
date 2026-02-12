@@ -192,6 +192,9 @@
               "darkTerra": {
                 "$path": "src/features/defense/towerAnimations/darkTerra.luau"
               },
+              "eradicator": {
+                "$path": "src/features/defense/towerAnimations/eradicator.luau"
+              },
               "flamethrower": {
                 "$path": "src/features/defense/towerAnimations/flamethrower.luau"
               },
