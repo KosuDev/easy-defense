@@ -4,7 +4,6 @@ local React = require(ReplicatedStorage.Packages.React)
 local RainbowGradient = require(ReplicatedStorage.Source.Core.UI.Components.RainbowGradient)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local RobuxButton = require(ReplicatedStorage.Source.Features.App.UI.Components.RobuxButton)
-local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local ShopContentFrame = require(ReplicatedStorage.Source.Features.Shop.UI.Components.ShopContentFrame)
 local ShopFrame = require(ReplicatedStorage.Source.Features.Shop.UI.Components.ShopFrame)
@@ -34,6 +33,7 @@ local function LimitedFrame(props)
 			Position = props.ImagePosition,
 			AnchorPoint = Vector2.new(0.5, 0),
 			BackgroundTransparency = 1,
+			ZIndex = 0,
 		}),
 
 		Description = e(TextLabel, {
@@ -88,6 +88,7 @@ local function OPLimitedFrame()
 			Position = UDim2.fromScale(1, 0.525),
 			AnchorPoint = Vector2.new(1, 0.5),
 			BackgroundTransparency = 1,
+			ZIndex = 0,
 		}),
 
 		Description = e(TextLabel, {
@@ -115,12 +116,12 @@ return function()
 		LayoutOrder = 10,
 	}, {
 		e(LimitedFrame, {
-			Title = "Tower Name",
+			Title = "Overdrive Tower",
 			Description = "110% OF YOUR BEST",
 			LayoutOrder = 1,
-			Image = Towers.getTowerInfo("crossbow").image,
+			Image = ImageIds.overdriveStroke,
 			ImagePosition = UDim2.fromScale(0.5, 0),
-			product = Products.diamondHunter,
+			product = Products.overdriveTower,
 		}),
 
 		e(LimitedFrame, {

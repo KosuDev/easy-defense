@@ -204,6 +204,11 @@ local products = {
 		id = 3535225657,
 		giftId = 3535225729,
 	} :: MonetizationProduct,
+
+	overdriveTower = {
+		id = 3535757314,
+		giftId = 3535757380,
+	} :: MonetizationProduct,
 }
 
 return products -- :: { [keyof<typeof(products)>]: MonetizationProduct }

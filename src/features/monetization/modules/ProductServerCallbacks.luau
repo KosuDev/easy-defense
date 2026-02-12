@@ -130,4 +130,16 @@ Products.eradicatorTower.callback = function(player: Player)
 	NotificationServiceServer:sendNotification(player, Towers.getTowerInfo("eradicator").image, 1)
 end
 
+Products.overdriveTower.callback = function(player: Player)
+	InventoryServiceServer:addToHotBar(
+		player,
+		InventoryServiceServer:addTower(player, {
+			itemId = "overdrive",
+			level = 1,
+		})
+	)
+
+	NotificationServiceServer:sendNotification(player, Towers.getTowerInfo("overdrive").image, 1)
+end
+
 return nil

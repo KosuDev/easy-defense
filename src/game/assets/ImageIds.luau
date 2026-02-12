@@ -21,6 +21,7 @@ return {
 	flex = "rbxassetid://105099692250066",
 	pyraStroke = "rbxassetid://101453484700747",
 	eradStroke = "rbxassetid://132073412807563",
+	overdriveStroke = "rbxassetid://86135529932185",
 	mutations = {
 		diamond = "rbxassetid://108049478374755",
 		gold = "rbxassetid://111372280889175",

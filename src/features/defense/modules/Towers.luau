@@ -284,6 +284,20 @@ local towers = {
 		height = 9,
 	},
 
+	overdrive = {
+		name = "Overdrive",
+		image = "rbxassetid://139408627674878",
+		crateImage = "",
+		crateOpenTime = 0,
+		crateCost = 0,
+		weight = 0,
+		damage = 1,
+		percentDamageOfBest = 1.10,
+		range = 25,
+		firerate = 1,
+		height = 14,
+	},
+
 	eradicator = {
 		name = "Eradicator",
 		image = "rbxassetid://91921018694227",
