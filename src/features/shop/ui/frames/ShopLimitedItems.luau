@@ -124,12 +124,12 @@ return function()
 		}),
 
 		e(LimitedFrame, {
-			Title = "Tower Name 2",
+			Title = "Eradicator Tower",
 			Description = "135% OF YOUR BEST",
 			LayoutOrder = 2,
-			Image = Towers.getTowerInfo("plasmaCannon").image,
+			Image = ImageIds.eradStroke,
 			ImagePosition = UDim2.fromScale(0.5, 0),
-			product = Products.diamondHunter,
+			product = Products.eradicatorTower,
 		}),
 
 		e(OPLimitedFrame),

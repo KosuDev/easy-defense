@@ -284,6 +284,20 @@ local towers = {
 		height = 9,
 	},
 
+	eradicator = {
+		name = "Eradicator",
+		image = "rbxassetid://91921018694227",
+		crateImage = "",
+		crateOpenTime = 0,
+		crateCost = 0,
+		weight = 0,
+		damage = 1,
+		percentDamageOfBest = 1.35,
+		range = 25,
+		firerate = 1,
+		height = 12,
+	},
+
 	pyramidium = {
 		name = "Pyramidium",
 		image = "rbxassetid://98593813513836",

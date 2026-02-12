@@ -199,6 +199,11 @@ local products = {
 		id = 3535178179,
 		giftId = 3535178260,
 	} :: MonetizationProduct,
+
+	eradicatorTower = {
+		id = 3535225657,
+		giftId = 3535225729,
+	} :: MonetizationProduct,
 }
 
 return products -- :: { [keyof<typeof(products)>]: MonetizationProduct }

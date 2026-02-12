@@ -124,6 +124,7 @@ function DefenseServer.strengthChanged(self: DefenseServer)
 
 	local previousBestDps = self.bestDps
 	self.bestDps = bestDps
+	print(self.bestDps, previousBestDps)
 
 	for floor, towers in self.towers do
 		local percentageOfBestOnThisFloor = totalPercentageOfBest[floor]
@@ -134,10 +135,7 @@ function DefenseServer.strengthChanged(self: DefenseServer)
 	end
 
 	self.strength = strength
-
-	if bestDps ~= previousBestDps then
-		self.networker:fireAll("bestDpsUpdated", bestDps)
-	end
+	self.networker:fireAll("bestDpsUpdated", bestDps)
 end
 
 function DefenseServer.updatePaths(self: DefenseServer, defenseModel: Model & any)

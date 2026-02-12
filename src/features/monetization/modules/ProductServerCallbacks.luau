@@ -118,4 +118,16 @@ Products.pyramidiumTower.callback = function(player: Player)
 	NotificationServiceServer:sendNotification(player, Towers.getTowerInfo("pyramidium").image, 1)
 end
 
+Products.eradicatorTower.callback = function(player: Player)
+	InventoryServiceServer:addToHotBar(
+		player,
+		InventoryServiceServer:addTower(player, {
+			itemId = "eradicator",
+			level = 1,
+		})
+	)
+
+	NotificationServiceServer:sendNotification(player, Towers.getTowerInfo("eradicator").image, 1)
+end
+
 return nil
