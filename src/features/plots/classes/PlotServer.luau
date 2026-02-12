@@ -336,6 +336,12 @@ function PlotServer.requestUpgrade(self: PlotServer, player: Player, floor: numb
 
 	local towerData: TowerData = DataService:get(player, { "inventory", uniqueId })
 	assert(towerData, "Tower data not found")
+	local info = Towers.getTowerInfo(towerData.itemId)
+	if info.percentDamageOfBest then
+		warn("Cannot upgrade a percentage-based tower")
+		return
+	end
+
 	local upgradeCost = PlotServiceUtils.getUpgradeCost(towerData)
 	if DataService:get(player, "currency") < upgradeCost then
 		return

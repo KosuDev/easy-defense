@@ -2,6 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Charm = require(ReplicatedStorage.Packages.Charm)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 local atom = Charm.atom
 
@@ -32,6 +33,10 @@ local actions = {
 
 	setTowerUpgrade = function(root: BasePart, itemData: any)
 		if itemData and itemData.crateId then
+			itemData = nil
+		end
+
+		if itemData and itemData.itemId and Towers.getTowerInfo(itemData.itemId).percentDamageOfBest then
 			itemData = nil
 		end
 
