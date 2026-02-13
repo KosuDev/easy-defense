@@ -98,6 +98,18 @@
               "$path": "src/features/autoRejoin/AutoRejoinServiceClient.luau"
             }
           },
+          "Codes": {
+            "$className": "Folder",
+            "CodeRewardCallbacks": {
+              "$path": "src/features/codes/CodeRewardCallbacks.luau"
+            },
+            "CodeServiceClient": {
+              "$path": "src/features/codes/CodeServiceClient.luau"
+            },
+            "CodeServiceUtils": {
+              "$path": "src/features/codes/CodeServiceUtils.luau"
+            }
+          },
           "Conveyor": {
             "$className": "Folder",
             "ConveyorClient": {
@@ -476,6 +488,9 @@
               },
               "Frames": {
                 "$className": "Folder",
+                "ShopCodes": {
+                  "$path": "src/features/shop/ui/frames/ShopCodes.luau"
+                },
                 "ShopCurrency": {
                   "$path": "src/features/shop/ui/frames/ShopCurrency.luau"
                 },
@@ -591,6 +606,9 @@
               "SlideOutFrame": {
                 "$path": "src/core/ui/primitives/SlideOutFrame.luau"
               },
+              "TextBox": {
+                "$path": "src/core/ui/primitives/TextBox.luau"
+              },
               "TextLabel": {
                 "$path": "src/core/ui/primitives/TextLabel.luau"
               }
@@ -663,6 +681,12 @@
           "$className": "Folder",
           "AutoRejoinServiceServer": {
             "$path": "src/features/autoRejoin/AutoRejoinServiceServer.luau"
+          }
+        },
+        "Codes": {
+          "$className": "Folder",
+          "CodeServiceServer": {
+            "$path": "src/features/codes/CodeServiceServer.luau"
           }
         },
         "Conveyor": {

@@ -2,9 +2,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local CodeRewardCallbacks = require(ReplicatedStorage.Source.Features.Codes.CodeRewardCallbacks)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local _ProductServerCallbacks = require(ServerScriptService.Features.Monetization.Modules.ProductServerCallbacks)
 local AutoRejoinServiceServer = require(ServerScriptService.Features.AutoRejoin.AutoRejoinServiceServer)
+local CodeServiceServer = require(ServerScriptService.Features.Codes.CodeServiceServer)
 local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local LeaderboardServiceServer = require(ServerScriptService.Features.Leaderboards.LeaderboardServiceServer)
 local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
@@ -42,6 +44,7 @@ MonetizationServiceServer:init({
 	groupId = 15794692,
 })
 
+CodeServiceServer:init(CodeRewardCallbacks :: any)
 PlotServiceServer:init()
 InventoryServiceServer:init()
 MutationServiceServer:init()
