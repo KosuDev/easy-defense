@@ -193,6 +193,7 @@ function PlotServer.loadDefense(self: PlotServer, fromLoad: boolean): ()
 	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "plotNodes")
 	for floorNodeStr, occupiedNode in occupiedNodes do
 		local floor, node = PlotServiceUtils.stringToFloorNode(floorNodeStr)
+		print("Loading node", floor, node, occupiedNode)
 		self:build(floor, node, occupiedNode, fromLoad)
 	end
 end
@@ -223,7 +224,6 @@ function PlotServer.build(
 	end
 
 	local nodeInfo = self.nodes[floor][node]
-	nodeInfo.data = nodeData
 
 	if isTower then
 		local uniqueId: string = occupiedNode
@@ -235,6 +235,7 @@ function PlotServer.build(
 		self.defense:addTower(uniqueId, tower, dontReplicate or fromLoad)
 	end
 
+	nodeInfo.data = nodeData
 	if not fromLoad then
 		local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 		DataService:set(self.player, { "plotNodes", floorNodeStr }, occupiedNode)

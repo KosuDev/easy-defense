@@ -101,11 +101,11 @@ function PlotClient.attemptBuild(self: PlotClient, floor: number, node: number)
 end
 
 function PlotClient.loadDefense(self: PlotClient, nodes: { { ClientNode } }?)
+	self.defenseJanitor:Cleanup()
 	if nodes then
 		self:setNodes(nodes)
 	end
 
-	self.defenseJanitor:Cleanup()
 	if self.player ~= Players.LocalPlayer then
 		return
 	end
@@ -126,7 +126,6 @@ function PlotClient.setNodes(self: PlotClient, nodes: { { Node } })
 end
 
 function PlotClient.setNode(self: PlotClient, floor: number, node: number, nodeData: Node)
-	print(floor, node, nodeData)
 	if not self.nodes[floor] then
 		self.nodes[floor] = {}
 	end

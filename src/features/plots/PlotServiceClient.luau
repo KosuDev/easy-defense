@@ -113,10 +113,6 @@ function PlotServiceClient.updatePlotReplication(self: PlotServiceClient)
 
 		local withinBounds = isWithinPlotBounds(plot.cf, pos)
 		plot:setReplication(withinBounds)
-
-		if withinBounds then
-			print("WITHTIN " .. plot.index)
-		end
 	end
 end
 
