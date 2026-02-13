@@ -1,8 +1,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SoundService = game:GetService("SoundService")
 
 local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundController)
 local AutoRejoinServiceClient = require(ReplicatedStorage.Source.Features.AutoRejoin.AutoRejoinServiceClient)
 local CodeServiceClient = require(ReplicatedStorage.Source.Features.Codes.CodeServiceClient)
+local FriendServiceClient = require(ReplicatedStorage.Source.Features.Friends.FriendServiceClient)
 local InventoryServiceClient = require(ReplicatedStorage.Source.Features.Inventory.InventoryServiceClient)
 local LeaderboardServiceClient = require(ReplicatedStorage.Source.Features.Leaderboards.LeaderboardServiceClient)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
@@ -25,6 +27,9 @@ MutationsServiceClient:init()
 LeaderboardServiceClient:init()
 AutoRejoinServiceClient:init()
 NotificationServiceClient:init()
+FriendServiceClient:init()
+
+SoundService:WaitForChild("Music"):Play()
 
 -- Preload sounds
 for _, sound in Sounds.misc do

@@ -6,6 +6,7 @@ local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local Enemies = require(ReplicatedStorage.Source.Features.Defense.Modules.Enemies)
 local HitSplat = require(ReplicatedStorage.Source.Features.Defense.Modules.HitSplat)
 local PathUtils = require(ReplicatedStorage.Source.Features.Defense.Modules.PathUtils)
+local FriendServiceClient = require(ReplicatedStorage.Source.Features.Friends.FriendServiceClient)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 
@@ -119,8 +120,12 @@ function EnemyClient.damage(self: EnemyClient, amt: number): ()
 		self.dead = true
 		local color = self.info.color
 		local ownsStarterPack = MonetizationServiceClient:ownsGamepass(Products.starterPack :: any)
-		local reward = Enemies.getEnemyReward(self.maxHealth, DataService.client:get("rebirths"), ownsStarterPack)
-			* self.rewardMult
+		local reward = Enemies.getEnemyReward(
+			self.maxHealth,
+			DataService.client:get("rebirths"),
+			ownsStarterPack,
+			FriendServiceClient.friendCount()
+		) * self.rewardMult
 		HitSplat(self:getPosition(), color, reward)
 	else
 		self:updateHpBar()

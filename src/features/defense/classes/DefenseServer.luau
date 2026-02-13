@@ -3,6 +3,7 @@ local RunService = game:GetService("RunService")
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local FriendServiceServer = require(ServerScriptService.Features.Friends.FriendServiceServer)
 local MonetizationServiceServer = require(ServerScriptService.Features.Monetization.MonetizationServiceServer)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local EnemyServer = require(script.Parent.EnemyServer)
@@ -227,8 +228,10 @@ end
 
 function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
 	local rebirths: number = DataService:get(self.player, "rebirths")
+	local numFriends = FriendServiceServer:getFriendCount(self.player)
 	local ownsStarterPack = MonetizationServiceServer:ownsGamepass(self.player, Products.starterPack)
-	local reward = math.round(Enemies.getEnemyReward(enemy.maxHealth, rebirths, ownsStarterPack) * self.currencyMult)
+	local reward =
+		math.round(Enemies.getEnemyReward(enemy.maxHealth, rebirths, ownsStarterPack, numFriends) * self.currencyMult)
 	DataService:update(self.player, "currency", function(amt: number)
 		return amt + reward
 	end)

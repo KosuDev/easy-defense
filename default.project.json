@@ -275,6 +275,12 @@
               }
             }
           },
+          "Friends": {
+            "$className": "Folder",
+            "FriendServiceClient": {
+              "$path": "src/features/friends/FriendServiceClient.luau"
+            }
+          },
           "Inventory": {
             "$className": "Folder",
             "InventoryServiceClient": {
@@ -708,6 +714,12 @@
             "TowerServer": {
               "$path": "src/features/defense/classes/TowerServer.luau"
             }
+          }
+        },
+        "Friends": {
+          "$className": "Folder",
+          "FriendServiceServer": {
+            "$path": "src/features/friends/FriendServiceServer.luau"
           }
         },
         "Inventory": {

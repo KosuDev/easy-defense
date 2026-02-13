@@ -11,6 +11,7 @@ local useServerTimeBinding = require(ReplicatedStorage.Source.Core.UI.Hooks.useS
 local AutoScaledFrame = require(ReplicatedStorage.Source.Core.UI.Primitives.AutoScaledFrame)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
+local FriendServiceClient = require(ReplicatedStorage.Source.Features.Friends.FriendServiceClient)
 local MutationEvents = require(ReplicatedStorage.Source.Features.Mutations.Modules.MutationEvents)
 local MutationSlice = require(ReplicatedStorage.Source.Features.Mutations.MutationSlice)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
@@ -71,7 +72,8 @@ local function CurrencyCounter()
 end
 
 local function FriendBoostCounter()
-	local percent = 0
+	local numFriends = ReactCharm.useAtom(FriendServiceClient.friendCount)
+	local percent = numFriends * 0.10
 
 	return e(TextLabel, {
 		Text = `Friend Boost +{math.round(percent * 100)}%`,
