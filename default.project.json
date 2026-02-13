@@ -237,6 +237,9 @@
               "protonSniper": {
                 "$path": "src/features/defense/towerAnimations/protonSniper.luau"
               },
+              "pyramidium": {
+                "$path": "src/features/defense/towerAnimations/pyramidium.luau"
+              },
               "tesla": {
                 "$path": "src/features/defense/towerAnimations/tesla.luau"
               },
