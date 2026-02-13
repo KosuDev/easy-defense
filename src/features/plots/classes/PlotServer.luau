@@ -77,19 +77,23 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 		nodes = {},
 		defense = DefenseServer.new(plotSpawn.index, player),
 		plotModel = newPlotModel(plotSpawn.part.CFrame),
-	}, PlotServer)
+	}, PlotServer) :: PlotServer
 
 	self.networker = Networker.server.new("Plot" .. plotSpawn.index, self, {
 		self.requestBuild,
 		self.requestRemove,
 		self.requestOpenCrate,
 		self.requestUpgrade,
+		self.setReplication,
 	})
+
+	self.networker:addRecipient(player)
+
 	self.conveyor = ConveyorServer.new(self.index, self.plotModel, player)
 	self:charInit()
-	self:loadDefense()
+	self:loadDefense(true)
 	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function()
-		self:loadDefense()
+		self:loadDefense(false)
 	end))
 
 	self.janitor:Add(InventoryServiceServer.itemSoldSignal:Connect(function(sellingPlayer: Player, uniqueId: string)
@@ -120,7 +124,20 @@ function PlotServer.get(self: PlotServer): PlotTypes.PlotData
 		currencyMult = self.defense.currencyMult,
 		damageMult = self.defense.damageMult,
 		bestDps = self.defense.bestDps,
+		towers = self.defense:getTowers(),
 	}
+end
+
+function PlotServer.setReplication(self: PlotServer, player: Player, isReplicated: boolean)
+	if isReplicated then
+		self.networker:addRecipient(player)
+		self.defense.networker:addRecipient(player)
+		self.conveyor.networker:addRecipient(player)
+	else
+		self.networker:removeRecipient(player)
+		self.defense.networker:removeRecipient(player)
+		self.conveyor.networker:removeRecipient(player)
+	end
 end
 
 function PlotServer.tpChar(self: PlotServer)
@@ -139,7 +156,7 @@ function PlotServer.charInit(self: PlotServer)
 	end))
 end
 
-function PlotServer.loadDefense(self: PlotServer): ()
+function PlotServer.loadDefense(self: PlotServer, fromLoad: boolean): ()
 	if self.defenseModel then
 		self.defenseModel:Destroy()
 	end
@@ -169,12 +186,15 @@ function PlotServer.loadDefense(self: PlotServer): ()
 	self.nodes = nodes
 	self.defense:removeAll()
 	self.defense:updatePaths(defenseModel)
-	self.networker:fireAll("loadDefense", self.nodes)
+	if not fromLoad then
+		self.networker:fireAll("loadDefense", self.nodes)
+	end
 
 	local occupiedNodes: OccupiedNodes = DataService:get(self.player, "plotNodes")
 	for floorNodeStr, occupiedNode in occupiedNodes do
 		local floor, node = PlotServiceUtils.stringToFloorNode(floorNodeStr)
-		self:build(floor, node, occupiedNode, true)
+		print("Loading node", floor, node, occupiedNode)
+		self:build(floor, node, occupiedNode, fromLoad)
 	end
 end
 
@@ -204,7 +224,6 @@ function PlotServer.build(
 	end
 
 	local nodeInfo = self.nodes[floor][node]
-	nodeInfo.data = nodeData
 
 	if isTower then
 		local uniqueId: string = occupiedNode
@@ -213,15 +232,15 @@ function PlotServer.build(
 		end
 
 		local tower = TowerServer.new(floor, node, nodeInfo.cf, nodeData)
-		self.defense:addTower(uniqueId, tower, dontReplicate)
+		self.defense:addTower(uniqueId, tower, dontReplicate or fromLoad)
 	end
 
+	nodeInfo.data = nodeData
 	if not fromLoad then
 		local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 		DataService:set(self.player, { "plotNodes", floorNodeStr }, occupiedNode)
+		self.networker:fireAll("setNode", floor, node, nodeInfo)
 	end
-
-	self.networker:fireAll("setNode", floor, node, nodeInfo)
 end
 
 function PlotServer.remove(self: PlotServer, uniqueId: string)

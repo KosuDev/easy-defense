@@ -63,18 +63,19 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 		damageMult = if MonetizationServiceServer:ownsGamepass(player, Products.doubleDamage) then 2 else 1,
 		currencyMult = if MonetizationServiceServer:ownsGamepass(player, Products.doubleMoney) then 2 else 1,
 		janitor = Janitor.new(),
-	}, DefenseServer)
+	}, DefenseServer) :: DefenseServer
 
 	self.networker = Networker.server.new("Defense" .. index, self, {})
+	self.networker:addRecipient(player)
 	self:start()
 
 	local doubleDmgChangedSignal = MonetizationServiceServer:getPassOwnshipChanged(player, Products.doubleDamage)
 	local doubleMoneyChangedSignal = MonetizationServiceServer:getPassOwnshipChanged(player, Products.doubleMoney)
 
-	self.networker:setAll("damageMult", self.damageMult)
+	self.networker:setRecipients("damageMult", self.damageMult)
 	self.janitor:Add(doubleDmgChangedSignal:Connect(function(owns)
 		self.damageMult = if owns then 2 else 1
-		self.networker:setAll("damageMult", self.damageMult)
+		self.networker:setRecipients("damageMult", self.damageMult)
 		for _, towers in self.towers do
 			for _, tower in towers do
 				tower.damageMult = self.damageMult
@@ -82,10 +83,10 @@ function DefenseServer.new(index: number, player: Player): DefenseServer
 		end
 	end))
 
-	self.networker:setAll("currencyMult", self.currencyMult)
+	self.networker:setRecipients("currencyMult", self.currencyMult)
 	self.janitor:Add(doubleMoneyChangedSignal:Connect(function(owns)
 		self.currencyMult = if owns then 2 else 1
-		self.networker:setAll("currencyMult", self.currencyMult)
+		self.networker:setRecipients("currencyMult", self.currencyMult)
 	end))
 
 	return self
@@ -133,7 +134,7 @@ function DefenseServer.strengthChanged(self: DefenseServer)
 
 	self.bestDps = bestDps
 	self.strength = strength
-	self.networker:fireAll("bestDpsUpdated", bestDps)
+	self.networker:fireRecipients("bestDpsUpdated", bestDps)
 end
 
 function DefenseServer.updatePaths(self: DefenseServer, defenseModel: Model & any)
@@ -146,7 +147,7 @@ function DefenseServer.updatePaths(self: DefenseServer, defenseModel: Model & an
 		end
 	end
 
-	self.networker:fireAll("pathsUpdated", paths)
+	self.networker:fireRecipients("pathsUpdated", paths)
 end
 
 function DefenseServer.start(self: DefenseServer)
@@ -197,6 +198,16 @@ function DefenseServer.removeTower(self: DefenseServer, uniqueId: string)
 	self:strengthChanged()
 end
 
+function DefenseServer.getTowers(self: DefenseServer)
+	local towers = {}
+	for _, floorTowers in self.towers do
+		for _, tower in floorTowers do
+			table.insert(towers, { floor = tower.floor, node = tower.node, data = tower.data, cf = tower.cf })
+		end
+	end
+	return towers
+end
+
 function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: TowerServer, dontReplicate: boolean?)
 	if not self.enemies[tower.floor] then
 		self.enemies[tower.floor] = {}
@@ -223,7 +234,7 @@ function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)
 
 	enemy.path = self.paths[enemy.floor]
 	table.insert(self.enemies[enemy.floor], enemy)
-	self.networker:fireAll("enemyAdded", enemy.floor, enemy.uniqueId, enemy.baseStats)
+	self.networker:fireRecipients("enemyAdded", enemy.floor, enemy.uniqueId, enemy.baseStats)
 end
 
 function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
@@ -277,14 +288,14 @@ end
 function DefenseServer.burnEnemies(self: DefenseServer)
 	local didBleed, bleeds = self:bleedEnemies("burn")
 	if didBleed then
-		self.networker:fireAll("burn", bleeds)
+		self.networker:fireRecipients("burn", bleeds)
 	end
 end
 
 function DefenseServer.poisonEnemies(self: DefenseServer)
 	local didBleed, bleeds = self:bleedEnemies("poison")
 	if didBleed then
-		self.networker:fireAll("poison", bleeds)
+		self.networker:fireRecipients("poison", bleeds)
 	end
 end
 

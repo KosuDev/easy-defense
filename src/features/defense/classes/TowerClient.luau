@@ -47,12 +47,22 @@ function TowerClient.new(
 		bestDps = bestDps,
 	}, TowerClient)
 
-	local model = Towers.getTowerModel(data.itemId, data.mutations)
+	self:loadModel()
+	local attackAnimModule = script.Parent.Parent.TowerAnimations:FindFirstChild(data.itemId)
+	if attackAnimModule then
+		self.attackAnim = require(attackAnimModule)
+	end
+
+	return self
+end
+
+function TowerClient.loadModel(self: TowerClient)
+	local model = Towers.getTowerModel(self.data.itemId, self.data.mutations)
 	model.Parent = workspace
-	model:PivotTo(cf * CFrame.new(0, 0.5, 0))
+	model:PivotTo(self.cf * CFrame.new(0, 0.5, 0))
 	self.model = model
-	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(data.level))
-	local gui = TowerBillboardGui.new(data, self.damageMult, self.bestDps)
+	self.model:ScaleTo(PlotServiceUtils.getScaleFromLevel(self.data.level))
+	local gui = TowerBillboardGui.new(self.data, self.damageMult, self.bestDps)
 	gui.Parent = model.PrimaryPart
 	self.gui = gui
 	self:charFloorChanged()
@@ -60,13 +70,6 @@ function TowerClient.new(
 	self.janitor:Add(Charm.subscribe(PlotSlice.states.characterFloor, function()
 		self:charFloorChanged()
 	end))
-
-	local attackAnimModule = script.Parent.Parent.TowerAnimations:FindFirstChild(data.itemId)
-	if attackAnimModule then
-		self.attackAnim = require(attackAnimModule)
-	end
-
-	return self
 end
 
 function TowerClient.setDamageMult(self: TowerClient, damageMult: number): ()

@@ -53,13 +53,14 @@ function ConveyorServer.new(index: number, plotModel: Model, player: Player): Co
 		recoverableCrates = {},
 		model = nil,
 		janitor = Janitor.new(),
-	}, ConveyorServer)
+	}, ConveyorServer) :: ConveyorServer
 
 	self.networker = Networker.server.new("Conveyor" .. index, self, {
 		self.spawnCrate,
 		self.buyCrate :: any,
 		self.requestUpgrade,
 	})
+	self.networker:addRecipient(player)
 
 	self.janitor:Add(DataService:getChangedSignal(player, "conveyorLevel"):Connect(function(newLevel: number)
 		self.level = newLevel
@@ -127,7 +128,7 @@ function ConveyorServer.recoverCrates(self: ConveyorServer)
 
 	self.recoverableCrates, self.crates = self.crates, self.recoverableCrates
 	self.timeOfLastCrateSpawn = os.clock()
-	self.networker:fireAll("cratesChanged", self.crates)
+	self.networker:fireRecipients("cratesChanged", self.crates)
 
 	return true
 end
@@ -187,7 +188,7 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 	end
 
 	self.timeOfLastCrateSpawn = os.clock()
-	self.networker:fireAll("cratesChanged", self.crates)
+	self.networker:fireRecipients("cratesChanged", self.crates)
 
 	return true
 end
@@ -253,7 +254,7 @@ function ConveyorServer.boughtCrate(self: ConveyorServer, crateIndex: number)
 	assert(crateData, "No crate data at index" .. crateIndex)
 
 	self.crates[crateIndex] = nil
-	self.networker:fireAll("crateBought", crateIndex)
+	self.networker:fireRecipients("crateBought", crateIndex)
 
 	local uniqueId = InventoryServiceServer:addCrate(self.player, crateData)
 	InventoryServiceServer:addToHotBar(self.player, uniqueId)

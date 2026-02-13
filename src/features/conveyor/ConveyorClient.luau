@@ -262,6 +262,9 @@ function ConveyorClient.destroy(self: ConveyorClient)
 	for _, crate in self.crates do
 		crate:destroy()
 	end
+	for _, recoverable in self.recoverableCrates do
+		recoverable.Model:Destroy()
+	end
 end
 
 return ConveyorClient

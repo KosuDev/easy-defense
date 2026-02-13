@@ -43,6 +43,7 @@ export type PlotClient = typeof(setmetatable(
 		networker: Networker.Client,
 		nodesUpdated: Signal.Signal<number, number>,
 		conveyor: ConveyorClient.ConveyorClient,
+		isReplicated: boolean,
 	},
 	PlotClient
 ))
@@ -55,11 +56,12 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 		plotModel = plotData.plotModel,
 		nodes = plotData.nodes,
 		janitor = Janitor.new(),
-		defense = DefenseClient.new(plotData.index, plotData.player),
 		defenseJanitor = Janitor.new(),
 		nodesUpdated = Signal.new(),
+		isReplicated = plotData.player == Players.LocalPlayer,
 	}, PlotClient) :: any
 
+	self.defense = DefenseClient.new(plotData.index, plotData.player, plotData.towers, self.isReplicated)
 	self.defense.currencyMult = plotData.currencyMult
 	self.defense.damageMult = plotData.damageMult
 	self.defense.bestDps = plotData.bestDps
@@ -67,7 +69,7 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 	self.networker = Networker.client.new("Plot" .. plotData.index, self :: any)
 	self.conveyor =
 		ConveyorClient.new(self.index, self.plotModel, plotData.conveyorModel, self.player, plotData.conveyorLevel)
-	self:loadDefense()
+	self:loadDefense(plotData.nodes)
 
 	self.plotModel.StarterPack.StarterPackRoot.BillboardGui.Cost.Text =
 		MonetizationServiceClient:getProductInfo(Products.starterPack).CostText
@@ -99,11 +101,11 @@ function PlotClient.attemptBuild(self: PlotClient, floor: number, node: number)
 end
 
 function PlotClient.loadDefense(self: PlotClient, nodes: { { ClientNode } }?)
+	self.defenseJanitor:Cleanup()
 	if nodes then
 		self:setNodes(nodes)
 	end
 
-	self.defenseJanitor:Cleanup()
 	if self.player ~= Players.LocalPlayer then
 		return
 	end
@@ -157,15 +159,19 @@ function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, t
 	nodeData.model = nil :: any
 	self.nodesUpdated:Fire(floor, node)
 
-	if isLuckyBlock then
-		LuckyBlockOpenVfx(
-			nodeData.cf,
-			crateModel,
-			towerData,
-			crateInfo.luck * ConveyorUpgrades[self.conveyor.level()].luck
-		)
+	if self.isReplicated then
+		if isLuckyBlock then
+			LuckyBlockOpenVfx(
+				nodeData.cf,
+				crateModel,
+				towerData,
+				crateInfo.luck * ConveyorUpgrades[self.conveyor.level()].luck
+			)
+		else
+			CrateOpenVfx(nodeData.cf, crateModel, towerData)
+		end
 	else
-		CrateOpenVfx(nodeData.cf, crateModel, towerData)
+		crateModel:Destroy()
 	end
 
 	self.defense:towerAdded(floor, node, towerCf, towerData)
@@ -242,10 +248,44 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	end)
 end
 
+function PlotClient.setReplication(self: PlotClient, isReplicated: boolean)
+	if self.isReplicated == isReplicated then
+		return
+	end
+
+	self.networker:fire("setReplication", isReplicated)
+	self.defense.isReplicated = isReplicated
+	self.isReplicated = isReplicated
+
+	if isReplicated then
+		self.defense:start()
+		return
+	end
+
+	self.defense:stop()
+
+	--clear enemies
+	for _, enemy in self.defense.enemies do
+		enemy:destroy()
+	end
+	self.defense.enemies = {}
+
+	--clear conveyor
+	for _, crate in self.conveyor.crates do
+		crate:destroy()
+	end
+	for _, recoverable in self.conveyor.recoverableCrates do
+		recoverable.Model:Destroy()
+	end
+	self.conveyor.crates = {}
+	self.conveyor.recoverableCrates = {}
+end
+
 function PlotClient.destroy(self: PlotClient)
+	self.networker:destroy()
 	self.janitor:Destroy()
 	self.plotModel:Destroy()
-	self.defense:stop()
+	self.defense:destroy()
 	self.defenseJanitor:Destroy()
 	self.conveyor:destroy()
 end

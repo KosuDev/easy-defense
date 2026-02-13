@@ -26,11 +26,12 @@ export type DefenseClient = typeof(setmetatable(
 		damageMult: number,
 		currencyMult: number,
 		bestDps: number,
+		isReplicated: boolean,
 	},
 	DefenseClient
 ))
 
-function DefenseClient.new(index: number, player: Player): DefenseClient
+function DefenseClient.new(index: number, player: Player, towers: any, isReplicated: boolean): DefenseClient
 	local self = setmetatable({
 		towers = {},
 		enemies = {},
@@ -40,10 +41,15 @@ function DefenseClient.new(index: number, player: Player): DefenseClient
 		damageMult = 1,
 		currencyMult = 1,
 		bestDps = 0,
+		isReplicated = isReplicated,
 	}, DefenseClient)
 
 	self.networker = Networker.client.new("Defense" .. index, self :: any)
 	self:start()
+
+	for _, towerData in towers do
+		self:towerAdded(towerData.floor, towerData.node, towerData.cf, towerData.data)
+	end
 
 	self.networker:getServerChangedSignal("damageMult"):Connect(function()
 		for _, tower in self.towers do
@@ -104,13 +110,18 @@ end
 
 function DefenseClient.towerUpdated(self: DefenseClient, floor: number, node: number, data: TowerData): ()
 	local tower = self.towers[floor][node]
-	if tower then
-		tower:setData(data)
+	if not tower then
+		return
+	end
+
+	tower:setData(data)
+	if self.isReplicated then
 		VfxUtils.emitAllAtPosition("TowerUpgrade", tower.model:GetPivot().Position + Vector3.new(0, 3, 0), true)
 	end
 end
 
 function DefenseClient.bestDpsUpdated(self: DefenseClient, bestDps: number): ()
+	self.bestDps = bestDps
 	for _, towers in self.towers do
 		for _, tower in towers do
 			tower:setBestDps(bestDps)

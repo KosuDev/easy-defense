@@ -2,10 +2,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local React = require(ReplicatedStorage.Packages.React)
+local useDataState = require(ReplicatedStorage.Source.Core.UI.Hooks.useDataState)
 local AutoScaledFrame = require(ReplicatedStorage.Source.Core.UI.Primitives.AutoScaledFrame)
 local Button = require(ReplicatedStorage.Source.Core.UI.Primitives.Button)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
+local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
+local ShopFrame = require(ReplicatedStorage.Source.Features.Shop.UI.Components.ShopFrame)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local e = React.createElement
 
@@ -15,6 +18,7 @@ type SideBarButtonProps = {
 	Image: string,
 	IconScale: number?,
 	Activated: () -> (),
+	children: any,
 }
 
 local function SideBarButton(props: SideBarButtonProps)
@@ -49,7 +53,7 @@ local function SideBarButton(props: SideBarButtonProps)
 			BackgroundTransparency = 1,
 			Image = props.Image,
 		}),
-	})
+	}, props.children)
 end
 
 local RAINBOW_GRADIENT = ColorSequence.new({
@@ -116,6 +120,38 @@ local function ShopButton()
 	})
 end
 
+local function RebirthNotiButton()
+	local rebirths: number = useDataState("rebirths")
+	local currency = useDataState("currency")
+	local towerIndex = useDataState("towerIndex")
+
+	if RebirthUtils.isMaxedRebirths(rebirths) then
+		return nil
+	end
+
+	local reqs = RebirthUtils.getRequirements(rebirths)
+	local currencyReqMet = currency >= reqs.currency
+	local towerReqMet = towerIndex.normal[reqs.towerId] ~= nil
+	local canRebirth = currencyReqMet and towerReqMet
+
+	if not canRebirth then
+		return nil
+	end
+
+	return e(ShopFrame.Red, {
+		Size = UDim2.fromScale(0.35, 0.35),
+		SizeConstraint = Enum.SizeConstraint.RelativeYY,
+		Position = UDim2.new(1, -2, 0, 2),
+		AnchorPoint = Vector2.new(1, 0),
+	}, {
+		e(TextLabel, {
+			Text = "!",
+			Size = UDim2.fromScale(1, 1),
+			Stroke = {},
+		}),
+	})
+end
+
 return function()
 	return e(AutoScaledFrame, {
 		Size = UDim2.fromOffset(180, 800),
@@ -133,7 +169,7 @@ return function()
 			Activated = function()
 				Menu.setOpenedMenu("RebirthMenu")
 			end,
-		}),
+		}, e(RebirthNotiButton)),
 
 		Index = e(SideBarButton, {
 			Position = UDim2.fromScale(0.25, 0.55),

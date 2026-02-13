@@ -1,4 +1,5 @@
 local CollectionService = game:GetService("CollectionService")
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
@@ -36,6 +37,16 @@ function PlotServiceServer.init(self: PlotServiceServer)
 		local fakeDefense: Model = ReplicatedStorage.Assets.PlotDefenses["1"]:Clone()
 		fakeDefense:PivotTo(fakePlot.DefenseSpawn.CFrame)
 		fakeDefense.Parent = fakePlot
+		local fakeConveyor: Model = ReplicatedStorage.Assets.Conveyors["1"]:Clone()
+		fakeConveyor:PivotTo(fakePlot.ConveyorSpawn.CFrame)
+		fakeConveyor.Parent = fakePlot
+
+		for _, desc in fakePlot:GetDescendants() do
+			if desc:IsA("BillboardGui") then
+				desc.Enabled = false
+			end
+		end
+
 		fakePlot:PivotTo(plotSpawn.CFrame)
 		fakePlot.Parent = workspace
 		self.plotSpawns[index] = { part = plotSpawn, index = index, fakePlot = fakePlot, owner = nil }
@@ -72,6 +83,17 @@ function PlotServiceServer.playerAdded(self: PlotServiceServer, player: Player, 
 	local plot = PlotServer.new(plotSpawn, player)
 	playerData.plot = plot
 	self.networker:fireAll("initPlot", plot:get())
+
+	for _, otherPlayer in Players:GetPlayers() do
+		if player == otherPlayer then
+			continue
+		end
+
+		local otherPlayerPlot = self:getPlotFromPlayer(otherPlayer)
+		if otherPlayerPlot then
+			self.networker:fire(player, "initPlot", otherPlayerPlot:get())
+		end
+	end
 end
 
 function PlotServiceServer.playerRemoving(self: PlotServiceServer, player: Player, playerData: PlayerData)
