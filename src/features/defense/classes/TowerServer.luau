@@ -53,7 +53,7 @@ function TowerServer.new(floor: number, node: number, cf: CFrame, data: TowerDat
 		bestDps = nil :: any,
 	}, TowerServer)
 
-	self.cd = 3 + 1 / self.firerate
+	self.cd = 1 / self.firerate
 	self.dps = self.dmg * self.firerate
 
 	return self

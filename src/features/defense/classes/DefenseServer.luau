@@ -208,7 +208,13 @@ function DefenseServer.getTowers(self: DefenseServer)
 	return towers
 end
 
-function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: TowerServer, dontReplicate: boolean?)
+function DefenseServer.addTower(
+	self: DefenseServer,
+	uniqueId: string,
+	tower: TowerServer,
+	fromLoad: boolean?,
+	fromCrate: boolean?
+)
 	if not self.enemies[tower.floor] then
 		self.enemies[tower.floor] = {}
 	end
@@ -220,8 +226,13 @@ function DefenseServer.addTower(self: DefenseServer, uniqueId: string, tower: To
 	tower.enemies = self.enemies[tower.floor]
 	tower.networker = self.networker
 	tower.bestDps = self.bestDps
+
+	if fromCrate then
+		tower.cd = 5
+	end
+
 	self.towers[tower.floor][uniqueId] = tower
-	if not dontReplicate then
+	if not (fromLoad or fromCrate) then
 		self.networker:fireAll("towerAdded", tower.floor, tower.node, tower.cf, tower.data)
 	end
 	self:strengthChanged()

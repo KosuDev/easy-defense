@@ -156,7 +156,12 @@ function DefenseClient.towerAttack(
 ): ()
 	local enemy = self.enemies[enemyUniqueId]
 	local tower = self.towers[floor][node]
-	tower:attack(enemy, damage)
+	if not tower then
+		enemy:damage(damage)
+	else
+		tower:attack(enemy, damage)
+	end
+
 	if enemy.dead then
 		task.defer(function()
 			self:removeEnemy(enemyUniqueId)
