@@ -19,8 +19,7 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 function DataService:onPlayerInit(_player, data)
 	print(data)
 	data.sessionStart = os.time()
-	data.rebirths = 6
-	data.currency = 0
+	--data.rebirths = 5
 	--data.__gamepasses = {}
 end
 
