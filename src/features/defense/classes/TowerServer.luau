@@ -65,7 +65,7 @@ function TowerServer.attack(self: TowerServer, enemy: EnemyServer): ()
 		else self.dmg * self.damageMult
 	enemy:damage(damage)
 	self.cd = 1 / self.firerate
-	self.networker:fireAll("towerAttack", self.floor, self.node, enemy.uniqueId, damage)
+	self.networker:fireRecipients("towerAttack", self.floor, self.node, enemy.uniqueId, damage)
 
 	if self.data.mutations and self.data.mutations.inferno then
 		enemy:addBurn(damage * BURN_DAMAGE)

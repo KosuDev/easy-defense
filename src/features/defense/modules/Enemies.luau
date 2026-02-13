@@ -246,11 +246,11 @@ function Enemies.getIndexFromX(x: number): number
 end
 
 function Enemies.getEnemyInfo(index: number)
-	return enemies[Enemies.getIndexFromX(index)]
+	return enemies[Enemies.getIndexFromX(index - 1)]
 end
 
 function Enemies.getEnemyModel(index: number, enemyType: string): Model
-	local info = enemies[Enemies.getIndexFromX(index)]
+	local info = enemies[Enemies.getIndexFromX(index - 1)]
 	if info.chachedModel then
 		local scale = enemyTypes[enemyType].size
 		local model = info.chachedModel:Clone() :: Model
