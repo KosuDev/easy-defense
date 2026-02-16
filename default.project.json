@@ -514,6 +514,24 @@
                 "$path": "src/features/shop/ui/ShopContent.luau"
               }
             }
+          },
+          "Tutorial": {
+            "$className": "Folder",
+            "Modules": {
+              "$className": "Folder",
+              "TutorialInstructions": {
+                "$path": "src/features/tutorial/modules/TutorialInstructions.luau"
+              }
+            },
+            "TutorialServiceClient": {
+              "$path": "src/features/tutorial/TutorialServiceClient.luau"
+            },
+            "TutorialServiceUtils": {
+              "$path": "src/features/tutorial/TutorialServiceUtils.luau"
+            },
+            "TutorialSteps": {
+              "$path": "src/features/tutorial/TutorialSteps.luau"
+            }
           }
         },
         "Core": {
@@ -768,6 +786,12 @@
           },
           "PlotServiceServer": {
             "$path": "src/features/plots/PlotServiceServer.luau"
+          }
+        },
+        "Tutorial": {
+          "$className": "Folder",
+          "TutorialServiceServer": {
+            "$path": "src/features/tutorial/TutorialServiceServer.luau"
           }
         }
       },

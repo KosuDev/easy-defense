@@ -9,6 +9,7 @@ local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
 local Screen = require(ReplicatedStorage.Source.Features.App.UI.Screens.Screen)
 local PlotClient = require(ReplicatedStorage.Source.Features.Plots.Classes.PlotClient)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local TutorialServiceClient = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceClient)
 
 local PlotServiceClient = {}
 
@@ -80,6 +81,7 @@ function PlotServiceClient.requestUpgrade(self: PlotServiceClient, floor: number
 	end
 
 	plot.networker:fire("requestUpgrade", floor, node)
+	TutorialServiceClient:nextStep("upgradeTower")
 end
 
 function PlotServiceClient.tpToSell(self: PlotServiceClient)

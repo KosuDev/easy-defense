@@ -14,6 +14,7 @@ local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local Products = require(ReplicatedStorage.Source.Features.Monetization.Modules.Products)
 local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
+local TutorialServiceClient = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceClient)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -116,6 +117,8 @@ function ConveyorClient.attemptCrateSpawn(self: ConveyorClient)
 		disconnect()
 		self.buttonSpring:setGoal(0)
 	end)
+
+	TutorialServiceClient:nextStep("clickConveyorSpawn")
 end
 
 local function getRecoverableOffset(index: number, max: number)
@@ -183,6 +186,10 @@ function ConveyorClient.cratesChanged(self: ConveyorClient, crateDatas: { CrateD
 		self.conveyorSpeed(0)
 		self.speedThread = nil
 	end)
+
+	if isLocalPlayer and not TutorialServiceClient:hasCompletedTutorial() then
+		self.crates[1].model:AddTag("TutorialCrate")
+	end
 end
 
 function ConveyorClient.initPads(self: ConveyorClient)
@@ -226,6 +233,7 @@ end
 
 function ConveyorClient.initSpawnButton(self: ConveyorClient)
 	local button = self.plotModel:FindFirstChild("SpawnerButton", true) :: BasePart
+	button:AddTag("ConveyorSpawner")
 	local originalCFrame = button.CFrame
 
 	self.buttonSpring:onChange(function(v: number)

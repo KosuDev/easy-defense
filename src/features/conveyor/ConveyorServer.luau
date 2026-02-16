@@ -145,7 +145,7 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		return false
 	end
 
-	DataService:update(player, { "stats", "crateRolls" }, function(amt: number)
+	local cratesRolled = DataService:update(player, { "stats", "crateRolls" }, function(amt: number)
 		return amt + 1
 	end, true)
 
@@ -185,6 +185,10 @@ function ConveyorServer.spawnCrate(self: ConveyorServer, player: Player): boolea
 		else
 			self.crates[i] = nil
 		end
+	end
+
+	if cratesRolled == 1 then
+		self.crates = { { crateId = "crossbow", amt = 1 } }
 	end
 
 	self.timeOfLastCrateSpawn = os.clock()

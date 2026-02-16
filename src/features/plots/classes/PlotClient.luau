@@ -20,6 +20,7 @@ local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Mone
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local TutorialServiceClient = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceClient)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -98,6 +99,8 @@ function PlotClient.attemptBuild(self: PlotClient, floor: number, node: number)
 	if data.itemId or (data.crateId and data.amt <= 0) then
 		InventoryServiceClient:unequipItem()
 	end
+
+	TutorialServiceClient:nextStep("placeCrate")
 end
 
 function PlotClient.loadDefense(self: PlotClient, nodes: { { ClientNode } }?)
@@ -215,10 +218,15 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 			end
 		end
 
+		local tutCompleted = TutorialServiceClient:hasCompletedTutorial()
 		prox.Enabled = true
-		if data and data.crateId then
+		if not tutCompleted and nodeIndex ~= 4 then
+			prox.Enabled = false
+		end
+
+		if data and data.crateId and (tutCompleted or TutorialServiceClient:getStep() == "openCrate") then
 			prox.ActionText = "Open"
-		elseif data and not data.crateId then
+		elseif data and not data.crateId and tutCompleted then
 			prox.ActionText = "Remove"
 		elseif InventorySlice.state.equippedItemUniqueId() ~= nil then
 			prox.ActionText = "Place"
@@ -230,6 +238,7 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	prox.Triggered:Connect(function()
 		if prox.ActionText == "Open" then
 			self.networker:fire("requestOpenCrate", floor, nodeIndex)
+			TutorialServiceClient:nextStep("openCrate")
 		elseif prox.ActionText == "Remove" then
 			self.networker:fire("requestRemove", floor, nodeIndex)
 		elseif prox.ActionText == "Place" then
@@ -241,11 +250,22 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	self.defenseJanitor:Add(attach)
 	self.defenseJanitor:Add(prox)
 	self.defenseJanitor:Add(self.nodesUpdated:Connect(update))
+	self.defenseJanitor:Add(DataService:getChangedSignal({ "tutorial" }):Connect(update))
 	self.defenseJanitor:Add(Charm.subscribe(InventorySlice.state.equippedItemUniqueId, update))
 	self.defenseJanitor:Add(function()
 		PlotSlice.actions.setTowerUpgrade(upgradePart, nil)
 		upgradePart:Destroy()
 	end)
+
+	if
+		self.player == Players.LocalPlayer
+		and not TutorialServiceClient:hasCompletedTutorial()
+		and nodeIndex == 4
+		and floor == 1
+	then
+		root:AddTag("TutorialNode")
+		upgradePart:AddTag("TutorialUpgrader")
+	end
 end
 
 function PlotClient.setReplication(self: PlotClient, isReplicated: boolean)

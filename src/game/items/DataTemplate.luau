@@ -67,6 +67,10 @@ return {
 	plotNodes = {},
 	inventory = {},
 	hotbar = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL },
+	tutorial = {
+		step = "joinInit",
+		completed = false,
+	},
 	stats = {
 		crateRolls = 0,
 		cratesOpened = 0,

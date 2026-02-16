@@ -8,6 +8,7 @@ local CrateSlice = require(ReplicatedStorage.Source.Features.Crates.CrateSlice)
 local CrateBillboardGui = require(ReplicatedStorage.Source.Features.Crates.UI.Screens.CrateBillboardGui)
 local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
 local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
+local TutorialServiceClient = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceClient)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 type CrateData = DataTemplate.CrateData
@@ -138,9 +139,12 @@ function Crate.new(
 end
 
 function Crate.onBought(self: Crate)
-	if self.isLocalPlayer then
-		self.networker:fire("buyCrate", self.index)
+	if not self.isLocalPlayer then
+		return
 	end
+
+	self.networker:fire("buyCrate", self.index)
+	TutorialServiceClient:nextStep("buyCrate")
 end
 
 function Crate.despawn(self: Crate)

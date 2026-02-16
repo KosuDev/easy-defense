@@ -14,6 +14,7 @@ local MonetizationServiceServer = require(ServerScriptService.Features.Monetizat
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local NotificationServiceServer = require(ServerScriptService.Features.Notifications.NotificationServiceServer)
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
+local TutorialServiceServer = require(ServerScriptService.Features.Tutorial.TutorialServiceServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 function DataService:onPlayerInit(_player, data)
@@ -32,15 +33,15 @@ end)
 DataService:init({
 	template = DataTemplate,
 	profileStoreIndex = "PRE",
-	useMock = false,
+	useMock = true,
 	resetData = false,
 	dontSave = false,
 })
 
 MonetizationServiceServer:init({
 	products = Products,
-	--canAwardGamepasses = false,
-	freePassesGroupRank = 45,
+	canAwardGamepasses = false,
+	freePassesGroupRank = 255,
 	groupId = 15794692,
 })
 
@@ -52,3 +53,4 @@ LeaderboardServiceServer:init()
 AutoRejoinServiceServer:init()
 NotificationServiceServer:init()
 FriendServiceServer:init()
+TutorialServiceServer:init()

@@ -54,6 +54,8 @@ local function CrateTimer(props: CrateTimerProps)
 		StudsOffsetWorldSpace = Vector3.new(0, 8, 0),
 		Size = UDim2.fromScale(7, 3.5),
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		AlwaysOnTop = true,
+		MaxDistance = 200,
 	}, {
 		CrateName = e(TextLabel, {
 			Text = crateInfo.name .. " Crate",
