@@ -16,7 +16,7 @@ export type EnemyInfo = {
 }
 
 local HP_SCALAR = 0.08
-local BASE_REWARD = 16
+local BASE_REWARD = 20
 
 local enemyTypes = {
 	normal = {

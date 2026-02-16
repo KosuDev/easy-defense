@@ -531,6 +531,12 @@
             },
             "TutorialSteps": {
               "$path": "src/features/tutorial/TutorialSteps.luau"
+            },
+            "UI": {
+              "$className": "Folder",
+              "TutorialRoot": {
+                "$path": "src/features/tutorial/ui/TutorialRoot.luau"
+              }
             }
           }
         },

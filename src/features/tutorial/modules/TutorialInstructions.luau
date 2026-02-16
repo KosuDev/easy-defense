@@ -43,7 +43,7 @@ local instructions = {
 	},
 
 	stopBrainrots = {
-		text = "Wait to earn $100 by stopping brainrots",
+		text = "Earn $100 by stopping brainrots",
 	},
 
 	upgradeTower = {

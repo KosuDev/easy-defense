@@ -108,6 +108,10 @@ function ConveyorClient.attemptCrateSpawn(self: ConveyorClient)
 		return
 	end
 
+	if not TutorialServiceClient:hasCompletedTutorial() and TutorialServiceClient:getStep() ~= "clickConveyorSpawn" then
+		return
+	end
+
 	SoundController:Play(Sounds.ui.click)
 	self.timeOfLastCrateSpawn = os.clock()
 	self.networker:fire("spawnCrate")
