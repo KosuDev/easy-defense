@@ -1,5 +1,7 @@
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local SocialService = game:GetService("SocialService")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).client
 local React = require(ReplicatedStorage.Packages.React)
@@ -75,13 +77,22 @@ local function FriendBoostCounter()
 	local numFriends = ReactCharm.useAtom(FriendServiceClient.friendCount)
 	local percent = numFriends * 0.10
 
-	return e(TextLabel, {
-		Text = `Friend Boost +{math.round(percent * 100)}%`,
-		Size = UDim2.fromOffset(400, 40),
+	return e(Button, {
+		hoverScale = 1,
+		Size = UDim2.fromOffset(300, 40),
 		Position = UDim2.new(0, 5, 1, 0),
 		AnchorPoint = Vector2.new(0, 1),
-		TextXAlignment = Enum.TextXAlignment.Left,
-		Stroke = { Thickness = 3 },
+		BackgroundTransparency = 1,
+		Activated = function()
+			SocialService:PromptGameInvite(Players.LocalPlayer)
+		end,
+	}, {
+		e(TextLabel, {
+			Text = `Friend Boost +{math.round(percent * 100)}%`,
+			Size = UDim2.fromOffset(400, 40),
+			TextXAlignment = Enum.TextXAlignment.Left,
+			Stroke = { Thickness = 3 },
+		}),
 	})
 end
 
