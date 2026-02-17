@@ -22,6 +22,11 @@ function PlotServiceClient.init(self: PlotServiceClient)
 		Menu.setOpenedMenu("SellMenu")
 	end)
 
+	local shopProx = CollectionService:GetTagged("ShopMenuProx")[1] :: ProximityPrompt
+	shopProx.Triggered:Connect(function()
+		Menu.setOpenedMenu("Shop")
+	end)
+
 	task.spawn(function()
 		while true do
 			self:updatePlotReplication()
