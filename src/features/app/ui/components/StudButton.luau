@@ -164,6 +164,20 @@ local function Black(props: StudButtonProps)
 	)
 end
 
+local function Red(props: StudButtonProps)
+	return e(
+		StudButton,
+		Sift.Dictionary.merge(props, {
+			StudGradient = ColorSequence.new({
+				ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
+				ColorSequenceKeypoint.new(0.21, Color3.fromRGB(255, 71, 71)),
+				ColorSequenceKeypoint.new(0.87, Color3.fromRGB(255, 10, 10)),
+				ColorSequenceKeypoint.new(1, Color3.fromRGB(117, 4, 4)),
+			}),
+		})
+	)
+end
+
 return {
 	Green = Green,
 	Component = StudButton,
@@ -173,4 +187,5 @@ return {
 	Teal = Teal,
 	Purple = Purple,
 	Black = Black,
+	Red = Red,
 }

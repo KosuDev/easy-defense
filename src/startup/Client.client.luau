@@ -12,6 +12,7 @@ local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Mone
 local MutationsServiceClient = require(ReplicatedStorage.Source.Features.Mutations.MutationsServiceClient)
 local NotificationServiceClient = require(ReplicatedStorage.Source.Features.Notifications.NotificationServiceClient)
 local PlotServiceClient = require(ReplicatedStorage.Source.Features.Plots.PlotServiceClient)
+local SettingInitializer = require(ReplicatedStorage.Source.Features.Settings.SettingInitializer)
 local TutorialServiceClient = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceClient)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
 local MountUI = require(script.Parent.MountUI)
@@ -30,6 +31,7 @@ AutoRejoinServiceClient:init()
 NotificationServiceClient:init()
 FriendServiceClient:init()
 TutorialServiceClient:init()
+SettingInitializer()
 
 SoundService:WaitForChild("Music"):Play()
 

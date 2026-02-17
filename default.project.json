@@ -46,6 +46,9 @@
                 },
                 "TopBar": {
                   "$path": "src/features/app/ui/hud/TopBar.luau"
+                },
+                "TopBarButtons": {
+                  "$path": "src/features/app/ui/hud/TopBarButtons.luau"
                 }
               },
               "Menus": {
@@ -67,6 +70,9 @@
                 },
                 "SellMenu": {
                   "$path": "src/features/app/ui/menus/SellMenu.luau"
+                },
+                "SettingsMenu": {
+                  "$path": "src/features/app/ui/menus/SettingsMenu.luau"
                 },
                 "ShopMenu": {
                   "$path": "src/features/app/ui/menus/ShopMenu.luau"
@@ -482,6 +488,24 @@
               }
             }
           },
+          "Settings": {
+            "$className": "Folder",
+            "Hooks": {
+              "$className": "Folder",
+              "useSetting": {
+                "$path": "src/features/settings/hooks/useSetting.luau"
+              }
+            },
+            "SettingInitializer": {
+              "$path": "src/features/settings/SettingInitializer.luau"
+            },
+            "SettingsServiceClient": {
+              "$path": "src/features/settings/SettingsServiceClient.luau"
+            },
+            "SettingsServiceUtils": {
+              "$path": "src/features/settings/SettingsServiceUtils.luau"
+            }
+          },
           "Shop": {
             "$className": "Folder",
             "ShopUtils": {
@@ -798,6 +822,12 @@
           },
           "PlotServiceServer": {
             "$path": "src/features/plots/PlotServiceServer.luau"
+          }
+        },
+        "Settings": {
+          "$className": "Folder",
+          "SettingsServiceServer": {
+            "$path": "src/features/settings/SettingsServiceServer.luau"
           }
         },
         "Tutorial": {

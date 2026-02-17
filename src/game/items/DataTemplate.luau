@@ -79,4 +79,7 @@ return {
 		timePlayed = 0,
 		robuxSpent = 0,
 	},
+	settings = {
+		music = true,
+	},
 }
