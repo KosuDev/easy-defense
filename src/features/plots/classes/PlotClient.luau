@@ -129,7 +129,7 @@ function PlotClient.setNodes(self: PlotClient, nodes: { { Node } })
 	end
 end
 
-function PlotClient.setNode(self: PlotClient, floor: number, node: number, nodeData: Node)
+function PlotClient.setNode(self: PlotClient, floor: number, node: number, nodeData: Node, fromCrate: boolean?)
 	if not self.nodes[floor] then
 		self.nodes[floor] = {}
 	end
@@ -149,6 +149,10 @@ function PlotClient.setNode(self: PlotClient, floor: number, node: number, nodeD
 		PlotSlice.actions.addCrate(nodeData.root, nodeData.data)
 	end
 
+	if fromCrate and self.isReplicated then
+		clientNode.crateOpening = true
+	end
+
 	self.nodes[floor][node] = clientNode
 	self.nodesUpdated:Fire(floor, node)
 end
@@ -161,6 +165,7 @@ function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, t
 	local isLuckyBlock = crateInfo.isLuckyBlock
 	nodeData.data = nil
 	nodeData.model = nil :: any
+	nodeData.crateOpening = true
 	self.nodesUpdated:Fire(floor, node)
 
 	if self.isReplicated then
@@ -177,6 +182,9 @@ function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, t
 	else
 		crateModel:Destroy()
 	end
+
+	self.nodes[floor][node].crateOpening = false
+	self.nodesUpdated:Fire(floor, node)
 
 	self.defense:towerAdded(floor, node, towerCf, towerData)
 end
@@ -201,7 +209,7 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	upgradePart.CFrame = root.CFrame * CFrame.new(0, 1.33, -5.5) * CFrame.Angles(math.rad(25), 0, 0)
 	upgradePart.Parent = root.Parent
 
-	local upgradeSurfaceGui = TowerUpgradeSurfaceGui.new()
+	local upgradeSurfaceGui, guiCleanup = TowerUpgradeSurfaceGui.new()
 	upgradeSurfaceGui.Adornee = upgradePart
 	upgradeSurfaceGui.Button.Activated:Connect(function()
 		self.networker:fire("requestUpgrade", floor, nodeIndex)
@@ -230,7 +238,11 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 		end
 
 		local tutCompleted = TutorialServiceClient:hasCompletedTutorial()
-		prox.Enabled = true
+		local shouldBeEnabled = not self.nodes[floor][nodeIndex].crateOpening
+		if not shouldBeEnabled then
+			upgradeSurfaceGui.Enabled = false
+		end
+		prox.Enabled = shouldBeEnabled
 		if not tutCompleted and nodeIndex ~= 4 then
 			prox.Enabled = false
 		end
@@ -267,6 +279,7 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 		PlotSlice.actions.setTowerUpgrade(upgradePart, nil)
 		upgradePart:Destroy()
 	end)
+	self.defenseJanitor:Add(guiCleanup)
 
 	if
 		self.player == Players.LocalPlayer

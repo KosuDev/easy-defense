@@ -1,7 +1,5 @@
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
-local UserInputService = game:GetService("UserInputService")
 
 local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundController)
 local AutoRejoinServiceClient = require(ReplicatedStorage.Source.Features.AutoRejoin.AutoRejoinServiceClient)
@@ -39,11 +37,3 @@ SoundService:WaitForChild("Music"):Play()
 for _, sound in Sounds.misc do
 	SoundController:Load(sound)
 end
-
-local mouse = Players.LocalPlayer:GetMouse()
-mouse.Button1Down:Connect(function()
-	if not mouse.Target then
-		print("NONE")
-	end
-	print(mouse.Target:GetFullName())
-end)

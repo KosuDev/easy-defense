@@ -238,7 +238,7 @@ function PlotServer.build(
 	if not fromLoad then
 		local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 		DataService:set(self.player, { "plotNodes", floorNodeStr }, occupiedNode)
-		self.networker:fireAll("setNode", floor, node, nodeInfo)
+		self.networker:fireAll("setNode", floor, node, nodeInfo, fromCrate)
 	end
 end
 

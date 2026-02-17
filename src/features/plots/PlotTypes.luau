@@ -17,6 +17,7 @@ export type PlotData = {
 	nodes: { { Node } },
 	paths: any,
 	conveyorModel: (Model & any)?,
+	crateOpening: boolean?,
 	conveyorLevel: number,
 	currencyMult: number,
 	damageMult: number,
@@ -26,6 +27,7 @@ export type PlotData = {
 
 export type ClientNode = Node & {
 	model: Model & any,
+	crateOpening: boolean?,
 }
 
 return nil
