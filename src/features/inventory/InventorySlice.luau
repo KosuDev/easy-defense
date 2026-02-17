@@ -14,7 +14,13 @@ local searchQuery: Atom<string?> = atom(nil)
 local numItemsVisible: Atom<number> = atom(0)
 local inventoryScrollable: Atom<boolean> = atom(true)
 
-local actions = {}
+local actions = {
+	toggleBackpack = function()
+		backpackOpen(function(prev)
+			return not prev
+		end)
+	end,
+}
 
 return {
 	actions = actions,

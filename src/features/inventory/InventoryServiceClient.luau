@@ -84,6 +84,10 @@ function InventoryServiceClient.init(self: InventoryServiceClient)
 				self:unequipItem()
 			end
 		end
+
+		if input.KeyCode == Enum.KeyCode.Backquote or input.KeyCode == Enum.KeyCode.G then
+			InventorySlice.actions.toggleBackpack()
+		end
 	end)
 
 	local function isUniqueIdBuilt(uniqueId: string): boolean

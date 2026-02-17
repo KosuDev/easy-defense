@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local StarterGui = game:GetService("StarterGui")
 
 local React = require(ReplicatedStorage.Packages.React)
 local ReactRoblox = require(ReplicatedStorage.Packages.ReactRoblox)
@@ -22,4 +23,5 @@ return function()
 	local app = e(RootUI)
 	root:render(app)
 	TopBarButtons()
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 end
