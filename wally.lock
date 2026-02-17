@@ -3,6 +3,11 @@
 registry = "test"
 
 [[package]]
+name = "1foreverhd/topbarplus"
+version = "3.4.0"
+dependencies = []
+
+[[package]]
 name = "chriscerie/react-error-boundary"
 version = "0.2.0"
 dependencies = [["Collections", "jsdotlua/collections@1.2.7"], ["LuauPolyfill", "jsdotlua/luau-polyfill@1.2.7"], ["React", "jsdotlua/react@17.2.1"], ["ReactRoblox", "jsdotlua/react-roblox@17.2.1"], ["Sift", "csqrl/sift@0.0.11"], ["TestEZ", "roblox/testez@0.4.1"]]
@@ -115,7 +120,7 @@ dependencies = [["collections", "jsdotlua/collections@1.2.7"]]
 [[package]]
 name = "leifs/easy-defense"
 version = "0.1.0"
-dependencies = [["Charm", "littensy/charm@0.10.0"], ["DataService", "leifstout/dataservice@0.4.0"], ["Janitor", "howmanysmall/janitor@1.18.3"], ["Networker", "leifstout/networker@0.3.0"], ["Promise", "howmanysmall/typed-promise@4.0.6"], ["React", "jsdotlua/react@17.2.1"], ["ReactCharm", "littensy/react-charm@0.3.0"], ["ReactErrorBoundary", "chriscerie/react-error-boundary@0.2.0"], ["ReactRoblox", "jsdotlua/react-roblox@17.2.1"], ["Ripple", "littensy/ripple@0.10.1"], ["ServicePlayerData", "leifstout/serviceplayerdata@0.1.2"], ["Sift", "csqrl/sift@0.0.11"], ["Signal", "sleitnick/signal@2.0.3"]]
+dependencies = [["Charm", "littensy/charm@0.10.0"], ["DataService", "leifstout/dataservice@0.4.0"], ["Janitor", "howmanysmall/janitor@1.18.3"], ["Networker", "leifstout/networker@0.3.1"], ["Promise", "howmanysmall/typed-promise@4.0.6"], ["React", "jsdotlua/react@17.2.1"], ["ReactCharm", "littensy/react-charm@0.3.0"], ["ReactErrorBoundary", "chriscerie/react-error-boundary@0.2.0"], ["ReactRoblox", "jsdotlua/react-roblox@17.2.1"], ["Ripple", "littensy/ripple@0.10.1"], ["ServicePlayerData", "leifstout/serviceplayerdata@0.1.2"], ["Sift", "csqrl/sift@0.0.11"], ["Signal", "sleitnick/signal@2.0.3"], ["Topbarplus", "1foreverhd/topbarplus@3.4.0"]]
 
 [[package]]
 name = "leifstout/dataservice"
@@ -129,7 +134,7 @@ dependencies = [["Signal", "sleitnick/signal@2.0.3"]]
 
 [[package]]
 name = "leifstout/networker"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [["Signal", "sleitnick/signal@2.0.3"]]
 
 [[package]]

@@ -14,6 +14,7 @@ local MonetizationServiceServer = require(ServerScriptService.Features.Monetizat
 local MutationServiceServer = require(ServerScriptService.Features.Mutations.MutationServiceServer)
 local NotificationServiceServer = require(ServerScriptService.Features.Notifications.NotificationServiceServer)
 local PlotServiceServer = require(ServerScriptService.Features.Plots.PlotServiceServer)
+local SettingsServiceServer = require(ServerScriptService.Features.Settings.SettingsServiceServer)
 local TutorialServiceServer = require(ServerScriptService.Features.Tutorial.TutorialServiceServer)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
@@ -52,3 +53,4 @@ AutoRejoinServiceServer:init()
 NotificationServiceServer:init()
 FriendServiceServer:init()
 TutorialServiceServer:init()
+SettingsServiceServer:init()
