@@ -32,9 +32,9 @@ end)
 
 DataService:init({
 	template = DataTemplate,
-	profileStoreIndex = "PRE",
+	profileStoreIndex = "OFFICIAL",
 	useMock = false,
-	resetData = true,
+	resetData = false,
 	dontSave = false,
 })
 

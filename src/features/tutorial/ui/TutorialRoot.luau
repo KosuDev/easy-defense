@@ -9,9 +9,10 @@ local TutorialInstructions = require(ReplicatedStorage.Source.Features.Tutorial.
 local e = React.createElement
 
 return function()
+	local completed = useDataState({ "tutorial", "completed" })
 	local step: string? = useDataState({ "tutorial", "step" })
 	local binding, spring = useSpring(0.5, { dampingRatio = 0.8, frequency = 1 }, 1)
-	if not step then
+	if completed or not step then
 		return
 	end
 

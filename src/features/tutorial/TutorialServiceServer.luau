@@ -3,12 +3,14 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
 local Networker = require(ReplicatedStorage.Packages.Networker)
+local ServicePlayerData = require(ReplicatedStorage.Packages.ServicePlayerData)
 local TutorialServiceUtils = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceUtils)
 
 local TutorialServiceServer = {}
 
 function TutorialServiceServer.init(self: TutorialServiceServer)
 	self.networker = Networker.server.new("TutorialService", self, { self.changeStep })
+	self.playerData = ServicePlayerData.new({}, self)
 end
 
 function TutorialServiceServer:playerRemoving(player: Player)
@@ -54,6 +56,7 @@ end
 
 type TutorialServiceServer = typeof(TutorialServiceServer) & {
 	networker: Networker.Server,
+	playerData: ServicePlayerData.ServicePlayerData<{}>,
 }
 
 return TutorialServiceServer :: TutorialServiceServer
