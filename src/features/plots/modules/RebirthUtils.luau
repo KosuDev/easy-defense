@@ -23,7 +23,7 @@ local rebirthRewards = {
 local rebirthRequirements = {
 	[1] = {
 		towerId = "harpoon",
-		currency = 10e3,
+		currency = 5e3,
 	},
 	[2] = {
 		towerId = "tesla",

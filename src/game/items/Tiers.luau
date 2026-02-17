@@ -77,6 +77,24 @@ local tiers = {
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 150)),
 		}),
 	},
+
+	ascended = {
+		name = "Ascended",
+		odds = 1 / 500e3,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 0)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 0, 0)),
+		}),
+	},
+
+	eternal = {
+		name = "Eternal",
+		odds = 1 / 2e6,
+		gradient = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 255)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 0, 150)),
+		}),
+	},
 }
 
 local sortedTiers = {}

@@ -39,6 +39,12 @@ function PlotServiceClient.initPlot(self: PlotServiceClient, plotData: PlotTypes
 
 	local plot = PlotClient.new(plotData)
 	self.plots[plot.index] = plot
+
+	if plot.player == Players.LocalPlayer then
+		task.wait(0.35)
+		local pos = (plot.plotModel:GetPivot() * CFrame.new(0, 25, 55)).Position
+		workspace.CurrentCamera.CFrame = CFrame.lookAt(pos, plot.plotModel:GetPivot().Position)
+	end
 end
 
 function PlotServiceClient.getPlot(self: PlotServiceClient, index: number): PlotClient.PlotClient?
