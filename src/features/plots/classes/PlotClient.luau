@@ -20,6 +20,7 @@ local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Mone
 local PlotServiceUtils = require(ReplicatedStorage.Source.Features.Plots.PlotServiceUtils)
 local PlotSlice = require(ReplicatedStorage.Source.Features.Plots.PlotSlice)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local TowerUpgradeSurfaceGui = require(ReplicatedStorage.Source.Features.Plots.UI.Components.TowerUpgradeSurfaceGui)
 local TutorialServiceClient = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceClient)
 local ConveyorUpgrades = require(ReplicatedStorage.Source.Game.Items.ConveyorUpgrades)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
@@ -200,17 +201,27 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	upgradePart.CFrame = root.CFrame * CFrame.new(0, 1.33, -5.5) * CFrame.Angles(math.rad(25), 0, 0)
 	upgradePart.Parent = root.Parent
 
+	local upgradeSurfaceGui = TowerUpgradeSurfaceGui.new()
+	upgradeSurfaceGui.Adornee = upgradePart
+	upgradeSurfaceGui.Button.Activated:Connect(function()
+		self.networker:fire("requestUpgrade", floor, nodeIndex)
+	end)
+
 	local function update(f: number?, n: number?)
 		local data = self.nodes[floor][nodeIndex].data
 		if f == floor and n == nodeIndex then
-			if data then
+			TowerUpgradeSurfaceGui.update(upgradeSurfaceGui, data)
+			--[[if data then
 				local upgradeData = table.clone(data) :: any
 				upgradeData.floor = floor
 				upgradeData.node = nodeIndex
+				print("setting upgrade data")
+				task.wait()
 				PlotSlice.actions.setTowerUpgrade(upgradePart, upgradeData)
 			else
+				print("setting to nil")
 				PlotSlice.actions.setTowerUpgrade(upgradePart, nil)
-			end
+			end]]
 
 			if data and data.itemId then
 				local scale = 1.25 * (PlotServiceUtils.getScaleFromLevel(data.level) - 0.75)

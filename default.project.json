@@ -462,6 +462,12 @@
             },
             "UI": {
               "$className": "Folder",
+              "Components": {
+                "$className": "Folder",
+                "TowerUpgradeSurfaceGui": {
+                  "$path": "src/features/plots/ui/components/TowerUpgradeSurfaceGui.luau"
+                }
+              },
               "PlotRoot": {
                 "$path": "src/features/plots/ui/PlotRoot.luau"
               },
