@@ -12,13 +12,14 @@ return function()
 	local completed = useDataState({ "tutorial", "completed" })
 	local step: string? = useDataState({ "tutorial", "step" })
 	local binding, spring = useSpring(0.5, { dampingRatio = 0.8, frequency = 1 }, 1)
-	if completed or not step then
-		return
-	end
 
 	React.useEffect(function()
 		spring:impulse(5)
 	end, { step })
+
+	if completed or not step then
+		return
+	end
 
 	local instruction = TutorialInstructions[step]
 	if not instruction or not instruction.text then

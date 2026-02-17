@@ -20,8 +20,6 @@ local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 function DataService:onPlayerInit(_player, data)
 	print(data)
 	data.sessionStart = os.time()
-	--data.rebirths = 0
-	--data.__gamepasses = {}
 end
 
 DataService:addPlayerRemovingCallback(function(_player, data)
@@ -40,7 +38,7 @@ DataService:init({
 
 MonetizationServiceServer:init({
 	products = Products,
-	canAwardGamepasses = false,
+	canAwardGamepasses = true,
 	freePassesGroupRank = 255,
 	groupId = 15794692,
 })

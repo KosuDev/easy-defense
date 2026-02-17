@@ -21,6 +21,10 @@ local function DraggedItemFrame(props)
 
 	React.useEffect(function()
 		local connection = UserInputService.InputChanged:Connect(function(input)
+			if not InventorySlice.state.draggingItemUniqueId() then
+				return
+			end
+
 			local inset = GuiService:GetGuiInset()
 			local mousePos = Vector2.new(input.Position.X, input.Position.Y) + inset
 			if mousePos.Y > vpSize.Y - 95 then
