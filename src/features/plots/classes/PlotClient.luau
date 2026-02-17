@@ -41,6 +41,7 @@ export type PlotClient = typeof(setmetatable(
 		janitor: Janitor.Janitor,
 		nodes: { { ClientNode } },
 		defense: DefenseClient.DefenseClient,
+		rebirths: number,
 		defenseJanitor: Janitor.Janitor,
 		networker: Networker.Client,
 		nodesUpdated: Signal.Signal<number, number>,
@@ -57,6 +58,7 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 		player = plotData.player,
 		plotModel = plotData.plotModel,
 		nodes = plotData.nodes,
+		rebirths = plotData.rebirths,
 		janitor = Janitor.new(),
 		defenseJanitor = Janitor.new(),
 		nodesUpdated = Signal.new(),
@@ -167,6 +169,7 @@ function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, t
 	nodeData.model = nil :: any
 	nodeData.crateOpening = true
 	self.nodesUpdated:Fire(floor, node)
+	local rebirths = self.rebirths
 
 	if self.isReplicated then
 		if isLuckyBlock then
@@ -184,6 +187,10 @@ function PlotClient.crateOpened(self: PlotClient, floor: number, node: number, t
 	end
 
 	self.nodes[floor][node].crateOpening = false
+	if self.rebirths ~= rebirths then
+		return
+	end
+
 	self.nodesUpdated:Fire(floor, node)
 
 	self.defense:towerAdded(floor, node, towerCf, towerData)
@@ -210,6 +217,8 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	upgradePart.Parent = root.Parent
 
 	local upgradeSurfaceGui, guiCleanup = TowerUpgradeSurfaceGui.new()
+	upgradeSurfaceGui.AlwaysOnTop = true
+	upgradeSurfaceGui.MaxDistance = 60
 	upgradeSurfaceGui.Adornee = upgradePart
 	upgradeSurfaceGui.Button.Activated:Connect(function()
 		self.networker:fire("requestUpgrade", floor, nodeIndex)

@@ -43,6 +43,7 @@ export type PlotServer = typeof(setmetatable(
 		cf: CFrame,
 		index: number,
 		player: Player,
+		rebirths: number,
 		janitor: Janitor.Janitor,
 		conveyor: ConveyorServer.ConveyorServer,
 		defense: DefenseServer.DefenseServer,
@@ -74,6 +75,7 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 		index = plotSpawn.index,
 		player = player,
 		janitor = Janitor.new(),
+		rebirths = DataService:get(player, "rebirths") :: number,
 		nodes = {},
 		defense = DefenseServer.new(plotSpawn.index, player),
 		plotModel = newPlotModel(plotSpawn.part.CFrame),
@@ -92,8 +94,10 @@ function PlotServer.new(plotSpawn: PlotSpawn, player: Player): PlotServer
 	self.conveyor = ConveyorServer.new(self.index, self.plotModel, player)
 	self:charInit()
 	self:loadDefense(true)
-	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function()
+	self.janitor:Add(DataService:getChangedSignal(player, "rebirths"):Connect(function(amt: number)
+		self.rebirths = amt
 		self:loadDefense(false)
+		self.networker:setAll("rebirths", self.rebirths)
 	end))
 
 	self.janitor:Add(InventoryServiceServer.itemSoldSignal:Connect(function(sellingPlayer: Player, uniqueId: string)
@@ -118,6 +122,7 @@ function PlotServer.get(self: PlotServer): PlotTypes.PlotData
 		player = self.player,
 		plotModel = self.plotModel,
 		nodes = self.nodes,
+		rebirths = self.rebirths,
 		paths = self.defense.paths,
 		conveyorModel = self.conveyor.model,
 		conveyorLevel = self.conveyor.level,
@@ -194,6 +199,11 @@ function PlotServer.loadDefense(self: PlotServer, fromLoad: boolean): ()
 	for floorNodeStr, occupiedNode in occupiedNodes do
 		local floor, node = PlotServiceUtils.stringToFloorNode(floorNodeStr)
 		self:build(floor, node, occupiedNode, fromLoad)
+	end
+
+	local char = self.player.Character
+	if char then
+		char:PivotTo(self.plotModel:GetPivot() * CHAR_SPAWN_OFFSET)
 	end
 end
 

@@ -22,6 +22,7 @@ export type PlotData = {
 	currencyMult: number,
 	damageMult: number,
 	bestDps: number,
+	rebirths: number,
 	towers: { { floor: number, node: Node, data: DataTemplate.TowerData, cf: CFrame } },
 }
 

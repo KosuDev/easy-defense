@@ -420,6 +420,11 @@ local GOLDEN_TWEAK: ColorTweaker.Tweak = {
 function Towers.getTowerModel(towerId: string, mutations: DataTemplate.Mutations?): Model
 	assert(towers[towerId], "Invalid tower ID" .. towerId)
 	local model = ReplicatedStorage.Assets.Towers[towerId]:Clone()
+	for _, part in model:GetDescendants() do
+		if part:IsA("BasePart") then
+			part.CanCollide = false
+		end
+	end
 
 	if mutations and mutations.diamond then
 		ColorTweaker.fromContainer(model, DIAMOND_TWEAK)
