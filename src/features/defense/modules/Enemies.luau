@@ -226,8 +226,9 @@ local function getEnemyStats(x: number, enemyType: string): EnemyStats
 end
 
 function Enemies.getEnemyForStrength(strength: number): EnemyStats
+	local damper = math.clamp(0.5 + (strength / 3000), 0.5, 1)
 	local mult = rollStrengthMultiplier()
-	strength *= mult
+	strength *= mult * damper
 	local x = math.max(1, math.round(math.log(strength / 4, 2)))
 	local enemyType = rollEnemyType()
 	return getEnemyStats(x, enemyType)
