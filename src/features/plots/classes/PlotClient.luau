@@ -213,6 +213,7 @@ function PlotClient._initProxForNode(self: PlotClient, node: ClientNode, floor: 
 	upgradeSurfaceGui.Adornee = upgradePart
 	upgradeSurfaceGui.Button.Activated:Connect(function()
 		self.networker:fire("requestUpgrade", floor, nodeIndex)
+		TutorialServiceClient:nextStep("upgradeTower")
 	end)
 
 	local function update(f: number?, n: number?)
