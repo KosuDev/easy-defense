@@ -121,7 +121,7 @@ return function()
 			Menu.setOpenedMenu("Shop")
 		end,
 		Prefix = {
-			Image = ImageIds.settings,
+			Image = ImageIds.shoppingCart,
 			HorizontalAlignment = Enum.HorizontalAlignment.Left,
 		},
 	}, {
