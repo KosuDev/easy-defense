@@ -53,6 +53,12 @@
               },
               "Menus": {
                 "$className": "Folder",
+                "GiftingMenu": {
+                  "$path": "src/features/app/ui/menus/GiftingMenu.luau"
+                },
+                "GiftReceivedMenu": {
+                  "$path": "src/features/app/ui/menus/GiftReceivedMenu.luau"
+                },
                 "IndexMenu": {
                   "$path": "src/features/app/ui/menus/IndexMenu.luau"
                 },
@@ -508,6 +514,9 @@
           },
           "Shop": {
             "$className": "Folder",
+            "ShopSlice": {
+              "$path": "src/features/shop/ShopSlice.luau"
+            },
             "ShopUtils": {
               "$path": "src/features/shop/ShopUtils.luau"
             },
@@ -602,6 +611,9 @@
               },
               "NotificationMessage": {
                 "$path": "src/core/ui/components/NotificationMessage.luau"
+              },
+              "PlayerPortrait": {
+                "$path": "src/core/ui/components/PlayerPortrait.luau"
               },
               "RainbowGradient": {
                 "$path": "src/core/ui/components/RainbowGradient.luau"

@@ -77,11 +77,17 @@ type MenuProps = {
 
 local function Menu(props: MenuProps)
 	local openedScreen = ReactCharm.useAtom(Screen.openedScreen)
+	local firstTimeRef = React.useRef(true)
 	local isOpen = ReactCharm.useAtom(function()
 		return openedMenu() == props.menuName
 	end)
 
 	React.useEffect(function()
+		if firstTimeRef.current then
+			firstTimeRef.current = false
+			return
+		end
+
 		if isOpen and props.OnOpen then
 			props.OnOpen()
 		elseif not isOpen and props.OnClose then

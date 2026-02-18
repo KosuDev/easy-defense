@@ -3,13 +3,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local StudButton = require(script.Parent.StudButton)
 local React = require(ReplicatedStorage.Packages.React)
 local Sift = require(ReplicatedStorage.Packages.Sift)
+local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
 local useProduct = require(ReplicatedStorage.Source.Features.Monetization.Hooks.useProduct)
 local MonetizationServiceClient = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceClient)
 local MonetizationServiceUtils = require(ReplicatedStorage.Source.Features.Monetization.MonetizationServiceUtils)
+local ShopSlice = require(ReplicatedStorage.Source.Features.Shop.ShopSlice)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 
---local SubMenu = require(ReplicatedStorage.UI.core.components.Menu.SubMenu)
---local shopState = require(ReplicatedStorage.UI.features.shop.state.shopState)
 local e: typeof(React.createElement) = React.createElement
 
 type MonetizationProduct = MonetizationServiceUtils.MonetizationProduct
@@ -65,8 +65,8 @@ return function(props: RobuxButtonProps)
 					SizeConstraint = Enum.SizeConstraint.RelativeYY,
 					LayoutOrder = 1,
 					Activated = function()
-						--shopState.state.giftingProduct(props.product)
-						--SubMenu.setOpenedMenu("Gift")
+						ShopSlice.state.giftingProduct(props.product)
+						Menu.setOpenedMenu("GiftingMenu")
 					end,
 				}, {
 					e("ImageLabel", {

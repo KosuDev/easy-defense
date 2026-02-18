@@ -18,7 +18,7 @@ return function(parent)
 	root:render(app)
 
 	local menuCleanup = Menu.init()
-	Menu.setOpenedMenu("SettingsMenu")
+	Menu.setOpenedMenu("GiftingMenu")
 
 	return function()
 		menuCleanup()
