@@ -89,6 +89,11 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 		end
 	end))
 
+	self.plotModel.LikeReward.LikeRewardRoot.BillboardGui.Cost.Visible = DataService:get("groupLootClaimed")
+	self.janitor:Add(DataService:getChangedSignal("groupLootClaimed"):Connect(function()
+		self.plotModel.LikeReward.LikeRewardRoot.BillboardGui.Cost.Visible = DataService:get("groupLootClaimed")
+	end))
+
 	self.janitor:Add(TouchPad.new(self.plotModel.LikeReward.Hitbox, function()
 		if not DataService:get("groupLootClaimed") then
 			Menu.setOpenedMenu("LikeMenu")
