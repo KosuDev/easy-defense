@@ -60,8 +60,8 @@ function MutationServiceClient.getActiveEvents(_self: MutationServiceClient): { 
 end
 
 function MutationServiceClient.rollMutations(self: MutationServiceClient): Mutations?
-	local goldHunterPass = MonetizationServiceClient:ownsGamepass(Products.goldHunter)
-	local diamondHunterPass = MonetizationServiceClient:ownsGamepass(Products.diamondHunter)
+	local goldHunterPass = MonetizationServiceClient:ownsGamepass(Products.goldHunter :: any)
+	local diamondHunterPass = MonetizationServiceClient:ownsGamepass(Products.diamondHunter :: any)
 	return MutationServiceUtils.rollMutations(self:getActiveEvents(), goldHunterPass, diamondHunterPass)
 end
 

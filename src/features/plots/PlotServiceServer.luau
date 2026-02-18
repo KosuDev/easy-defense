@@ -5,11 +5,15 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local NotificationServiceServer = require(ServerScriptService.Features.Notifications.NotificationServiceServer)
 local PlotServer = require(ServerScriptService.Features.Plots.Classes.PlotServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local ServicePlayerData = require(ReplicatedStorage.Packages.ServicePlayerData)
+local IsUserInGroup = require(ReplicatedStorage.Source.Core.Platform.IsUserInGroup)
 local RebirthUtils = require(ReplicatedStorage.Source.Features.Plots.Modules.RebirthUtils)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
+local ShopUtils = require(ReplicatedStorage.Source.Features.Shop.ShopUtils)
+local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 local DataTemplate = require(ReplicatedStorage.Source.Game.Items.DataTemplate)
 
 type Plot = PlotServer.PlotServer
@@ -26,7 +30,8 @@ type PlayerData = {
 }
 
 function PlotServiceServer.init(self: PlotServiceServer)
-	self.networker = Networker.server.new("PlotService", self, { self.rebirth, self.tpToBase, self.tpToSell })
+	self.networker =
+		Networker.server.new("PlotService", self, { self.rebirth, self.tpToBase, self.tpToSell, self.claimGroupLoot })
 	self.playerData = ServicePlayerData.new(PLAYER_DATA_TEMPLATE :: PlayerData, self)
 	self.plotSpawns = {}
 
@@ -201,6 +206,29 @@ function PlotServiceServer.boughtProductCrate(self: PlotServiceServer, player: P
 
 	plot.conveyor:crateProductBought(conveyorBoughtCrate)
 	DataService:set(player, { "conveyorBoughtCrates", n }, nil)
+
+	return true
+end
+
+function PlotServiceServer:claimGroupLoot(player: Player)
+	if DataService:get(player, "groupLootClaimed") then
+		return
+	end
+
+	if not IsUserInGroup(player.UserId, 15794692) then
+		return
+	end
+
+	DataService:set(player, "groupLootClaimed", true)
+
+	local currencyReward =
+		math.round(1e3 + ShopUtils.getCurrencyAmtFromRebirth(1, DataService:get(player, "rebirths")) / 3)
+	DataService:update(player, "currency", function(amt: number)
+		return amt + currencyReward
+	end)
+
+	NotificationServiceServer:sendNotification(player, ImageIds.luck, 1)
+	NotificationServiceServer:sendNotification(player, ImageIds.currency, currencyReward)
 
 	return true
 end

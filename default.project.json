@@ -62,6 +62,9 @@
                 "IndexMenu": {
                   "$path": "src/features/app/ui/menus/IndexMenu.luau"
                 },
+                "LikeMenu": {
+                  "$path": "src/features/app/ui/menus/LikeMenu.luau"
+                },
                 "Menu": {
                   "$path": "src/features/app/ui/menus/Menu.luau"
                 },
@@ -585,6 +588,9 @@
             "$className": "Folder",
             "ColorTweaker": {
               "$path": "src/core/platform/ColorTweaker.luau"
+            },
+            "IsUserInGroup": {
+              "$path": "src/core/platform/IsUserInGroup.luau"
             },
             "RetryAsync": {
               "$path": "src/core/platform/RetryAsync.luau"

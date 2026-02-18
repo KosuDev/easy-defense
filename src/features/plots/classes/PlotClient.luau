@@ -6,6 +6,7 @@ local Charm = require(ReplicatedStorage.Packages.Charm)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local Signal = require(ReplicatedStorage.Packages.Signal)
+local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
 local ConveyorClient = require(ReplicatedStorage.Source.Features.Conveyor.ConveyorClient)
 local TouchPad = require(ReplicatedStorage.Source.Features.Conveyor.Modules.TouchPad)
 local CrateOpenVfx = require(ReplicatedStorage.Source.Features.Crates.Modules.CrateOpenVfx)
@@ -85,6 +86,12 @@ function PlotClient.new(plotData: PlotTypes.PlotData): PlotClient
 	self.janitor:Add(TouchPad.new(self.plotModel.StarterPack.Hitbox, function()
 		if not MonetizationServiceClient:ownsGamepass(Products.starterPack :: any) then
 			MonetizationServiceClient:promptProduct(Products.starterPack :: any)
+		end
+	end))
+
+	self.janitor:Add(TouchPad.new(self.plotModel.LikeReward.Hitbox, function()
+		if not DataService:get("groupLootClaimed") then
+			Menu.setOpenedMenu("LikeMenu")
 		end
 	end))
 

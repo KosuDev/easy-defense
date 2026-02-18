@@ -124,7 +124,7 @@ local function Menu(props: MenuProps)
 		}, {
 			Title = e(TextLabel, {
 				Text = props.Title,
-				Size = UDim2.fromScale(0.5, 0.8),
+				Size = UDim2.fromScale(0.8, 0.8),
 				AnchorPoint = Vector2.new(0, 0.5),
 				Position = UDim2.fromScale(0.01, 0.5),
 				Stroke = { Thickness = 3, Color = Color3.fromRGB(20, 20, 20) },

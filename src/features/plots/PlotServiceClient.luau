@@ -2,14 +2,17 @@ local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local DataService = require(ReplicatedStorage.Packages.DataService).client
 local PlotSlice = require(script.Parent.PlotSlice)
 local Networker = require(ReplicatedStorage.Packages.Networker)
 local ErrorMessage = require(ReplicatedStorage.Source.Core.UI.Components.ErrorMessage)
+local NotificationMessage = require(ReplicatedStorage.Source.Core.UI.Components.NotificationMessage)
 local Menu = require(ReplicatedStorage.Source.Features.App.UI.Menus.Menu)
 local Screen = require(ReplicatedStorage.Source.Features.App.UI.Screens.Screen)
 local PlotClient = require(ReplicatedStorage.Source.Features.Plots.Classes.PlotClient)
 local PlotTypes = require(ReplicatedStorage.Source.Features.Plots.PlotTypes)
 local TutorialServiceClient = require(ReplicatedStorage.Source.Features.Tutorial.TutorialServiceClient)
+local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
 
 local PlotServiceClient = {}
 
@@ -33,6 +36,14 @@ function PlotServiceClient.init(self: PlotServiceClient)
 			task.wait(1)
 		end
 	end)
+
+	if not TutorialServiceClient:hasCompletedTutorial() then
+		task.delay(7 * 60, function()
+			if not DataService:get("groupLootClaimed") then
+				Menu.setOpenedMenu("LikeMenu")
+			end
+		end)
+	end
 end
 
 function PlotServiceClient.initPlot(self: PlotServiceClient, plotData: PlotTypes.PlotData)
@@ -127,6 +138,26 @@ function PlotServiceClient.updatePlotReplication(self: PlotServiceClient)
 		local withinBounds = isWithinPlotBounds(plot.cf, pos)
 		plot:setReplication(withinBounds)
 	end
+end
+
+function PlotServiceClient:claimGroupLoot()
+	if DataService:get("groupLootClaimed") then
+		return
+	end
+
+	local success = self.networker:fetch("claimGroupLoot")
+	if not success then
+		return
+	end
+
+	NotificationMessage.add({
+		Text = "Like rewards claimed!",
+		TextColor3 = Color3.fromRGB(140, 255, 0),
+		Stroke = { Thickness = 2, Color = Color3.fromRGB(0, 45, 25) },
+		Prefix = {
+			Image = ImageIds.upgrade,
+		},
+	})
 end
 
 type PlotServiceClient = typeof(PlotServiceClient) & {
