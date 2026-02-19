@@ -270,6 +270,9 @@
               "pyramidium": {
                 "$path": "src/features/defense/towerAnimations/pyramidium.luau"
               },
+              "railgun": {
+                "$path": "src/features/defense/towerAnimations/railgun.luau"
+              },
               "superTesla": {
                 "$path": "src/features/defense/towerAnimations/superTesla.luau"
               },

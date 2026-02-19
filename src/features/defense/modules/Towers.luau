@@ -310,6 +310,19 @@ local towers = {
 		height = 17,
 	},
 
+	railgun = {
+		name = "Railgun",
+		image = "rbxassetid://71267814543164",
+		crateImage = "rbxassetid://121324063838249",
+		crateOpenTime = 90 * 60,
+		crateCost = 676e9,
+		weight = 500,
+		damage = 43e6,
+		range = 25,
+		firerate = 0.75,
+		height = 10,
+	},
+
 	overdrive = {
 		name = "Overdrive",
 		image = "rbxassetid://139408627674878",
