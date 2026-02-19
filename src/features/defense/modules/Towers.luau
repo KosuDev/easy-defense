@@ -297,6 +297,19 @@ local towers = {
 		height = 9,
 	},
 
+	superTesla = {
+		name = "Super Tesla",
+		image = "rbxassetid://71267814543164",
+		crateImage = "rbxassetid://121324063838249",
+		crateOpenTime = 80 * 60,
+		crateCost = 250e9,
+		weight = 1e3,
+		damage = 16.7e6,
+		range = 25,
+		firerate = 1,
+		height = 17,
+	},
+
 	overdrive = {
 		name = "Overdrive",
 		image = "rbxassetid://139408627674878",

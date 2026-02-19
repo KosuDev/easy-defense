@@ -21,6 +21,6 @@ return {
 	},
 	{
 		cost = 100e9,
-		luck = 450,
+		luck = 6e3,
 	},
 }
