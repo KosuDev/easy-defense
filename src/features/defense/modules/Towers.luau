@@ -284,6 +284,19 @@ local towers = {
 		height = 9,
 	},
 
+	dualshot = {
+		name = "Dualshot",
+		image = "rbxassetid://71267814543164",
+		crateImage = "rbxassetid://121324063838249",
+		crateOpenTime = 70 * 60,
+		crateCost = 105e9,
+		weight = 2e3,
+		damage = 4.2e6,
+		range = 25,
+		firerate = 2,
+		height = 9,
+	},
+
 	overdrive = {
 		name = "Overdrive",
 		image = "rbxassetid://139408627674878",

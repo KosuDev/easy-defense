@@ -219,6 +219,9 @@
               "darkTerra": {
                 "$path": "src/features/defense/towerAnimations/darkTerra.luau"
               },
+              "dualshot": {
+                "$path": "src/features/defense/towerAnimations/dualshot.luau"
+              },
               "eradicator": {
                 "$path": "src/features/defense/towerAnimations/eradicator.luau"
               },
