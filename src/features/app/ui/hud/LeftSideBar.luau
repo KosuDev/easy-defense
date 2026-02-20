@@ -131,7 +131,9 @@ local function RebirthNotiButton()
 
 	local reqs = RebirthUtils.getRequirements(rebirths)
 	local currencyReqMet = currency >= reqs.currency
-	local towerReqMet = towerIndex.normal[reqs.towerId] ~= nil
+	local towerReqMet = towerIndex.normal[reqs.towerId]
+		or towerIndex.gold[reqs.towerId]
+		or towerIndex.diamond[reqs.towerId]
 	local canRebirth = currencyReqMet and towerReqMet
 
 	if not canRebirth then

@@ -35,7 +35,7 @@ local tiers = {
 
 	epic = {
 		name = "Epic",
-		odds = 1 / 200,
+		odds = 1 / 300,
 		gradient = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 134, 255)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 0, 200)),
@@ -44,7 +44,7 @@ local tiers = {
 
 	legendary = {
 		name = "Legendary",
-		odds = 1 / 1000,
+		odds = 1 / 2e3,
 		gradient = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 204, 102)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 102, 0)),
@@ -53,7 +53,7 @@ local tiers = {
 
 	mythic = {
 		name = "Mythic",
-		odds = 1 / 5e3,
+		odds = 1 / 13e3,
 		gradient = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 75, 75)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 0, 0)),
@@ -62,7 +62,7 @@ local tiers = {
 
 	divine = {
 		name = "Divine",
-		odds = 1 / 20e3,
+		odds = 1 / 75e3,
 		gradient = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(187, 39, 255)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 192, 118)),
@@ -71,7 +71,7 @@ local tiers = {
 
 	exotic = {
 		name = "Exotic",
-		odds = 1 / 100e3,
+		odds = 1 / 600e3,
 		gradient = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 150, 150)),
@@ -80,7 +80,7 @@ local tiers = {
 
 	ascended = {
 		name = "Ascended",
-		odds = 1 / 500e3,
+		odds = 1 / 4e6,
 		gradient = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 0)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(200, 0, 0)),
@@ -89,7 +89,7 @@ local tiers = {
 
 	eternal = {
 		name = "Eternal",
-		odds = 1 / 2e6,
+		odds = 1 / 25e6,
 		gradient = ColorSequence.new({
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 255)),
 			ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 0, 150)),

@@ -49,7 +49,9 @@ local function RequirementsFrame()
 	local towerInfo = Towers.getTowerInfo(reqs.towerId)
 	local tier = Tiers.getTierForOdds(towerInfo.odds)
 	local currencyReqMet = currency >= reqs.currency
-	local towerReqMet = towerIndex.normal[reqs.towerId] ~= nil
+	local towerReqMet = towerIndex.normal[reqs.towerId]
+		or towerIndex.gold[reqs.towerId]
+		or towerIndex.diamond[reqs.towerId]
 
 	return e(InsetFrame, {
 		Size = UDim2.new(0.9, 0, 0, 160),

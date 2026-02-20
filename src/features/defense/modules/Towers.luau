@@ -286,10 +286,10 @@ local towers = {
 
 	dualshot = {
 		name = "Dualshot",
-		image = "rbxassetid://71267814543164",
-		crateImage = "rbxassetid://121324063838249",
+		image = "rbxassetid://119923869478094",
+		crateImage = "rbxassetid://119078506264377",
 		crateOpenTime = 70 * 60,
-		crateCost = 105e9,
+		crateCost = 140e9,
 		weight = 2e3,
 		damage = 4.2e6,
 		range = 25,
@@ -299,10 +299,10 @@ local towers = {
 
 	superTesla = {
 		name = "Super Tesla",
-		image = "rbxassetid://71267814543164",
-		crateImage = "rbxassetid://121324063838249",
+		image = "rbxassetid://89220675611412",
+		crateImage = "rbxassetid://98772576870574",
 		crateOpenTime = 80 * 60,
-		crateCost = 250e9,
+		crateCost = 425e9,
 		weight = 1e3,
 		damage = 16.7e6,
 		range = 25,
@@ -312,15 +312,15 @@ local towers = {
 
 	railgun = {
 		name = "Railgun",
-		image = "rbxassetid://71267814543164",
-		crateImage = "rbxassetid://121324063838249",
+		image = "rbxassetid://130781208461690",
+		crateImage = "rbxassetid://71411355602861",
 		crateOpenTime = 90 * 60,
-		crateCost = 676e9,
+		crateCost = 1.2e12,
 		weight = 500,
 		damage = 43e6,
 		range = 25,
 		firerate = 0.75,
-		height = 10,
+		height = 9,
 	},
 
 	overdrive = {

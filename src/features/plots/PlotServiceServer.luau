@@ -5,6 +5,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 local ServerStorage = game:GetService("ServerStorage")
 
 local DataService = require(ReplicatedStorage.Packages.DataService).server
+local InventoryServiceServer = require(ServerScriptService.Features.Inventory.InventoryServiceServer)
 local NotificationServiceServer = require(ServerScriptService.Features.Notifications.NotificationServiceServer)
 local PlotServer = require(ServerScriptService.Features.Plots.Classes.PlotServer)
 local Networker = require(ReplicatedStorage.Packages.Networker)
@@ -129,7 +130,7 @@ function PlotServiceServer.rebirth(_self: PlotServiceServer, player: Player): (b
 		return false, "Not enough money"
 	end
 
-	local hasUnlockedTower = DataService:get(player, { "towerIndex", "normal", reqs.towerId }) ~= nil
+	local hasUnlockedTower = InventoryServiceServer:hasUnlockedTower(player, reqs.towerId)
 	if not hasUnlockedTower then
 		return false, "Required tower not unlocked"
 	end

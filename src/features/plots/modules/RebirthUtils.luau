@@ -18,6 +18,15 @@ local rebirthRewards = {
 	[6] = {
 		towerSlots = 2,
 	},
+	[7] = {
+		towerSlots = 2,
+	},
+	[8] = {
+		towerSlots = 2,
+	},
+	[9] = {
+		towerSlots = 2,
+	},
 }
 
 local rebirthRequirements = {
@@ -43,7 +52,19 @@ local rebirthRequirements = {
 	},
 	[6] = {
 		towerId = "orbOfDarkness",
-		currency = 267e6,
+		currency = 676e6,
+	},
+	[7] = {
+		towerId = "overseer",
+		currency = 4e9,
+	},
+	[8] = {
+		towerId = "phantom",
+		currency = 22e9,
+	},
+	[9] = {
+		towerId = "dualshot",
+		currency = 150e9,
 	},
 }
 

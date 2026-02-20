@@ -124,6 +124,16 @@ function InventoryServiceServer.addToHotBar(self: InventoryServiceServer, player
 	self.networker:fire(player, "addToHotbar", uniqueId)
 end
 
+function InventoryServiceServer.hasUnlockedTower(
+	_self: InventoryServiceServer,
+	player: Player,
+	towerId: string
+): boolean
+	return DataService:get(player, { "towerIndex", "normal", towerId })
+		or DataService:get(player, { "towerIndex", "gold", towerId })
+		or DataService:get(player, { "towerIndex", "diamond", towerId })
+end
+
 type InventoryServiceServer = typeof(InventoryServiceServer) & {
 	networker: Networker.Server,
 	itemSoldSignal: Signal.Signal<Player, string>,
