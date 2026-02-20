@@ -155,6 +155,10 @@ function DefenseClient.towerAttack(
 	damage: number
 ): ()
 	local enemy = self.enemies[enemyUniqueId]
+	if not enemy then
+		return
+	end
+
 	local tower = self.towers[floor][node]
 	if not tower then
 		enemy:damage(damage)

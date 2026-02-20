@@ -308,7 +308,9 @@ function PlotServer.requestBuild(self: PlotServer, player: Player, floor: number
 	assert(not self:isOccupied(floor, node), "Node is already occupied")
 
 	local itemData: ItemData = DataService:get(player, { "inventory", uniqueId })
-	assert(itemData, "Item data not found")
+	if not itemData then
+		return
+	end
 
 	if itemData.itemId then
 		self:build(floor, node, uniqueId)
@@ -343,7 +345,9 @@ end
 function PlotServer.requestRemove(self: PlotServer, player: Player, floor: number, node: number): ()
 	assert(self:isOwner(player), "Player is not the owner of this plot")
 	assert(self:isValidNode(floor, node), "Invalid floor or node")
-	assert(self:isOccupied(floor, node), "Node is not occupied")
+	if not self:isOccupied(floor, node) then
+		return
+	end
 	local floorNodeStr = PlotServiceUtils.floorNodeToString(floor, node)
 	local uniqueId = DataService:get(self.player, { "plotNodes", floorNodeStr })
 	if type(uniqueId) == "string" then

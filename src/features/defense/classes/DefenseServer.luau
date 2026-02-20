@@ -249,6 +249,10 @@ function DefenseServer.addEnemy(self: DefenseServer, enemy: EnemyServer)
 end
 
 function DefenseServer.rewardEnemy(self: DefenseServer, enemy: EnemyServer)
+	if not DataService:hasProfile(self.player) then
+		return
+	end
+
 	local rebirths: number = DataService:get(self.player, "rebirths")
 	local numFriends = FriendServiceServer:getFriendCount(self.player)
 	local ownsStarterPack = MonetizationServiceServer:ownsGamepass(self.player, Products.starterPack)

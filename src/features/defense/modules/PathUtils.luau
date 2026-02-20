@@ -122,6 +122,10 @@ function PathUtils.calcPaths(defenseModel: Model & any): { Path }
 end
 
 function PathUtils.getCFrameFromDist(path: Path, dist: number): CFrame
+	if path == nil then
+		return CFrame.new()
+	end
+
 	-- Clamp to [0, path.length] to avoid out-of-range
 	if dist <= 0 then
 		return path.nodes[1]

@@ -60,8 +60,10 @@ return function(self: any, enemy: Enemy)
 		if self.attackTimer <= 0 then
 			self.attackConnection:Disconnect()
 			self.attackConnection = nil
-			for _, bolt in self.bolts:GetChildren() do
-				bolt.Transparency = 1
+			if self.bolts then
+				for _, bolt in self.bolts:GetChildren() do
+					bolt.Transparency = 1
+				end
 			end
 		end
 	end)

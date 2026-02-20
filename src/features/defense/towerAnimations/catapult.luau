@@ -42,12 +42,18 @@ return function(self: Tower & any, enemy: Enemy)
 			top:PivotTo(startingCf * CFrame.Angles(0, 0, angle))
 			if angle <= goalAngle then
 				resetConn:Disconnect()
-				top.Projectile.Transparency = 0
+				if top.Projectile then
+					top.Projectile.Transparency = 0
+				end
 			end
 		end)
 	end
 
 	local function projectile()
+		if not top.Projectile then
+			return
+		end
+
 		bullet.CFrame = top.Projectile.CFrame
 		top.Projectile.Transparency = 1
 		local startPos = bullet.Position

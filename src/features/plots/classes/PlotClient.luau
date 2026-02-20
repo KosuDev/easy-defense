@@ -111,7 +111,7 @@ function PlotClient.attemptBuild(self: PlotClient, floor: number, node: number)
 
 	self.networker:fire("requestBuild", floor, node, equippedItemUniqueId)
 	local data = DataService:get({ "inventory", equippedItemUniqueId }) :: DataTemplate.ItemData
-	if data.itemId or (data.crateId and data.amt <= 0) then
+	if not data or data.itemId or (data.crateId and data.amt <= 0) then
 		InventoryServiceClient:unequipItem()
 	end
 
