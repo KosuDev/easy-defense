@@ -1,16 +1,33 @@
+-- InsetFrame.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Sift = require(ReplicatedStorage.Packages.Sift)
-local UITypes = require(ReplicatedStorage.Source.Core.UI.UITypes)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
-local e = React.createElement
 
-return function(props: UITypes.GenericUIProps)
-	local safeProps = Sift.Dictionary.copy(props)
-	safeProps.Image = ImageIds.insetFrame
-	safeProps.ScaleType = Enum.ScaleType.Slice
-	safeProps.SliceCenter = Rect.new(31, 33, 109, 99)
-	safeProps.BackgroundTransparency = 1
-	return e("ImageLabel", safeProps, safeProps.children)
+local create = Vide.create
+
+export type InsetFrameProps = {
+	Size: UDim2?,
+	Position: UDim2?,
+	AnchorPoint: Vector2?,
+	LayoutOrder: number?,
+	ZIndex: number?,
+	Visible: boolean?,
+	children: { any }?,
+}
+
+return function(props: InsetFrameProps)
+	return create("ImageLabel")({
+		Size = props.Size,
+		Position = props.Position,
+		AnchorPoint = props.AnchorPoint,
+		LayoutOrder = props.LayoutOrder,
+		ZIndex = props.ZIndex,
+		Visible = props.Visible,
+		Image = ImageIds.insetFrame,
+		ScaleType = Enum.ScaleType.Slice,
+		SliceCenter = Rect.new(31, 33, 109, 99),
+		BackgroundTransparency = 1,
+		props.children,
+	})
 end

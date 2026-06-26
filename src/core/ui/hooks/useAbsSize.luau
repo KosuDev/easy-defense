@@ -1,24 +1,17 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 
-return function(ref)
-	local absSize, setAbsSize = React.useState(Vector2.new(0, 0))
+return function(instance: GuiObject): () -> Vector2
+	local absSize = Vide.source(instance.AbsoluteSize)
 
-	React.useEffect(function()
-		if not ref.current then
-			return
-		end
+	local conn = instance:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		absSize(instance.AbsoluteSize)
+	end)
 
-		setAbsSize(ref.current.AbsoluteSize)
-		local conn = ref.current:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
-			setAbsSize(ref.current.AbsoluteSize)
-		end)
-
-		return function()
-			conn:Disconnect()
-		end
-	end, { ref.current })
+	Vide.cleanup(function()
+		conn:Disconnect()
+	end)
 
 	return absSize
 end

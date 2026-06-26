@@ -1,36 +1,31 @@
 local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 
-return function(tag: string): Instance?
-	local instance, setInstance = React.useState(CollectionService:GetTagged(tag)[1])
-	local ref = React.useRef(instance)
+return function(tag: string): () -> Instance?
+	local instance = Vide.source(CollectionService:GetTagged(tag)[1] :: Instance?)
 
-	React.useEffect(function()
-		local addedConn = CollectionService:GetInstanceAddedSignal(tag):Connect(function(newInstance)
-			if ref.current ~= nil then
-				warn(
-					`useTag: Multiple instances with tag "{tag}" detected.\nuseTag should only be used with tags that have a single instance.`
-				)
-				return
-			end
-			setInstance(newInstance)
-			ref.current = newInstance
-		end)
-
-		local removedConn = CollectionService:GetInstanceRemovedSignal(tag):Connect(function(removedInstance)
-			if removedInstance == ref.current then
-				setInstance(nil)
-				ref.current = nil
-			end
-		end)
-
-		return function()
-			addedConn:Disconnect()
-			removedConn:Disconnect()
+	local addedConn = CollectionService:GetInstanceAddedSignal(tag):Connect(function(newInstance)
+		if instance() ~= nil then
+			warn(
+				`useTag: Multiple instances with tag "{tag}" detected. useTag should only be used with tags that have a single instance.`
+			)
+			return
 		end
-	end, { tag })
+		instance(newInstance)
+	end)
+
+	local removedConn = CollectionService:GetInstanceRemovedSignal(tag):Connect(function(removedInstance)
+		if removedInstance == instance() then
+			instance(nil)
+		end
+	end)
+
+	Vide.cleanup(function()
+		addedConn:Disconnect()
+		removedConn:Disconnect()
+	end)
 
 	return instance
 end

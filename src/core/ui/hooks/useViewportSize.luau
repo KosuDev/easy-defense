@@ -1,24 +1,18 @@
+-- useViewportSize.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 
-local React = require(ReplicatedStorage.Packages.React)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 
-return function()
-	local value, setValue = React.useState(workspace.CurrentCamera.ViewportSize)
+return function(): () -> Vector2
+	local viewportSize = Vide.source(workspace.CurrentCamera.ViewportSize)
 
-	React.useEffect(function()
-		local function update()
-			RunService.Heartbeat:Wait()
-			setValue(workspace.CurrentCamera.ViewportSize)
-		end
+	local conn = workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+		viewportSize(workspace.CurrentCamera.ViewportSize)
+	end)
 
-		update()
-		local conn = workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(update)
+	Vide.cleanup(function()
+		conn:Disconnect()
+	end)
 
-		return function()
-			conn:Disconnect()
-		end
-	end, {})
-
-	return value
+	return viewportSize
 end

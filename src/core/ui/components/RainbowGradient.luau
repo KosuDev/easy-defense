@@ -1,7 +1,8 @@
+-- RainbowGradient.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local React = require(ReplicatedStorage.Packages.React)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 
 local RAINBOW_GRADIENT = ColorSequence.new({
 	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
@@ -14,20 +15,18 @@ local RAINBOW_GRADIENT = ColorSequence.new({
 })
 
 return function()
-	local rot, setRot = React.useBinding(0)
-	React.useEffect(function()
-		local connection
-		connection = RunService.Heartbeat:Connect(function(dt)
-			setRot((rot:getValue() + dt * 15) % 360)
-		end)
+	local rotation = Vide.source(0)
 
-		return function()
-			connection:Disconnect()
-		end
-	end, {})
+	local conn = RunService.Heartbeat:Connect(function(dt)
+		rotation((rotation() + dt * 15) % 360)
+	end)
 
-	return React.createElement("UIGradient", {
+	Vide.cleanup(function()
+		conn:Disconnect()
+	end)
+
+	return Vide.create("UIGradient")({
 		Color = RAINBOW_GRADIENT,
-		Rotation = rot,
+		Rotation = rotation,
 	})
 end

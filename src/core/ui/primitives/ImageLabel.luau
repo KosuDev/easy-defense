@@ -1,22 +1,50 @@
+-- ImageLabel.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Sift = require(ReplicatedStorage.Packages.Sift)
-local UITypes = require(ReplicatedStorage.Source.Core.UI.UITypes)
-local e: typeof(React.createElement) = React.createElement
+local Vide = require(ReplicatedStorage.Packages.Vide)
+local create = Vide.create
 
-local DEFAULTS = {
-	BackgroundTransparency = 1,
-	Size = UDim2.fromScale(1, 1),
+export type ImageLabelProps = {
+	Size: UDim2?,
+	Position: UDim2?,
+	AnchorPoint: Vector2?,
+	BackgroundTransparency: number?,
+	BackgroundColor3: Color3?,
+	Image: string?,
+	ImageColor3: Color3?,
+	ImageTransparency: number?,
+	ImageRectOffset: Vector2?,
+	ImageRectSize: Vector2?,
+	ScaleType: Enum.ScaleType?,
+	SliceCenter: Rect?,
+	TileSize: UDim2?,
+	LayoutOrder: number?,
+	ZIndex: number?,
+	Visible: boolean?,
+	SizeConstraint: Enum.SizeConstraint?,
+	children: { any }?,
 }
 
-type ImageLabelProps = UITypes.ImageLabelProps & {
-	children: React.ReactNode?,
-}
+return function(props: ImageLabelProps)
+	return create("ImageLabel")({
+		Size = props.Size or UDim2.fromScale(1, 1),
+		Position = props.Position,
+		AnchorPoint = props.AnchorPoint,
+		BackgroundTransparency = props.BackgroundTransparency or 1,
+		BackgroundColor3 = props.BackgroundColor3,
+		Image = props.Image or "",
+		ImageColor3 = props.ImageColor3,
+		ImageTransparency = props.ImageTransparency,
+		ImageRectOffset = props.ImageRectOffset,
+		ImageRectSize = props.ImageRectSize,
+		ScaleType = props.ScaleType,
+		SliceCenter = props.SliceCenter,
+		TileSize = props.TileSize,
+		LayoutOrder = props.LayoutOrder,
+		ZIndex = props.ZIndex,
+		Visible = props.Visible,
+		SizeConstraint = props.SizeConstraint,
 
-return React.forwardRef(function(props: ImageLabelProps, ref: any)
-	local defaultedProps = Sift.Dictionary.merge(DEFAULTS, props)
-	defaultedProps.ref = ref
-	defaultedProps.children = nil
-	return e("ImageLabel", defaultedProps, props.children)
-end)
+		props.children,
+	})
+end

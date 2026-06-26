@@ -651,32 +651,11 @@
               "serverTimeAtom": {
                 "$path": "src/core/ui/hooks/serverTimeAtom.luau"
               },
-              "useAbsSize": {
-                "$path": "src/core/ui/hooks/useAbsSize.luau"
-              },
               "useDataState": {
                 "$path": "src/core/ui/hooks/useDataState.luau"
               },
-              "useDeviceInput": {
-                "$path": "src/core/ui/hooks/useDeviceInput.luau"
-              },
-              "useServerTime": {
-                "$path": "src/core/ui/hooks/useServerTime.luau"
-              },
-              "useServerTimeBinding": {
-                "$path": "src/core/ui/hooks/useServerTimeBinding.luau"
-              },
-              "useSpring": {
-                "$path": "src/core/ui/hooks/useSpring.luau"
-              },
               "useTag": {
                 "$path": "src/core/ui/hooks/useTag.luau"
-              },
-              "useTween": {
-                "$path": "src/core/ui/hooks/useTween.luau"
-              },
-              "useViewportSize": {
-                "$path": "src/core/ui/hooks/useViewportSize.luau"
               }
             },
             "Primitives": {
@@ -702,9 +681,6 @@
             },
             "Suffixes": {
               "$path": "src/core/ui/Suffixes.luau"
-            },
-            "UITypes": {
-              "$path": "src/core/ui/UITypes.luau"
             }
           },
           "Util": {

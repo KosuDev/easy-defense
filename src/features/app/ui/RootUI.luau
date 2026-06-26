@@ -1,11 +1,12 @@
+-- RootUI.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Sift = require(ReplicatedStorage.Packages.Sift)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 local ErrorMessage = require(ReplicatedStorage.Source.Core.UI.Components.ErrorMessage)
 local NotificationMessage = require(ReplicatedStorage.Source.Core.UI.Components.NotificationMessage)
 local Notifications = require(ReplicatedStorage.Source.Features.Notifications.UI.Notifications)
-local e = React.createElement
+
+local create = Vide.create
 
 local capturedRoots = {}
 for _, module in ReplicatedStorage.Source.Features:GetDescendants() do
@@ -15,18 +16,21 @@ for _, module in ReplicatedStorage.Source.Features:GetDescendants() do
 end
 
 local function RootUI()
-	return e(
-		React.Fragment,
-		nil,
-		Sift.Dictionary.map(capturedRoots, function(rootModule, rootName)
-			return e(rootModule, { Name = rootName })
-		end),
-		{
-			e(ErrorMessage.Component),
-			e(NotificationMessage.Component),
-			e(Notifications.Screen),
-		}
-	)
+	local children = {}
+
+	for name, rootModule in capturedRoots do
+		children[name] = rootModule()
+	end
+
+	children.ErrorMessage = ErrorMessage.Component()
+	children.NotificationMessage = NotificationMessage.Component()
+	children.Notifications = Notifications.Screen()
+
+	return create("Frame")({
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		children,
+	})
 end
 
 return RootUI

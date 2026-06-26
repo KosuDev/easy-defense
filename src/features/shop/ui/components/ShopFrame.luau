@@ -1,9 +1,7 @@
+-- ShopFrame.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Sift = require(ReplicatedStorage.Packages.Sift)
 local StudFrame = require(ReplicatedStorage.Source.Features.App.UI.Components.StudFrame)
-local e = React.createElement
 
 local GOLD = ColorSequence.new({
 	ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 235, 192)),
@@ -47,47 +45,20 @@ local GREY = ColorSequence.new({
 	ColorSequenceKeypoint.new(1, Color3.fromRGB(94, 94, 94)),
 })
 
-local function gold(props)
-	local newProps = Sift.Dictionary.set(props, "Gradient", GOLD)
-	return e(StudFrame, newProps, props.children)
-end
-
-local function green(props)
-	local newProps = Sift.Dictionary.set(props, "Gradient", GREEN)
-	return e(StudFrame, newProps, props.children)
-end
-
-local function blue(props)
-	local newProps = Sift.Dictionary.set(props, "Gradient", BLUE)
-	return e(StudFrame, newProps, props.children)
-end
-
-local function purple(props)
-	local newProps = Sift.Dictionary.set(props, "Gradient", PURPLE)
-	return e(StudFrame, newProps, props.children)
-end
-
-local function red(props)
-	local newProps = Sift.Dictionary.set(props, "Gradient", RED)
-	return e(StudFrame, newProps, props.children)
-end
-
-local function orange(props)
-	local newProps = Sift.Dictionary.set(props, "Gradient", ORANGE)
-	return e(StudFrame, newProps, props.children)
-end
-
-local function grey(props)
-	local newProps = Sift.Dictionary.set(props, "Gradient", GREY)
-	return e(StudFrame, newProps, props.children)
+local function withGradient(gradient: ColorSequence)
+	return function(props)
+		local merged = table.clone(props)
+		merged.Gradient = gradient
+		return StudFrame(merged)
+	end
 end
 
 return {
-	Gold = gold,
-	Green = green,
-	Blue = blue,
-	Purple = purple,
-	Red = red,
-	Orange = orange,
-	Grey = grey,
+	Gold = withGradient(GOLD),
+	Green = withGradient(GREEN),
+	Blue = withGradient(BLUE),
+	Purple = withGradient(PURPLE),
+	Red = withGradient(RED),
+	Orange = withGradient(ORANGE),
+	Grey = withGradient(GREY),
 }

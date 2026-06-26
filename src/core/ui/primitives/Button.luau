@@ -1,73 +1,91 @@
+-- Button.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Sift = require(ReplicatedStorage.Packages.Sift)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 local SoundController = require(ReplicatedStorage.Source.Core.Platform.SoundController)
-local useSpring = require(ReplicatedStorage.Source.Core.UI.Hooks.useSpring)
-local UITypes = require(ReplicatedStorage.Source.Core.UI.UITypes)
 local Sounds = require(ReplicatedStorage.Source.Game.Assets.Sounds)
-local e: typeof(React.createElement) = React.createElement
+local useSpring = require(ReplicatedStorage.Packages.VideRipple).useSpring
+local create = Vide.create
 
-export type ButtonProps = UITypes.ImageLabelProps & {
+export type ButtonProps = {
+	-- layout
+	Size: UDim2?,
+	Position: UDim2?,
+	AnchorPoint: Vector2?,
+	LayoutOrder: number?,
+	ZIndex: number?,
+	Visible: (boolean | () -> boolean)?,
+	-- image
+	Image: string?,
+	ImageColor3: Color3?,
+	ImageTransparency: number?,
+	ScaleType: Enum.ScaleType?,
+	-- button behavior
 	hoverScale: number?,
-	children: React.ReactNode?,
+	AutoButtonColor: boolean?,
+	-- callbacks
 	Activated: (() -> ())?,
 	OnEnter: (() -> ())?,
 	OnLeave: (() -> ())?,
 	OnDown: (() -> ())?,
 	OnUp: (() -> ())?,
+	-- children
+	children: { any }?,
 }
 
-type ButtonConstructor = (props: ButtonProps) -> React.ReactNode?
-
-local CUSTOM_PROPS = { "hoverScale", "Activated", "OnEnter", "OnLeave", "OnDown", "OnUp" }
-
-local DEFAULTS = {
-	BackgroundTransparency = 1,
-	AutoButtonColor = false,
-}
-
-local Button = React.forwardRef(function(props: ButtonProps, ref: any)
+return function(props: ButtonProps)
 	local hoverScale = props.hoverScale or 1.2
-	local scale, scaleMotion = useSpring(1, { frequency = 5, dampingRatio = 0.7 })
-	local safeProps = Sift.Dictionary.removeKeys(props, table.unpack(CUSTOM_PROPS))
-	safeProps.ref = ref
-	safeProps.BackgroundTransparency = safeProps.BackgroundTransparency or DEFAULTS.BackgroundTransparency
-	safeProps.AutoButtonColor = safeProps.AutoButtonColor or DEFAULTS.AutoButtonColor
-	safeProps.children = nil
+	local scale, spring = useSpring(1, { frequency = 5, dampingRatio = 0.7 })
 
-	safeProps[React.Event.MouseEnter] = function()
-		SoundController:Play(Sounds.ui.hover)
-		scaleMotion:setGoal(hoverScale)
-		if props.OnEnter then
-			props.OnEnter()
-		end
-	end
+	return create("ImageButton")({
+		Size = props.Size,
+		Position = props.Position,
+		AnchorPoint = props.AnchorPoint,
+		LayoutOrder = props.LayoutOrder,
+		ZIndex = props.ZIndex,
+		Visible = props.Visible,
+		Image = props.Image or "",
+		ImageColor3 = props.ImageColor3,
+		ImageTransparency = props.ImageTransparency,
+		ScaleType = props.ScaleType,
+		BackgroundTransparency = 1,
+		AutoButtonColor = props.AutoButtonColor or false,
 
-	safeProps[React.Event.MouseLeave] = function()
-		scaleMotion:setGoal(1)
-		if props.OnLeave then
-			props.OnLeave()
-		end
-	end
+		MouseEnter = function()
+			SoundController:Play(Sounds.ui.hover)
+			spring:setGoal(hoverScale)
+			if props.OnEnter then
+				props.OnEnter()
+			end
+		end,
 
-	safeProps[React.Event.MouseButton1Down] = function()
-		SoundController:Play(Sounds.ui.mouseDown)
-		if props.OnDown then
-			props.OnDown()
-		end
-	end
+		MouseLeave = function()
+			spring:setGoal(1)
+			if props.OnLeave then
+				props.OnLeave()
+			end
+		end,
 
-	safeProps[React.Event.MouseButton1Up] = function()
-		SoundController:Play(Sounds.ui.mouseUp)
-		if props.OnUp then
-			props.OnUp()
-		end
-	end
+		MouseButton1Down = function()
+			SoundController:Play(Sounds.ui.mouseDown)
+			if props.OnDown then
+				props.OnDown()
+			end
+		end,
 
-	safeProps[React.Event.Activated] = props.Activated
+		MouseButton1Up = function()
+			SoundController:Play(Sounds.ui.mouseUp)
+			if props.OnUp then
+				props.OnUp()
+			end
+		end,
 
-	return e("ImageButton", safeProps, e("UIScale", { Scale = scale }), props.children)
-end)
+		Activated = props.Activated,
 
-return (Button :: any) :: ButtonConstructor
+		create("UIScale")({
+			Scale = scale,
+		}),
+
+		props.children,
+	})
+end

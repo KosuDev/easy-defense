@@ -30,6 +30,7 @@ return {
 	},
 
 	misc = {
+		--[[
 		roll = {
 			SoundId = "rbxassetid://82676714368656",
 			Volume = 2.5,
@@ -57,5 +58,6 @@ return {
 			Volume = 2,
 			PlaybackRegion = NumberRange.new(0.14, 999),
 		},
+		]]
 	},
 }

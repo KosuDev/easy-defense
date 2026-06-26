@@ -1,20 +1,25 @@
+-- LeaderboardsRoot.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Towers = require(ReplicatedStorage.Source.Features.Defense.Modules.Towers)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 local LeaderboardSlice = require(ReplicatedStorage.Source.Features.Leaderboards.LeaderboardSlice)
 local LeaderboardSurfaceGui =
 	require(ReplicatedStorage.Source.Features.Leaderboards.UI.Components.LeaderboardSurfaceGui)
 local ImageIds = require(ReplicatedStorage.Source.Game.Assets.ImageIds)
-local e = React.createElement
+
+local create = Vide.create
 
 return function()
-	return e(React.Fragment, nil, {
-		CrateLeaderboard = e(LeaderboardSurfaceGui, {
+	return create("Frame")({
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+
+		-- swap out prefix images and gradients for your own game
+		LeaderboardSurfaceGui({
 			tag = "CrateLeaderboard",
 			leaderboardData = LeaderboardSlice.states.crateRollsLeaderboard,
 			prefix = {
-				Image = Towers.getTowerInfo("crossbow").crateImage,
+				Image = "", -- replace with your own image
 				HorizontalAlignment = Enum.HorizontalAlignment.Left,
 			},
 			gradient = ColorSequence.new({
@@ -23,7 +28,7 @@ return function()
 			}),
 		}),
 
-		KillsLeaderboard = e(LeaderboardSurfaceGui, {
+		LeaderboardSurfaceGui({
 			tag = "KillsLeaderboard",
 			leaderboardData = LeaderboardSlice.states.killsLeaderboard,
 			prefix = {
@@ -36,7 +41,7 @@ return function()
 			}),
 		}),
 
-		CurrencyLeaderboard = e(LeaderboardSurfaceGui, {
+		LeaderboardSurfaceGui({
 			tag = "CurrencyLeaderboard",
 			leaderboardData = LeaderboardSlice.states.currencyLeaderboard,
 			prefix = {

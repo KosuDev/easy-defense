@@ -1,11 +1,18 @@
+-- TextBox.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Sift = require(ReplicatedStorage.Packages.Sift)
-local UITypes = require(ReplicatedStorage.Source.Core.UI.UITypes)
-local e = React.createElement
+local Vide = require(ReplicatedStorage.Packages.Vide)
+local create = Vide.create
 
-export type TextBoxProps = UITypes.GenericUIProps & {
+export type TextBoxProps = {
+	Size: UDim2?,
+	Position: UDim2?,
+	AnchorPoint: Vector2?,
+	BackgroundTransparency: number?,
+	BackgroundColor3: Color3?,
+	LayoutOrder: number?,
+	ZIndex: number?,
+	Visible: boolean?,
 	Text: string?,
 	ClearTextOnFocus: boolean?,
 	TextEditable: boolean?,
@@ -16,57 +23,23 @@ export type TextBoxProps = UITypes.GenericUIProps & {
 	TextScaled: boolean?,
 	TextWrapped: boolean?,
 	TextXAlignment: Enum.TextXAlignment?,
-	children: React.ReactNode?,
+	-- input filters
 	NumbersOnly: boolean?,
 	LettersOnly: boolean?,
 	LettersAndNumbersOnly: boolean?,
 	MaxCharacters: number?,
 	CapsLock: boolean?,
+	-- callbacks
 	FocusLost: ((textbox: TextBox, enterPressed: boolean) -> ())?,
+	-- children
+	children: { any }?,
 }
 
-local DEFAULTS = {
-	Text = "",
-	Font = Enum.Font.BuilderSansExtraBold,
-	ClearTextOnFocus = false,
-	TextEditable = true,
-	PlaceholderText = "",
-	PlaceholderColor3 = Color3.fromRGB(194, 194, 194),
-	TextColor3 = Color3.fromRGB(255, 255, 255),
-	TextScaled = true,
-	TextXAlignment = Enum.TextXAlignment.Left,
-	Position = UDim2.fromScale(0.5, 0.5),
-	AnchorPoint = Vector2.new(0.5, 0.5),
-	BackgroundTransparency = 1,
-}
-
-local CUSTOM_PROPS =
-	{ "children", "NumbersOnly", "LettersOnly", "LettersAndNumbersOnly", "MaxCharacters", "CapsLock", "FocusLost" }
-
-return React.forwardRef(function(props: TextBoxProps, ref)
-	local textboxRef = React.useRef(nil :: TextBox?)
-
-	local safeProps = Sift.Dictionary.removeKeys(props, unpack(CUSTOM_PROPS))
-	for i, v in DEFAULTS do
-		if safeProps[i] == nil then
-			safeProps[i] = v
-		end
-	end
-
-	safeProps.ref = React.useCallback(function(instance)
-		textboxRef.current = instance
-		if ref then
-			if typeof(ref) == "function" then
-				ref(instance)
-			else
-				ref.current = instance
-			end
-		end
-	end, { ref })
-
-	safeProps[React.Change.Text] = React.useCallback(function(textbox: TextBox)
+return function(props: TextBoxProps)
+	local function onTextChanged(textbox: TextBox)
 		local newText = textbox.Text
-		if props.MaxCharacters and newText:len() > props.MaxCharacters then
+
+		if props.MaxCharacters and #newText > props.MaxCharacters then
 			newText = newText:sub(1, props.MaxCharacters)
 		end
 
@@ -85,9 +58,32 @@ return React.forwardRef(function(props: TextBoxProps, ref)
 		if newText ~= textbox.Text then
 			textbox.Text = newText
 		end
-	end, { props })
+	end
 
-	safeProps[React.Event.FocusLost] = props.FocusLost
+	return create("TextBox")({
+		Size = props.Size,
+		Position = props.Position or UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = props.AnchorPoint or Vector2.new(0.5, 0.5),
+		BackgroundTransparency = props.BackgroundTransparency or 1,
+		BackgroundColor3 = props.BackgroundColor3,
+		LayoutOrder = props.LayoutOrder,
+		ZIndex = props.ZIndex,
+		Visible = props.Visible,
+		Text = props.Text or "",
+		ClearTextOnFocus = props.ClearTextOnFocus or false,
+		TextEditable = props.TextEditable ~= false,
+		PlaceholderText = props.PlaceholderText or "",
+		PlaceholderColor3 = props.PlaceholderColor3 or Color3.fromRGB(194, 194, 194),
+		TextSize = props.TextSize,
+		TextColor3 = props.TextColor3 or Color3.fromRGB(255, 255, 255),
+		TextScaled = props.TextScaled ~= false,
+		TextWrapped = props.TextWrapped,
+		TextXAlignment = props.TextXAlignment or Enum.TextXAlignment.Left,
+		Font = Enum.Font.BuilderSansExtraBold,
 
-	return e("TextBox", safeProps, props.children)
-end)
+		Changed = onTextChanged,
+		FocusLost = props.FocusLost,
+
+		props.children,
+	})
+end

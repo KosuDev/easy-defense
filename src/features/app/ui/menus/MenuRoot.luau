@@ -1,8 +1,7 @@
+-- MenuRoot.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local Sift = require(ReplicatedStorage.Packages.Sift)
-local e = React.createElement
+local Vide = require(ReplicatedStorage.Packages.Vide)
 
 local capturedMenus = {}
 for _, module in script.Parent:GetChildren() do
@@ -12,12 +11,13 @@ for _, module in script.Parent:GetChildren() do
 end
 
 return function()
-	return e(
-		React.Fragment,
-		nil,
-		Sift.Dictionary.map(capturedMenus, function(menuModule, name)
-			return e(menuModule), name
-		end),
-		{}
-	)
+	local children = {}
+	for name, menuModule in capturedMenus do
+		children[name] = menuModule()
+	end
+	return Vide.create("Frame")({
+		Size = UDim2.fromScale(1, 1),
+		BackgroundTransparency = 1,
+		children,
+	})
 end

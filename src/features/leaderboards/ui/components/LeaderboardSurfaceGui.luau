@@ -1,13 +1,14 @@
+-- LeaderboardSurfaceGui.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local React = require(ReplicatedStorage.Packages.React)
-local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local Sift = require(ReplicatedStorage.Packages.Sift)
+local Vide = require(ReplicatedStorage.Packages.Vide)
+local VideCharm = require(ReplicatedStorage.Packages.VideCharm)
 local Abbreviate = require(ReplicatedStorage.Source.Core.UI.Abbreviate)
 local useTag = require(ReplicatedStorage.Source.Core.UI.Hooks.useTag)
 local TextLabel = require(ReplicatedStorage.Source.Core.UI.Primitives.TextLabel)
 local LeaderboardServiceUtils = require(ReplicatedStorage.Source.Features.Leaderboards.LeaderboardServiceUtils)
-local e = React.createElement
+
+local create = Vide.create
 
 type EntryProps = {
 	i: number,
@@ -17,20 +18,20 @@ type EntryProps = {
 }
 
 local function LeaderboardEntry(props: EntryProps)
-	return e("Frame", {
+	return create("Frame")({
 		Size = UDim2.new(1, 0, 0, 90),
 		BackgroundTransparency = 1,
 		LayoutOrder = props.i,
-	}, {
-		Icon = e("ImageLabel", {
+
+		create("ImageLabel")({
 			Size = UDim2.fromScale(1, 1),
 			SizeConstraint = Enum.SizeConstraint.RelativeYY,
 			Position = UDim2.fromScale(0, 0.5),
 			AnchorPoint = Vector2.new(0, 0.5),
 			Image = props.entry.profileImageId,
 			BackgroundTransparency = 1,
-		}, {
-			Rank = e(TextLabel, {
+
+			TextLabel({
 				Size = UDim2.fromScale(1, 0.33),
 				Position = UDim2.fromScale(0, 1),
 				AnchorPoint = Vector2.new(0, 1),
@@ -40,7 +41,7 @@ local function LeaderboardEntry(props: EntryProps)
 			}),
 		}),
 
-		UserName = e(TextLabel, {
+		TextLabel({
 			Size = UDim2.fromScale(0.7, 0.5),
 			Position = UDim2.fromOffset(100, 0),
 			AnchorPoint = Vector2.new(0, 0),
@@ -49,7 +50,7 @@ local function LeaderboardEntry(props: EntryProps)
 			Stroke = {},
 		}),
 
-		Stat = e(TextLabel, {
+		TextLabel({
 			Size = UDim2.fromScale(0.7, 0.5),
 			Position = UDim2.fromScale(1, 0.5),
 			AnchorPoint = Vector2.new(1, 0),
@@ -65,41 +66,49 @@ local function LeaderboardEntry(props: EntryProps)
 	})
 end
 
-return function(props)
-	local leaderboardData: LeaderboardServiceUtils.LeaderboardData = ReactCharm.useAtom(props.leaderboardData)
+type LeaderboardSurfaceGuiProps = {
+	tag: string,
+	leaderboardData: () -> LeaderboardServiceUtils.LeaderboardData,
+	prefix: any,
+	gradient: ColorSequence,
+}
+
+return function(props: LeaderboardSurfaceGuiProps)
+	local leaderboardData = VideCharm.useSignalState(props.leaderboardData)
 	local adornee = useTag(props.tag)
 
-	return e("SurfaceGui", {
+	return create("SurfaceGui")({
 		Adornee = adornee,
 		Face = Enum.NormalId.Left,
 		SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud,
 		MaxDistance = 400,
 		LightInfluence = 0,
-	}, {
-		e(
-			"ScrollingFrame",
-			{
-				Size = UDim2.fromScale(1, 1),
-				CanvasSize = UDim2.fromScale(0, 0),
-				ScrollBarThickness = 0,
-				AutomaticCanvasSize = Enum.AutomaticSize.Y,
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-			},
-			{
-				Layout = e("UIListLayout", {
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					Padding = UDim.new(0, 4),
-				}),
-			},
-			Sift.Dictionary.map(leaderboardData, function(entry: LeaderboardServiceUtils.LeaderboardEntry, i: number)
-				return e(LeaderboardEntry, {
-					i = i,
-					entry = entry,
-					prefix = props.prefix,
-					gradient = props.gradient,
-				})
-			end)
-		),
+
+		create("ScrollingFrame")({
+			Size = UDim2.fromScale(1, 1),
+			CanvasSize = UDim2.fromScale(0, 0),
+			ScrollBarThickness = 0,
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+
+			create("UIListLayout")({
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				Padding = UDim.new(0, 4),
+			}),
+
+			function()
+				local children = {}
+				for i, entry in leaderboardData() do
+					children[i] = LeaderboardEntry({
+						i = i,
+						entry = entry,
+						prefix = props.prefix,
+						gradient = props.gradient,
+					})
+				end
+				return children
+			end,
+		}),
 	})
 end

@@ -1,20 +1,19 @@
+-- useDeviceInput.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
-local React = require(ReplicatedStorage.Packages.React)
+local Vide = require(ReplicatedStorage.Packages.Vide)
 
-return function()
-	local currentInput, setCurrentInput = React.useState(UserInputService.PreferredInput)
+return function(): () -> Enum.UserInputType
+	local currentInput = Vide.source(UserInputService.PreferredInput)
 
-	React.useEffect(function()
-		local conn = UserInputService:GetPropertyChangedSignal("PreferredInput"):Connect(function()
-			setCurrentInput(UserInputService.PreferredInput)
-		end)
+	local conn = UserInputService:GetPropertyChangedSignal("PreferredInput"):Connect(function()
+		currentInput(UserInputService.PreferredInput)
+	end)
 
-		return function()
-			conn:Disconnect()
-		end
-	end, { currentInput })
+	Vide.cleanup(function()
+		conn:Disconnect()
+	end)
 
 	return currentInput
 end

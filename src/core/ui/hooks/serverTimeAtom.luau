@@ -3,26 +3,29 @@ local RunService = game:GetService("RunService")
 
 local Charm = require(ReplicatedStorage.Packages.Charm)
 
-local function getTime(): number
+local function getCurrentTime(): number
 	if RunService:IsRunning() then
 		return math.round(workspace:GetServerTimeNow())
 	end
 	return os.time()
 end
 
-local t: Charm.Atom<number> = Charm.atom(getTime())
+local getServerTime, setServerTime = Charm.signal(getCurrentTime())
+
 local TIME_GET_CD = 60
-local lastTimeGet = t()
+local lastTimeGet = getServerTime()
 
 task.spawn(function()
 	while true do
 		task.wait(1)
-		t(t() + 1)
-		if t() - lastTimeGet >= TIME_GET_CD then
-			t(getTime())
-			lastTimeGet = t()
+		setServerTime(function(current)
+			return current + 1
+		end)
+		if getServerTime() - lastTimeGet >= TIME_GET_CD then
+			setServerTime(getCurrentTime())
+			lastTimeGet = getServerTime()
 		end
 	end
 end)
 
-return t
+return getServerTime

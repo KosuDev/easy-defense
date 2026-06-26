@@ -1,53 +1,54 @@
+-- Screen.luau
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Charm = require(ReplicatedStorage.Packages.Charm)
-local React = require(ReplicatedStorage.Packages.React)
-local ReactCharm = require(ReplicatedStorage.Packages.ReactCharm)
-local useSpring = require(ReplicatedStorage.Source.Core.UI.Hooks.useSpring)
-local e = React.createElement
+local VideCharm = require(ReplicatedStorage.Packages.VideCharm)
+local Vide = require(ReplicatedStorage.Packages.Vide)
+local useSpring = require(ReplicatedStorage.Packages.VideRipple).useSpring
 
-local openedScreen = Charm.atom(nil :: string?)
+local getOpenedScreen, setOpenedScreenSignal = Charm.signal(nil :: string?)
 
 local function setOpenedScreen(screenName: string?)
-	openedScreen(screenName)
+	setOpenedScreenSignal(screenName)
 end
 
 type ScreenProps = {
 	screenName: string,
-	children: React.ReactNode?,
+	children: { any }?,
 }
 
 local function Screen(props: ScreenProps)
-	local isOpen = ReactCharm.useAtom(function()
-		return openedScreen() == props.screenName
+	local isOpen = VideCharm.useSignalState(function()
+		return getOpenedScreen() == props.screenName
 	end)
 
-	if isOpen then
-		return nil
+	return function()
+		if not isOpen() then
+			return nil
+		end
+		return props.children
 	end
-
-	return e(React.Fragment, nil, props.children)
 end
 
 local function useScreenSpring(screenName: string)
-	local binding, spring =
-		useSpring(if openedScreen() == screenName then 1 else 0, { frequency = 3, dampingRatio = 0.7 })
+	local value, spring =
+		useSpring(if getOpenedScreen() == screenName then 1 else 0, { frequency = 3, dampingRatio = 0.7 })
 
-	React.useEffect(function()
-		return Charm.subscribe(openedScreen, function(newScreen)
-			if newScreen == screenName then
-				spring:setGoal(1)
-			else
-				spring:setGoal(0)
-			end
-		end)
-	end, {})
+	local unsub = Charm.subscribe(getOpenedScreen, function(newScreen)
+		if newScreen == screenName then
+			spring:setGoal(1)
+		else
+			spring:setGoal(0)
+		end
+	end)
 
-	return binding
+	Vide.cleanup(unsub)
+
+	return value
 end
 
 return {
-	openedScreen = openedScreen,
+	openedScreen = getOpenedScreen,
 	setOpenedScreen = setOpenedScreen,
 	Component = Screen,
 	useScreenSpring = useScreenSpring,
